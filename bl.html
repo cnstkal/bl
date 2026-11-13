@@ -1,0 +1,2090 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFTERGLOW : 잔광 - 사이버펑크 디스토피아 비주얼 노벨</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Orbitron:wght@500;700;900&display=swap');
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            user-select: none;
+            overflow: hidden;
+            background-color: #05070a;
+        }
+
+        .font-cyber {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* 배경 전환 및 분위기 효과 */
+        .bg-transition {
+            transition: opacity 0.8s ease-in-out, filter 0.8s ease-in-out;
+        }
+
+        /* 캐릭터 스탠딩 애니메이션 */
+        .char-standing {
+            transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+            filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.85));
+        }
+
+        /* 대화창 텍스트 커서 효과 */
+        .typing-cursor::after {
+            content: '▼';
+            display: inline-block;
+            margin-left: 8px;
+            font-size: 0.75rem;
+            color: #10b981;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); opacity: 0.8; }
+            50% { transform: translateY(4px); opacity: 0.3; }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 18px rgba(16, 185, 129, 0.45)); }
+            50% { filter: drop-shadow(0 0 32px rgba(244, 63, 94, 0.55)); }
+        }
+
+        .title-glow {
+            animation: pulseGlow 4s infinite ease-in-out;
+        }
+
+        /* 빗줄기/스모그 오버레이 효과 */
+        .cyber-rain {
+            background-image: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(148, 163, 184, 0.06) 100%);
+            background-size: 2px 35px;
+        }
+
+        /* 커스텀 스크롤바 */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="w-screen h-screen flex items-center justify-center bg-black">
+
+    <!-- 비주얼 노벨 메인 프레임 -->
+    <div id="vn-container" class="relative w-full h-full max-w-[1600px] max-h-[900px] bg-slate-950 overflow-hidden shadow-2xl border border-slate-800/80 flex flex-col justify-between">
+
+        <!-- ================= 0. 메인 타이틀 화면 (AFTERGLOW : 잔광) ================= -->
+        <div id="title-screen" class="absolute inset-0 z-50 bg-slate-950 flex flex-col justify-between p-8 md:p-16 overflow-hidden">
+            <!-- 타이틀 배경 SVG -->
+            <div class="absolute inset-0 z-0 opacity-75">
+                <svg viewBox="0 0 1600 900" class="w-full h-full object-cover">
+                    <defs>
+                        <linearGradient id="titleSky" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#030508"/>
+                            <stop offset="50%" stop-color="#0f172a"/>
+                            <stop offset="85%" stop-color="#31102f"/>
+                            <stop offset="100%" stop-color="#090d16"/>
+                        </linearGradient>
+                        <radialGradient id="afterglowSun" cx="50%" cy="68%" r="40%">
+                            <stop offset="0%" stop-color="#f43f5e" stop-opacity="0.45"/>
+                            <stop offset="45%" stop-color="#f59e0b" stop-opacity="0.2"/>
+                            <stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>
+                        </radialGradient>
+                    </defs>
+                    <rect width="1600" height="900" fill="url(#titleSky)"/>
+                    <circle cx="800" cy="610" r="550" fill="url(#afterglowSun)"/>
+                    <!-- 초거대 수직 도시 아르카디아 실루엣 -->
+                    <rect x="80" y="180" width="170" height="720" fill="#050811"/>
+                    <rect x="290" y="90" width="230" height="810" fill="#070b16"/>
+                    <rect x="550" y="240" width="160" height="660" fill="#0a0f1d"/>
+                    <rect x="920" y="140" width="210" height="760" fill="#070b16"/>
+                    <rect x="1160" y="210" width="190" height="690" fill="#050811"/>
+                    <rect x="1380" y="110" width="160" height="790" fill="#030509"/>
+                    <!-- 상층과 하층을 가르는 브릿지 구조물 -->
+                    <rect x="0" y="340" width="1600" height="18" fill="#0f172a" opacity="0.85"/>
+                    <rect x="0" y="520" width="1600" height="10" fill="#1e293b" opacity="0.7"/>
+                    <!-- 도시의 잔광 네온 불빛 -->
+                    <rect x="330" y="180" width="60" height="6" fill="#10b981" opacity="0.7"/>
+                    <rect x="330" y="200" width="90" height="6" fill="#10b981" opacity="0.5"/>
+                    <rect x="960" y="260" width="110" height="8" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="1200" y="390" width="80" height="6" fill="#38bdf8" opacity="0.6"/>
+                    <rect x="140" y="450" width="70" height="6" fill="#f59e0b" opacity="0.6"/>
+                </svg>
+            </div>
+            <div class="absolute inset-0 z-0 cyber-rain opacity-50 pointer-events-none"></div>
+            <div class="absolute inset-0 z-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-transparent pointer-events-none"></div>
+
+            <!-- 상단 버전 및 세계관 태그 -->
+            <div class="relative z-10 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <span class="px-3 py-1 rounded-full bg-rose-500/15 border border-rose-500/40 text-rose-300 text-xs font-semibold tracking-widest font-cyber">ARCADIA 2138</span>
+                    <span class="text-xs text-slate-400">장편 사이버펑크 디스토피아 멀티 엔딩 비주얼 노벨</span>
+                </div>
+                <div class="text-xs text-slate-400">
+                    달성한 엔딩: <span id="title-ending-count" class="text-emerald-400 font-bold">0 / 20</span>
+                </div>
+            </div>
+
+            <!-- 중앙 로고 및 메인 메뉴 -->
+            <div class="relative z-10 my-auto max-w-2xl space-y-10">
+                <div class="space-y-3 title-glow">
+                    <p class="text-xs md:text-sm tracking-[0.45em] text-emerald-400 font-cyber uppercase">CYBERPUNK DYSTOPIA INTERACTIVE STORY</p>
+                    <h1 class="text-5xl md:text-7xl font-black tracking-wider text-white font-cyber">
+                        AFTERGLOW
+                    </h1>
+                    <div class="flex items-center gap-4 pt-1">
+                        <div class="h-[2px] w-16 bg-gradient-to-r from-rose-500 to-amber-500"></div>
+                        <h2 class="text-2xl md:text-3xl font-light tracking-[0.35em] text-slate-200">잔 광</h2>
+                        <span class="text-xs text-slate-400 tracking-widest">— 꺼져가는 도시 끝에 남은 온기</span>
+                    </div>
+                </div>
+
+                <p class="text-slate-300/90 text-sm md:text-base leading-relaxed max-w-xl border-l-2 border-emerald-500/60 pl-4">
+                    2138년 초거대 수직 도시 아르카디아. 하층 제9구역의 평범한 철물점 청년 <strong class="text-white">정윤호</strong>의 삶에 스며든 일곱 명의 인물들.<br>
+                    당신이 건넨 사소한 말 한마디와 약속, 그리고 침묵이 누군가의 운명과 도시의 결말을 바꿉니다.
+                </p>
+
+                <!-- 타이틀 메뉴 버튼 -->
+                <div class="flex flex-col sm:flex-row flex-wrap gap-3 pt-2">
+                    <button onclick="startNewGame()" class="px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold tracking-wider shadow-xl transition transform hover:-translate-y-0.5 font-cyber">
+                        NEW GAME
+                    </button>
+                    <button id="btn-title-continue" onclick="continueLastGame()" class="px-7 py-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/50 text-emerald-300 font-semibold tracking-wider shadow-lg transition font-cyber">
+                        CONTINUE
+                    </button>
+                    <button onclick="openModal('modal-saveload')" class="px-7 py-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-200 font-semibold tracking-wider transition font-cyber">
+                        LOAD GAME
+                    </button>
+                    <button onclick="openModal('modal-endings')" class="px-7 py-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-amber-300 font-semibold tracking-wider transition font-cyber">
+                        ENDINGS
+                    </button>
+                    <button onclick="openModal('modal-settings')" class="px-6 py-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 font-semibold tracking-wider transition font-cyber">
+                        SETTINGS
+                    </button>
+                </div>
+            </div>
+
+            <!-- 하단 등장인물 요약 표시 -->
+            <div class="relative z-10 border-t border-slate-800/80 pt-4 flex flex-wrap justify-between items-center text-xs text-slate-400 gap-2">
+                <div>주인공: <span class="text-slate-200">정윤호(29)</span> | 주요 인물: <span class="text-slate-300">박성화(33) · 김홍중(33) · 강여상(29) · 최산(29) · 송민기(29) · 정우영(29) · 최종호(28)</span></div>
+                <div class="font-cyber text-slate-500">FULL 6 CHAPTERS & MULTI-ROUTE EDITION</div>
+            </div>
+        </div>
+
+        <!-- 1. 배경 이미지 레이어 (SVG 아트워크로 장소/시간/날씨 표현) -->
+        <div id="bg-layer" class="absolute inset-0 w-full h-full bg-transition z-0"></div>
+
+        <!-- 환경 효과 오버레이 -->
+        <div id="weather-layer" class="absolute inset-0 pointer-events-none z-10 opacity-40 cyber-rain"></div>
+        <div class="absolute inset-0 pointer-events-none z-10 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/60"></div>
+
+        <!-- 2. 상단 최소 정보 바 -->
+        <header class="relative z-30 flex justify-between items-center px-6 py-4 pointer-events-none">
+            <div class="flex items-center gap-3 bg-slate-950/80 border border-slate-700/60 backdrop-blur-md px-4 py-2 rounded-full shadow-lg pointer-events-auto">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="font-cyber text-xs text-rose-400 font-bold tracking-wider hidden sm:inline">AFTERGLOW</span>
+                <span class="text-slate-600 hidden sm:inline">|</span>
+                <span id="hud-date" class="text-xs md:text-sm font-medium text-slate-200 tracking-wide">2138. 10. 14 (목)</span>
+                <span class="text-slate-600">|</span>
+                <span id="hud-time" class="text-xs md:text-sm font-bold text-emerald-400">14:15</span>
+                <span class="text-slate-600">|</span>
+                <span id="hud-location" class="text-xs md:text-sm text-slate-300">제9구역 메가볼트 철물점</span>
+            </div>
+
+            <div class="flex items-center gap-2 pointer-events-auto">
+                <div class="bg-slate-950/80 border border-slate-700/60 backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-semibold text-amber-400 shadow-lg">
+                    <span class="text-slate-400 mr-1">CR</span><span id="hud-money">620 C</span>
+                </div>
+                <button onclick="openModal('modal-status')" class="bg-slate-900/80 hover:bg-slate-800 border border-slate-700/70 text-slate-200 text-xs px-3.5 py-2 rounded-full backdrop-blur-md transition shadow">
+                    상태·인벤토리
+                </button>
+                <button onclick="openModal('modal-relations')" class="bg-slate-900/80 hover:bg-slate-800 border border-slate-700/70 text-slate-200 text-xs px-3.5 py-2 rounded-full backdrop-blur-md transition shadow">
+                    인물 관계
+                </button>
+                <button onclick="openModal('modal-endings')" class="bg-slate-900/80 hover:bg-slate-800 border border-slate-700/70 text-amber-300 text-xs px-3.5 py-2 rounded-full backdrop-blur-md transition shadow hidden sm:inline-block">
+                    엔딩 도감
+                </button>
+                <button onclick="showTitleScreen()" class="bg-slate-900/80 hover:bg-rose-950/80 border border-slate-700/70 text-slate-300 text-xs px-3 py-2 rounded-full backdrop-blur-md transition shadow" title="타이틀 화면으로">
+                    타이틀
+                </button>
+            </div>
+        </header>
+
+        <!-- 3. 캐릭터 스탠딩 레이어 -->
+        <div id="standing-layer" class="relative z-20 flex-1 flex items-end justify-center px-12 pb-44 pointer-events-none overflow-hidden">
+            <div id="char-slot-left" class="char-standing transform translate-y-6 opacity-0 hidden mx-4"></div>
+            <div id="char-slot-center" class="char-standing transform translate-y-6 opacity-0 hidden mx-4"></div>
+            <div id="char-slot-right" class="char-standing transform translate-y-6 opacity-0 hidden mx-4"></div>
+        </div>
+
+        <!-- 4. 중요 분기 선택지 오버레이 -->
+        <div id="choice-overlay" class="absolute inset-0 z-40 bg-slate-950/70 backdrop-blur-[3px] hidden flex-col items-center justify-center p-6">
+            <div class="max-w-2xl w-full space-y-3 mb-24 max-h-[65vh] overflow-y-auto px-2">
+                <div class="text-center mb-4">
+                    <span id="choice-badge" class="inline-block bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 text-xs font-bold px-3.5 py-1 rounded-full tracking-widest uppercase">
+                        DECISION POINT
+                    </span>
+                </div>
+                <div id="choice-list" class="space-y-3"></div>
+            </div>
+        </div>
+
+        <!-- 5. 엔딩 연출 전용 전체 화면 모달 (엔딩 도달 시 표시) -->
+        <div id="ending-screen" class="absolute inset-0 z-45 bg-slate-950/95 backdrop-blur-xl hidden flex-col items-center justify-center p-8 text-center">
+            <div class="max-w-2xl w-full space-y-6 border border-slate-800 bg-slate-900/70 p-8 md:p-12 rounded-3xl shadow-2xl">
+                <span id="ending-type-badge" class="inline-block px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase bg-rose-500/20 text-rose-300 border border-rose-500/40">
+                    CHARACTER ENDING
+                </span>
+                <h2 id="ending-title" class="text-3xl md:text-4xl font-bold text-white tracking-wide">엔딩 제목</h2>
+                <p id="ending-subtitle" class="text-sm text-emerald-400 font-medium">엔딩 부제</p>
+                <div class="h-[1px] w-full bg-slate-800 my-4"></div>
+                <p id="ending-desc" class="text-slate-200 text-sm md:text-base leading-relaxed text-left whitespace-pre-line"></p>
+                <div class="pt-6 flex flex-wrap justify-center gap-3">
+                    <button onclick="returnToHubAfterEnding()" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition">
+                        직전 분기점(제5장/제6장)에서 다른 선택 해보기
+                    </button>
+                    <button onclick="openModal('modal-endings')" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-semibold text-sm transition">
+                        엔딩 컬렉션 확인
+                    </button>
+                    <button onclick="showTitleScreen()" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-sm transition">
+                        메인 타이틀로
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. 하단 비주얼 노벨 대화창 -->
+        <footer class="relative z-30 w-full px-4 md:px-10 pb-5 pt-2 flex flex-col items-center">
+            <div class="w-full max-w-5xl relative">
+                
+                <div id="speaker-box" class="inline-flex items-center gap-2 bg-slate-900/95 border-t border-x border-emerald-500/50 px-6 py-2 rounded-t-2xl shadow-lg transform translate-y-[1px] ml-4 hidden">
+                    <span id="speaker-dot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span id="speaker-name" class="font-bold text-sm md:text-base text-white tracking-wide">정윤호</span>
+                    <span id="speaker-title" class="text-xs text-slate-400 font-normal ml-1"></span>
+                </div>
+
+                <div id="dialogue-box" onclick="handleNextDialogue()" class="w-full min-h-[155px] md:min-h-[175px] bg-slate-950/90 border border-slate-700/80 backdrop-blur-xl rounded-2xl p-6 md:p-7 shadow-2xl cursor-pointer flex flex-col justify-between transition hover:border-slate-600/90">
+                    
+                    <div id="dialogue-text" class="text-slate-100 text-base md:text-lg leading-relaxed font-normal tracking-wide pr-4"></div>
+
+                    <div onclick="event.stopPropagation()" class="flex flex-wrap justify-between items-center pt-3 mt-2 border-t border-slate-800/80 text-xs text-slate-400 gap-2">
+                        <div class="flex items-center gap-2">
+                            <span id="chapter-indicator" class="text-emerald-400/90 font-semibold">제1장: 잿빛 하늘 아래의 나사못</span>
+                            <span id="route-indicator" class="text-[11px] bg-slate-900 border border-slate-700 text-slate-300 px-2 py-0.5 rounded-md">공통 서사</span>
+                        </div>
+
+                        <div class="flex items-center gap-1.5 md:gap-2">
+                            <button onclick="openModal('modal-log')" class="hover:text-white hover:bg-slate-800 px-2.5 py-1 rounded-lg transition">이전 대화(Log)</button>
+                            <button id="btn-auto" onclick="toggleAutoPlay()" class="hover:text-white hover:bg-slate-800 px-2.5 py-1 rounded-lg transition">자동 진행(Auto)</button>
+                            <button onclick="cycleTextSpeed()" id="btn-speed" class="hover:text-white hover:bg-slate-800 px-2.5 py-1 rounded-lg transition">속도: 보통</button>
+                            <button onclick="openModal('modal-saveload')" class="hover:text-white hover:bg-slate-800 px-2.5 py-1 rounded-lg transition">저장 / 불러오기</button>
+                            <button onclick="openModal('modal-custom')" class="text-amber-300/90 hover:text-amber-200 hover:bg-amber-950/50 border border-amber-500/30 px-2.5 py-1 rounded-lg transition">보조 행동</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </footer>
+
+        <!-- ================= 모달 창 모음 ================= -->
+
+        <!-- [모달 1] 대화 기록 -->
+        <div id="modal-log" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full max-h-[80vh] flex flex-col shadow-2xl">
+                <div class="flex justify-between items-center p-5 border-b border-slate-800">
+                    <h3 class="font-bold text-lg text-emerald-400">스토리 대화 기록 (History Log)</h3>
+                    <button onclick="closeModal('modal-log')" class="text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full">✕</button>
+                </div>
+                <div id="log-content" class="flex-1 overflow-y-auto p-6 space-y-4 text-sm"></div>
+            </div>
+        </div>
+
+        <!-- [모달 2] 인물 관계 (숫자 대신 정성적 분위기 및 누적 기억 표시) -->
+        <div id="modal-relations" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-4xl w-full max-h-[85vh] flex flex-col shadow-2xl">
+                <div class="flex justify-between items-center p-5 border-b border-slate-800">
+                    <div>
+                        <h3 class="font-bold text-lg text-emerald-400">인물 관계 및 서사 비중</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">세부 호감도 수치는 비공개로 작동하며, 현재 윤호와 상대방 사이의 분위기와 누적된 기억만 표시됩니다.</p>
+                    </div>
+                    <button onclick="closeModal('modal-relations')" class="text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full">✕</button>
+                </div>
+                <div id="relations-content" class="flex-1 overflow-y-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm"></div>
+            </div>
+        </div>
+
+        <!-- [모달 3] 상태창 및 인벤토리 -->
+        <div id="modal-status" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full flex flex-col shadow-2xl">
+                <div class="flex justify-between items-center p-5 border-b border-slate-800">
+                    <h3 class="font-bold text-lg text-emerald-400">정윤호 상태 · 소지품 · 누적 기록</h3>
+                    <button onclick="closeModal('modal-status')" class="text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full">✕</button>
+                </div>
+                <div class="p-6 space-y-6 text-sm overflow-y-auto max-h-[75vh]">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <span class="text-xs text-slate-400 block">이름 / 나이</span>
+                            <span class="font-bold text-slate-100">정윤호 (29세)</span>
+                        </div>
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <span class="text-xs text-slate-400 block">계층 / 신체</span>
+                            <span class="font-bold text-slate-100">하층민 / 순수 인간</span>
+                        </div>
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <span class="text-xs text-slate-400 block">현재 서사 중심축</span>
+                            <span id="stat-modal-focus" class="font-bold text-emerald-400">제9구역 일상</span>
+                        </div>
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <span class="text-xs text-slate-400 block">현금 자산 (소지금)</span>
+                            <span id="stat-modal-money" class="font-bold text-amber-400">620 C</span>
+                        </div>
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <span class="text-xs text-slate-400 block">비상금 저축 계좌</span>
+                            <span class="font-bold text-emerald-400">1,200 C</span>
+                        </div>
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <span class="text-xs text-slate-400 block">거주지 월세 상태</span>
+                            <span id="stat-modal-rent" class="font-bold text-rose-400">450 C (납부 전)</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">보유 인벤토리 (소지품 및 단서)</h4>
+                        <div id="inventory-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">기억된 주요 선택 및 사건 흐름</h4>
+                        <div id="memory-list" class="space-y-1.5 text-xs text-slate-300 bg-slate-950 p-4 rounded-xl border border-slate-800"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- [모달 4] 세이브 & 로드 -->
+        <div id="modal-saveload" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-xl w-full flex flex-col shadow-2xl">
+                <div class="flex justify-between items-center p-5 border-b border-slate-800">
+                    <h3 class="font-bold text-lg text-emerald-400">저장 및 불러오기 (Save / Load)</h3>
+                    <button onclick="closeModal('modal-saveload')" class="text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full">✕</button>
+                </div>
+                <div class="p-6 space-y-4 text-sm">
+                    <div id="save-slots" class="space-y-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- [모달 5] 엔딩 아카이브 (20종 멀티 엔딩 도감) -->
+        <div id="modal-endings" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-4xl w-full max-h-[85vh] flex flex-col shadow-2xl">
+                <div class="flex justify-between items-center p-5 border-b border-slate-800">
+                    <div>
+                        <h3 class="font-bold text-lg text-amber-400">《AFTERGLOW : 잔광》 멀티 엔딩 아카이브</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">7인의 개인 엔딩(연애/비연애/비극), 세계관 엔딩, 특수 엔딩 수집 현황입니다. (달성 조건은 스포일러 방지를 위해 숨겨집니다)</p>
+                    </div>
+                    <button onclick="closeModal('modal-endings')" class="text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full">✕</button>
+                </div>
+                <div id="endings-content" class="flex-1 overflow-y-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-3.5 text-sm"></div>
+            </div>
+        </div>
+
+        <!-- [모달 6] 환경 설정 (SETTINGS) -->
+        <div id="modal-settings" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full flex flex-col shadow-2xl">
+                <div class="flex justify-between items-center p-5 border-b border-slate-800">
+                    <h3 class="font-bold text-lg text-emerald-400">환경 설정 (SETTINGS)</h3>
+                    <button onclick="closeModal('modal-settings')" class="text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full">✕</button>
+                </div>
+                <div class="p-6 space-y-5 text-sm">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-200">텍스트 출력 속도</span>
+                        <button onclick="cycleTextSpeed()" id="setting-speed-btn" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-emerald-400 font-semibold">보통</button>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-200">배경 빗줄기/스모그 효과</span>
+                        <button onclick="toggleWeatherEffect()" id="setting-weather-btn" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-emerald-400 font-semibold">켜짐</button>
+                    </div>
+                    <div class="pt-3 border-t border-slate-800 flex justify-end">
+                        <button onclick="closeModal('modal-settings')" class="px-5 py-2 rounded-xl bg-emerald-600 text-white font-semibold">확인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- [모달 7] 보조 자유 행동 입력 -->
+        <div id="modal-custom" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full flex flex-col shadow-2xl">
+                <div class="flex justify-between items-center p-5 border-b border-slate-800">
+                    <h3 class="font-bold text-base text-amber-400">보조 기능: 직접 행동 / 단말기 연락</h3>
+                    <button onclick="closeModal('modal-custom')" class="text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full">✕</button>
+                </div>
+                <div class="p-6 space-y-4 text-sm">
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        이 게임은 스토리와 선택지 중심으로 자동 진행됩니다. 현재 장면에서 특별히 시도하고 싶은 행동이나 인물에게 보낼 메시지가 있다면 아래에 입력해 주세요.
+                    </p>
+                    <input id="custom-input-box" type="text" placeholder="예: 주머니 속 명함을 확인한다 / 동생에게 안부 메시지를 보낸다" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-amber-500">
+                    <div class="flex justify-end gap-2">
+                        <button onclick="closeModal('modal-custom')" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300">취소</button>
+                        <button onclick="executeCustomAction()" class="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold">실행하기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 토스트 알림 -->
+        <div id="vn-toast" class="fixed top-16 right-6 z-50 bg-slate-900/95 border border-emerald-500/60 text-slate-100 px-4 py-2.5 rounded-xl shadow-2xl text-xs font-medium transform translate-x-60 opacity-0 transition-all duration-300">
+            알림 메시지
+        </div>
+
+    </div>
+
+    <script>
+        /* =========================================================================
+           1. 배경 아트워크 (7종 장소/분위기 고해상도 SVG)
+           ========================================================================= */
+        const BG_ART = {
+            hardware_store: `
+                <svg viewBox="0 0 1600 900" class="w-full h-full object-cover">
+                    <defs>
+                        <linearGradient id="storeBg" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#0b1320"/><stop offset="60%" stop-color="#152238"/><stop offset="100%" stop-color="#090d16"/>
+                        </linearGradient>
+                        <linearGradient id="windowGlow" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#0f766e" stop-opacity="0.35"/><stop offset="100%" stop-color="#1e1b4b" stop-opacity="0.6"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="1600" height="900" fill="url(#storeBg)"/>
+                    <rect x="120" y="90" width="900" height="520" fill="url(#windowGlow)" stroke="#334155" stroke-width="8"/>
+                    <rect x="200" y="160" width="140" height="450" fill="#0f172a" opacity="0.7"/>
+                    <rect x="420" y="120" width="190" height="490" fill="#090d16" opacity="0.8"/>
+                    <rect x="700" y="200" width="160" height="410" fill="#0f172a" opacity="0.7"/>
+                    <rect x="440" y="220" width="120" height="35" rx="4" fill="#ec4899" opacity="0.45"/>
+                    <rect x="220" y="310" width="90" height="25" rx="4" fill="#06b6d4" opacity="0.45"/>
+                    <rect x="1080" y="60" width="440" height="720" fill="#1e293b" stroke="#475569" stroke-width="4"/>
+                    <line x1="1080" y1="220" x2="1520" y2="220" stroke="#475569" stroke-width="8"/>
+                    <line x1="1080" y1="390" x2="1520" y2="390" stroke="#475569" stroke-width="8"/>
+                    <line x1="1080" y1="560" x2="1520" y2="560" stroke="#475569" stroke-width="8"/>
+                    <rect x="1120" y="140" width="110" height="75" fill="#0284c7" opacity="0.6"/>
+                    <rect x="1260" y="150" width="130" height="65" fill="#475569"/>
+                    <rect x="1140" y="310" width="150" height="75" fill="#d97706" opacity="0.7"/>
+                    <rect x="60" y="610" width="1050" height="290" fill="#0f172a" stroke="#334155" stroke-width="4"/>
+                    <rect x="80" y="600" width="1010" height="20" fill="#475569"/>
+                    <rect x="350" y="20" width="380" height="12" rx="6" fill="#e2e8f0" opacity="0.8"/>
+                </svg>
+            `,
+            street_night: `
+                <svg viewBox="0 0 1600 900" class="w-full h-full object-cover">
+                    <defs>
+                        <linearGradient id="nightSky" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#05070e"/><stop offset="55%" stop-color="#111827"/><stop offset="100%" stop-color="#1e1b4b"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="1600" height="900" fill="url(#nightSky)"/>
+                    <rect x="0" y="0" width="260" height="900" fill="#090d16"/>
+                    <rect x="1320" y="0" width="280" height="900" fill="#090d16"/>
+                    <rect x="240" y="80" width="220" height="820" fill="#0f172a"/>
+                    <rect x="1100" y="110" width="240" height="790" fill="#0f172a"/>
+                    <rect x="520" y="200" width="180" height="650" fill="#1e293b" opacity="0.6"/>
+                    <rect x="860" y="160" width="200" height="680" fill="#1e293b" opacity="0.6"/>
+                    <rect x="270" y="250" width="160" height="60" rx="6" fill="#10b981" opacity="0.35" stroke="#34d399" stroke-width="2"/>
+                    <rect x="1120" y="300" width="180" height="75" rx="6" fill="#f43f5e" opacity="0.35" stroke="#fb7185" stroke-width="2"/>
+                    <rect x="880" y="380" width="130" height="45" rx="6" fill="#38bdf8" opacity="0.35" stroke="#7dd3fc" stroke-width="2"/>
+                    <polygon points="0,900 1600,900 1150,680 450,680" fill="#090d16"/>
+                    <ellipse cx="800" cy="800" rx="350" ry="30" fill="#10b981" opacity="0.12"/>
+                </svg>
+            `,
+            underground_clinic: `
+                <svg viewBox="0 0 1600 900" class="w-full h-full object-cover">
+                    <rect width="1600" height="900" fill="#081418"/>
+                    <rect x="80" y="60" width="1440" height="780" fill="#0d1f26" stroke="#1e3a45" stroke-width="6"/>
+                    <line x1="80" y1="180" x2="1520" y2="180" stroke="#155e75" stroke-width="14" opacity="0.5"/>
+                    <line x1="80" y1="210" x2="1520" y2="210" stroke="#334155" stroke-width="8"/>
+                    <rect x="920" y="480" width="480" height="160" rx="16" fill="#1e293b" stroke="#475569" stroke-width="4"/>
+                    <rect x="220" y="280" width="280" height="190" rx="8" fill="#042f2e" stroke="#14b8a6" stroke-width="3"/>
+                    <polyline points="240,380 300,380 320,330 345,430 370,360 400,380 480,380" fill="none" stroke="#2dd4bf" stroke-width="4"/>
+                    <rect x="580" y="250" width="260" height="420" fill="#0f172a" stroke="#334155" stroke-width="3"/>
+                    <rect x="610" y="290" width="40" height="60" fill="#38bdf8" opacity="0.5"/>
+                    <rect x="670" y="290" width="40" height="60" fill="#10b981" opacity="0.5"/>
+                </svg>
+            `,
+            yunho_room: `
+                <svg viewBox="0 0 1600 900" class="w-full h-full object-cover">
+                    <rect width="1600" height="900" fill="#0c101c"/>
+                    <rect x="980" y="130" width="420" height="360" fill="#162038" stroke="#334155" stroke-width="8"/>
+                    <line x1="1190" y1="130" x2="1190" y2="490" stroke="#334155" stroke-width="6"/>
+                    <circle cx="1100" cy="260" r="60" fill="#f43f5e" opacity="0.15"/>
+                    <rect x="120" y="540" width="640" height="240" rx="12" fill="#1e293b" stroke="#334155" stroke-width="4"/>
+                    <rect x="150" y="510" width="180" height="60" rx="10" fill="#475569"/>
+                    <rect x="920" y="560" width="520" height="220" fill="#0f172a" stroke="#334155" stroke-width="3"/>
+                    <rect x="1050" y="420" width="240" height="140" rx="6" fill="#0284c7" opacity="0.25" stroke="#38bdf8" stroke-width="3"/>
+                </svg>
+            `,
+            nox_lounge: `
+                <svg viewBox="0 0 1600 900" class="w-full h-full object-cover">
+                    <defs>
+                        <linearGradient id="noxBg" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#090514"/><stop offset="50%" stop-color="#1e1035"/><stop offset="100%" stop-color="#08060c"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="1600" height="900" fill="url(#noxBg)"/>
+                    <!-- 통유리 너머 미들 코어 스카이라인 -->
+                    <rect x="160" y="70" width="1280" height="480" fill="#0c0a1d" stroke="#581c87" stroke-width="4"/>
+                    <circle cx="1150" cy="220" r="110" fill="#c084fc" opacity="0.12"/>
+                    <rect x="280" y="180" width="130" height="370" fill="#1e1b4b"/>
+                    <rect x="480" y="130" width="180" height="420" fill="#0f172a"/>
+                    <rect x="860" y="150" width="170" height="400" fill="#1e1b4b"/>
+                    <!-- 고급 바 테이블 및 조명 -->
+                    <rect x="100" y="600" width="1400" height="260" rx="20" fill="#181124" stroke="#7e22ce" stroke-width="3"/>
+                    <line x1="160" y1="70" x2="160" y2="550" stroke="#a855f7" stroke-width="2" opacity="0.4"/>
+                    <line x1="1440" y1="70" x2="1440" y2="550" stroke="#a855f7" stroke-width="2" opacity="0.4"/>
+                </svg>
+            `,
+            security_hq: `
+                <svg viewBox="0 0 1600 900" class="w-full h-full object-cover">
+                    <rect width="1600" height="900" fill="#060d1a"/>
+                    <!-- 대형 전술 홀로그램 스크린 -->
+                    <rect x="180" y="80" width="1240" height="470" rx="12" fill="#081c30" stroke="#0284c7" stroke-width="4"/>
+                    <circle cx="800" cy="315" r="160" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.45"/>
+                    <circle cx="800" cy="315" r="95" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="10 6" opacity="0.6"/>
+                    <line x1="240" y1="315" x2="1360" y2="315" stroke="#0284c7" stroke-width="1" opacity="0.4"/>
+                    <line x1="800" y1="110" x2="800" y2="520" stroke="#0284c7" stroke-width="1" opacity="0.4"/>
+                    <!-- 서버 콘솔 데스크 -->
+                    <polygon points="100,900 1500,900 1320,600 280,600" fill="#0f172a" stroke="#334155" stroke-width="4"/>
+                </svg>
+            `,
+            starlight_stage: `
+                <svg viewBox="0 0 1600 900" class="w-full h-full object-cover">
+                    <defs>
+                        <radialGradient id="stageSpot" cx="50%" cy="25%" r="55%">
+                            <stop offset="0%" stop-color="#ec4899" stop-opacity="0.35"/>
+                            <stop offset="50%" stop-color="#6366f1" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#05070a" stop-opacity="1"/>
+                        </radialGradient>
+                    </defs>
+                    <rect width="1600" height="900" fill="url(#stageSpot)"/>
+                    <polygon points="450,0 650,900 150,900" fill="#f472b6" opacity="0.08"/>
+                    <polygon points="1150,0 1450,900 950,900" fill="#38bdf8" opacity="0.08"/>
+                    <ellipse cx="800" cy="760" rx="580" ry="90" fill="#0f172a" stroke="#ec4899" stroke-width="3" opacity="0.8"/>
+                </svg>
+            `
+        };
+
+        /* =========================================================================
+           2. 캐릭터 스탠딩 일러스트 생성기
+           ========================================================================= */
+        const CHAR_INFO = {
+            yunho: { name: "정윤호", title: "29세 / 주인공", color: "#34d399", hair: "#3b2f2f", coat: "#334155", inner: "#94a3b8" },
+            sunghwa: { name: "박성화", title: "33세 / 녹스 핵심 간부", color: "#c084fc", hair: "#090d16", coat: "#0f172a", inner: "#7e22ce", cyber: true },
+            hongjoong: { name: "김홍중", title: "33세 / 안보국 소령", color: "#38bdf8", hair: "#1e293b", coat: "#172554", inner: "#eab308", uniform: true },
+            yeosang: { name: "강여상", title: "29세 / 비공인 의료인", color: "#2dd4bf", hair: "#fde68a", coat: "#f1f5f9", inner: "#334155" },
+            san: { name: "최산", title: "29세 / 군용 안드로이드", color: "#fb7185", hair: "#111827", coat: "#1f2937", inner: "#991b1b" },
+            mingi: { name: "송민기", title: "29세 / 정비공 친구", color: "#fbbf24", hair: "#e2e8f0", coat: "#78350f", inner: "#d97776" },
+            wooyoung: { name: "정우영", title: "29세 / 인간 아이돌", color: "#f472b6", hair: "#fbcfe8", coat: "#18181b", inner: "#ec4899" },
+            jongho: { name: "최종호", title: "28세 / 사이버안보국 대위", color: "#818cf8", hair: "#1e1b4b", coat: "#1e293b", inner: "#6366f1", glasses: true }
+        };
+
+        function generateStandingSVG(charKey, expression = "normal") {
+            const c = CHAR_INFO[charKey];
+            if (!c) return "";
+
+            let eyePath = `<line x1="155" y1="155" x2="180" y2="155" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+                           <line x1="220" y1="155" x2="245" y2="155" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>`;
+            let mouthPath = `<path d="M 188 205 Q 200 208 212 205" stroke="#0f172a" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+            let browPath = `<line x1="152" y1="142" x2="182" y2="144" stroke="${c.hair}" stroke-width="3.5"/>
+                            <line x1="218" y1="144" x2="248" y2="142" stroke="${c.hair}" stroke-width="3.5"/>`;
+
+            if (expression === "smile" || expression === "smirk") {
+                mouthPath = `<path d="M 184 202 Q 200 216 218 200" stroke="#0f172a" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+                eyePath = `<path d="M 155 156 Q 168 148 180 156" stroke="#0f172a" stroke-width="3.5" fill="none"/>
+                           <path d="M 220 156 Q 232 148 245 156" stroke="#0f172a" stroke-width="3.5" fill="none"/>`;
+            } else if (expression === "cold" || expression === "serious") {
+                browPath = `<line x1="152" y1="138" x2="183" y2="146" stroke="${c.hair}" stroke-width="4"/>
+                            <line x1="217" y1="146" x2="248" y2="138" stroke="${c.hair}" stroke-width="4"/>`;
+                mouthPath = `<line x1="188" y1="206" x2="212" y2="206" stroke="#0f172a" stroke-width="3"/>`;
+            } else if (expression === "surprised") {
+                browPath = `<path d="M 152 138 Q 167 130 182 138" stroke="${c.hair}" stroke-width="3.5" fill="none"/>
+                            <path d="M 218 138 Q 233 130 248 138" stroke="${c.hair}" stroke-width="3.5" fill="none"/>`;
+                mouthPath = `<ellipse cx="200" cy="206" rx="7" ry="5" fill="#0f172a"/>`;
+            }
+
+            const cyberDetail = c.cyber ? `<path d="M 182 245 L 218 245 L 212 285 L 188 285 Z" fill="#94a3b8" opacity="0.65"/>
+                                           <line x1="190" y1="235" x2="190" y2="275" stroke="#cbd5e1" stroke-width="2"/>` : "";
+
+            const glassesDetail = c.glasses ? `<rect x="148" y="144" width="38" height="22" rx="4" fill="none" stroke="#94a3b8" stroke-width="2.5"/>
+                                               <rect x="214" y="144" width="38" height="22" rx="4" fill="none" stroke="#94a3b8" stroke-width="2.5"/>
+                                               <line x1="186" y1="154" x2="214" y2="154" stroke="#94a3b8" stroke-width="2.5"/>` : "";
+
+            return `
+                <svg viewBox="0 0 400 560" class="w-[290px] md:w-[360px] h-auto select-none">
+                    <defs>
+                        <linearGradient id="coat_${charKey}" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="${c.coat}"/>
+                            <stop offset="100%" stop-color="#05070a"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M 65 560 L 95 295 Q 130 265 200 265 Q 270 265 305 295 L 335 560 Z" fill="url(#coat_${charKey})" stroke="${c.color}" stroke-width="2" stroke-opacity="0.45"/>
+                    <polygon points="160,268 240,268 215,430 185,430" fill="${c.inner}"/>
+                    <rect x="176" y="218" width="48" height="62" rx="10" fill="#f1dca7"/>
+                    ${cyberDetail}
+                    <path d="M 138 130 Q 138 232 200 238 Q 262 232 262 130 Q 262 75 200 75 Q 138 75 138 130 Z" fill="#f8e5b8"/>
+                    ${browPath}
+                    ${eyePath}
+                    <circle cx="168" cy="156" r="4.5" fill="#1e293b"/>
+                    <circle cx="232" cy="156" r="4.5" fill="#1e293b"/>
+                    <line x1="200" y1="164" x2="197" y2="186" stroke="#d4a373" stroke-width="2.5" stroke-linecap="round"/>
+                    ${mouthPath}
+                    ${glassesDetail}
+                    <path d="M 130 145 Q 125 65 200 62 Q 275 65 270 145 Q 255 98 205 105 Q 160 100 130 145 Z" fill="${c.hair}"/>
+                    <polygon points="145,270 176,250 188,370 130,340" fill="${c.coat}" stroke="#334155" stroke-width="1.5"/>
+                    <polygon points="255,270 224,250 212,370 270,340" fill="${c.coat}" stroke="#334155" stroke-width="1.5"/>
+                </svg>
+            `;
+        }
+
+        /* =========================================================================
+           3. 20종 멀티 엔딩 데이터베이스 (7인 개인 엔딩 + 세계관 엔딩 + 특수 엔딩)
+           ========================================================================= */
+        const ENDINGS_DB = {
+            // 1. 박성화 엔딩 (2종)
+            end_sunghwa_love: {
+                id: "end_sunghwa_love",
+                category: "박성화 개인 엔딩 ① (연인/공범)",
+                title: "차가운 금속 위에 피어난 잔광",
+                subtitle: "박성화 True & Romance Ending",
+                desc: "녹스 내부의 숙청 폭풍과 안보국의 포위망을 뚫고, 윤호는 성화의 가장 깊은 약점이자 유일한 안식처로 남았다.\n\n절반 이상이 차가운 티타늄으로 대체된 성화의 심장 위에서, 순수 인간인 윤호의 체온은 그가 인간임을 잊지 않게 해주는 유일한 증거가 되었다. 두 사람은 미들 코어의 가장 높은 펜트하우스에서 도시의 밤을 함께 내려다본다."
+            },
+            end_sunghwa_tragic: {
+                id: "end_sunghwa_tragic",
+                category: "박성화 개인 엔딩 ② (애증/이별)",
+                title: "유리 정원의 새장",
+                subtitle: "박성화 Dark Obsession Ending",
+                desc: "성화에 대한 신뢰가 흔들리고 경계심이 극에 달한 끝에, 성화는 윤호가 자신을 떠날지도 모른다는 공포에 사로잡혔다.\n\n그는 모든 위협으로부터 윤호를 지킨다는 명목으로 스카이 섹터의 비밀 별장에 윤호를 완벽히 격리했다. 사랑하지만 결코 자유로울 수 없는 새장 속에서 두 사람의 긴 밤이 이어진다."
+            },
+            // 2. 김홍중 엔딩 (2종)
+            end_hongjoong_love: {
+                id: "end_hongjoong_love",
+                category: "김홍중 개인 엔딩 ① (연인/신뢰)",
+                title: "새벽을 여는 방파제",
+                subtitle: "김홍중 True & Romance Ending",
+                desc: "군 상층부와 크로노스 코퍼레이션의 불법 뇌 이식 유착 스캔들을 성공적으로 적발한 홍중은 마침내 무거운 죄책감에서 한 걸음 벗어났다.\n\n원칙과 책임감으로만 자신을 옥죄던 그가 유일하게 어깨를 기대고 잠들 수 있는 사람은 정윤호뿐이었다. 비가 그친 제9구역의 새벽 거리에서 두 사람은 나란히 걸음을 맞춘다."
+            },
+            end_hongjoong_duty: {
+                id: "end_hongjoong_duty",
+                category: "김홍중 개인 엔딩 ② (비연애/존경)",
+                title: "계엄령 너머의 경례",
+                subtitle: "김홍중 Duty & Farewell Ending",
+                desc: "서로에게 깊은 신뢰와 호감을 품었으나, 홍중은 도시의 붕괴를 막기 위해 외곽 방벽 사령관으로 자원해 떠나는 길을 택했다.\n\n연인이라는 이름 대신 서로의 삶과 신념을 끝까지 지켜주기로 한 두 사람. 떠나가는 군용 열차 너머로 홍중이 남긴 짧은 목례가 윤호의 가슴에 오래도록 남는다."
+            },
+            // 3. 강여상 엔딩 (2종)
+            end_yeosang_love: {
+                id: "end_yeosang_love",
+                category: "강여상 개인 엔딩 ① (연인/구원)",
+                title: "무균실 밖의 따뜻한 숨결",
+                subtitle: "강여상 True & Romance Ending",
+                desc: "상류층 의료 카르텔의 보복과 단속 위기 속에서 윤호는 끝까지 여상의 지하 진료소를 함께 지켰다.\n\n정식 면허 복권 제안마저 거절하고 하층민들의 곁에 남기로 한 여상은, 처음으로 자신의 하얀 장갑을 벗고 윤호의 손을 맞잡았다. 어두운 지하 2층 진료소에 두 사람만의 따뜻한 불빛이 켜진다."
+            },
+            end_yeosang_partner: {
+                id: "end_yeosang_partner",
+                category: "강여상 개인 엔딩 ② (비연애/동반자)",
+                title: "언더 시티의 등불",
+                subtitle: "강여상 Sanctuary Partner Ending",
+                desc: "윤호는 철물점 일을 그만두고 여상의 진료소 운영과 약품 조달을 전담하는 가장 믿음직한 파트너가 되었다.\n\n연애 감정보다 더 깊고 고요한 유대 속에서, 두 사람은 버려진 하층민들과 비인가 개조 피해자들을 구원하는 언더 시티의 전설적인 안식처를 함께 일구어 나간다."
+            },
+            // 4. 최산 엔딩 (2종)
+            end_san_love: {
+                id: "end_san_love",
+                category: "최산 개인 엔딩 ① (연인/자유)",
+                title: "강철의 심장, 인간의 기억",
+                subtitle: "최산 True & Romance Ending",
+                desc: "군 사령부의 강제 신경 초기화 명령이 떨어지기 직전, 윤호는 홍중과 종호의 암묵적인 조력을 받아 산의 군용 제어를 해제하는 데 성공했다.\n\n자신이 인간인지 기계인지 고뇌하던 산은, 윤호가 건넨 따뜻한 손길 속에서 살아갈 이유를 찾았다. 공식 기록상 완전히 소멸된 그는 이제 윤호의 곁에서 온전한 '최산'으로 살아간다."
+            },
+            end_san_sacrifice: {
+                id: "end_san_sacrifice",
+                category: "최산 개인 엔딩 ② (비극/희생)",
+                title: "리부트되지 않는 봄",
+                subtitle: "최산 Bittersweet Sacrifice Ending",
+                desc: "제9구역 봉쇄 작전의 한가운데서 산은 윤호를 구하기 위해 자신의 뇌 생명 유지 장치 과부하 한계를 넘겼다.\n\n생명은 건졌으나 과열로 인해 최근 수개월간의 단기 기억이 소실된 산. 한 달 뒤 거리에서 우연히 마주친 산은 윤호를 기억하지 못하면서도, 어쩐지 익숙한 듯 장난스러운 미소를 지으며 인사를 건넨다."
+            },
+            // 5. 송민기 엔딩 (2종)
+            end_mingi_love: {
+                id: "end_mingi_love",
+                category: "송민기 개인 엔딩 ① (연인/재기)",
+                title: "고철 더미 위에서 찾은 잭팟",
+                subtitle: "송민기 True & Romance Ending",
+                desc: "윤호의 진심 어린 질책과 헌신적인 도움으로 도박장 빚 청산에 성공한 민기는, 마침내 불법 도박에서 완전히 손을 뗐다.\n\n제9구역 정식 기계·안드로이드 수리 공방을 함께 차린 두 사람. 오랫동안 친구라는 이름 뒤에 숨겨왔던 민기의 투박하고도 뜨거운 고백이 기름때 묻은 공방 안을 채운다."
+            },
+            end_mingi_runaway: {
+                id: "end_mingi_runaway",
+                category: "송민기 개인 엔딩 ② (공범/도주)",
+                title: "방벽 너머로 달리는 화물열차",
+                subtitle: "송민기 Outlaw Duo Ending",
+                desc: "녹스와 안보국 양쪽의 추적을 받게 된 민기를 버리지 못한 윤호는, 민기와 함께 크로노스 물류 열차를 해킹해 아르카디아 탈출을 감행했다.\n\n비록 도시의 모든 기반을 잃고 황무지 횡단 열차에 몸을 실었지만, 오랜 죽마고우와 함께 맞이하는 미지의 바람만큼은 그 어느 때보다 시원했다."
+            },
+            // 6. 정우영 엔딩 (2종)
+            end_wooyoung_love: {
+                id: "end_wooyoung_love",
+                category: "정우영 개인 엔딩 ① (연인/진실)",
+                title: "스포트라이트가 꺼진 뒤의 우리",
+                subtitle: "정우영 True & Romance Ending",
+                desc: "소속사 스타라이트 미디어의 통제와 스폰서 스캔들 폭로 위기 속에서, 우영은 화려한 거짓 대신 자신의 진짜 목소리와 윤호를 선택했다.\n\n독립 레이블을 설립해 한층 자유로워진 인간 아티스트 정우영. 무대 아래로 내려온 그가 가장 먼저 달려와 안기는 곳은 언제나 제9구역 윤호의 품이었다."
+            },
+            end_wooyoung_star: {
+                id: "end_wooyoung_star",
+                category: "정우영 개인 엔딩 ② (비연애/동경)",
+                title: "가장 멀고도 가까운 객석",
+                subtitle: "정우영 Starlight & Fan Ending",
+                desc: "윤호는 우영의 아이돌 커리어와 안전을 위해, 스캔들이 터지기 직전 스스로 한 걸음 물러나 평범한 팬의 자리로 돌아갔다.\n\n일 년 뒤 열린 메가 돔 단독 콘서트. 수만 명의 함성 속에서 무대 위 우영은 객석 한구석의 윤호를 정확히 찾아내어, 두 사람만 아는 눈인사와 미소를 보낸다."
+            },
+            // 7. 최종호 엔딩 (2종)
+            end_jongho_love: {
+                id: "end_jongho_love",
+                category: "최종호 개인 엔딩 ① (연인/안식)",
+                title: "방화벽 너머의 온기",
+                subtitle: "최종호 True & Romance Ending",
+                desc: "도시 전체의 감시망을 다루면서도 정작 자신의 감정은 철저히 숨기던 종호는, 자신을 있는 그대로 걱정해 주는 윤호의 다정함에 무장해제되었다.\n\n퇴근 후 안경을 벗은 종호가 윤호의 좁은 원룸 소파에 기대어 잠드는 평화로운 저녁. 차가운 디지털 데이터로 가득했던 그의 세계에 비로소 사람의 온기가 스며들었다."
+            },
+            end_jongho_partner: {
+                id: "end_jongho_partner",
+                category: "최종호 개인 엔딩 ② (비연애/진실추적)",
+                title: "보이지 않는 파수꾼들",
+                subtitle: "최종호 Shadow Watcher Ending",
+                desc: "윤호의 현장 감각과 종호의 천재적인 해킹 능력이 결합되어, 두 사람은 도시의 부패한 기업과 범죄 카르텔을 익명으로 고발하는 비밀 정보 조직의 핵심이 되었다.\n\n서로를 전적으로 신뢰하는 든든한 형과 동생이자 파트너로서, 두 사람은 오늘도 아르카디아의 어둠을 감시한다."
+            },
+            // 8. 세계관 중심 엔딩 (3종)
+            end_world_reformer: {
+                id: "end_world_reformer",
+                category: "세계관 엔딩 ① (도시 변혁)",
+                title: "아르카디아의 여명",
+                subtitle: "World Ending : Dawn of Arcadia",
+                desc: "특정 인물 한 명에게 안주하지 않고 범죄조직과 군부, 지하 의료망의 단서를 모두 모은 윤호는 '프로젝트 아케론'의 진실을 공동 국제기구와 전 시민 단말기에 폭로했다.\n\n거대한 파장 끝에 상층부의 독점 구조가 흔들리고 하층 구역 자치권이 확대되었다. 평범한 철물점 청년이었던 윤호는 도시의 역사를 바꾼 숨은 주역으로 남는다."
+            },
+            end_world_ordinary: {
+                id: "end_world_ordinary",
+                category: "세계관 엔딩 ② (일상 회귀)",
+                title: "제9구역의 평온한 내일",
+                subtitle: "World Ending : Life Goes On",
+                desc: "거대한 총격전과 권력 암투가 폭풍처럼 지나간 뒤, 윤호는 어느 조직에도 몸담지 않고 자신의 평범한 일상을 지켜냈다.\n\n밀리지 않은 월세, 학업을 마치고 돌아올 동생 윤슬, 그리고 이따금 매장에 들러 안부를 묻는 인연들. 디스토피아의 잿빛 하늘 아래서도 윤호의 삶은 담담하고 꿋꿋하게 이어진다."
+            },
+            end_world_departure: {
+                id: "end_world_departure",
+                category: "세계관 엔딩 ③ (도시 탈출)",
+                title: "학술 도시 벨룸으로 가는 열차",
+                subtitle: "World Ending : Beyond the Wall",
+                desc: "차곡차곡 모은 비상금과 거래 보수를 합쳐, 윤호는 마침내 동생 윤슬이 있는 학술 도시 '벨룸'으로의 이주 허가권을 손에 넣었다.\n\n숨 막히는 스모그와 계층 격차의 도시 아르카디아를 뒤로하고 초고속 열차에 오른 윤호. 창밖으로 멀어지는 네온사인 너머로 새로운 삶이 기다리고 있다."
+            },
+            // 9. 특수 엔딩 (3종)
+            end_special_solo: {
+                id: "end_special_solo",
+                category: "특수 엔딩 ① (독자 해결)",
+                title: "이름 없는 해결사",
+                subtitle: "Special Ending : Lone Fixer",
+                desc: "군부도, 범죄조직도 믿지 않은 윤호는 자신의 눈썰미와 철물점 기술만으로 핵심 메모리 코어의 거래를 독자적으로 중재해 막대한 보수를 챙겼다.\n\n누구에게도 예속되지 않은 채 하층과 중층을 오가는 독립 브로커로 거듭난 정윤호. 이제 도시의 거물들이 먼저 그에게 거래를 청해 온다."
+            },
+            end_special_burnout: {
+                id: "end_special_burnout",
+                category: "특수 엔딩 ② (관계 파탄/추방)",
+                title: "말소된 시민 코드",
+                subtitle: "Special Ending : Erased Identity",
+                desc: "약속을 어기고 양측 세력에 거짓 정보를 흘린 대가는 혹독했다. 신뢰를 잃은 인물들은 등을 돌렸고, 임대료 체납과 보안법 위반 혐의가 겹치며 윤호의 제9구역 거주권이 말소되었다.\n\n차가운 산성비가 내리는 밤, 윤호는 단말기 신호마저 끊은 채 지하 최하층 B4 구역의 어둠 속으로 자취를 감춘다."
+            },
+            end_special_ignorance: {
+                id: "end_special_ignorance",
+                category: "특수 엔딩 ③ (진실 미발견)",
+                title: "회색빛 침묵",
+                subtitle: "Special Ending : Gray Silence",
+                desc: "윤호는 위험한 사건과 비밀들을 끝까지 외면하고 문을 걸어 잠갔다. 그사이 도시에서는 누군가가 숙청당하고 누군가가 기억을 잃었으나, 윤호는 그 내막을 끝내 알지 못했다.\n\n아무 일도 일어나지 않은 것 같은 철물점의 오후. 그러나 라디오에서 흘러나오는 뉴스 속보만이 도시가 조용히 변했음을 알려주고 있었다."
+            }
+        };
+
+        /* =========================================================================
+           4. 장편 6챕터 스토리 스크립트 (제1장~제6장 완결 및 7인 루트·멀티 엔딩)
+           ========================================================================= */
+        const STORY_NODES = {
+            // ==================== [제1장: 잿빛 하늘 아래의 나사못 (10월 14일 낮)] ====================
+            "ch1_start": {
+                chapter: "제1장: 잿빛 하늘 아래의 나사못",
+                routeTag: "공통 서사",
+                bg: "hardware_store",
+                date: "2138. 10. 14 (목)",
+                time: "14:15",
+                location: "제9구역 메가볼트 철물점",
+                lines: [
+                    { speaker: null, text: "지잉— 철컥. 매장 천장에 매달린 구형 환기팬이 기름때 낀 날개를 무겁게 돌리며 낮게 웅웅거렸다." },
+                    { speaker: null, text: "통유리창 너머로는 상층 스카이 섹터의 거대한 인공 지반에 가려 대낮인데도 초저녁처럼 침침한 하층 제9구역의 거리가 내다보였다." },
+                    { speaker: "yunho", exp: "normal", pos: "center", text: "「……이번 달에 동생 윤슬이 학비 보태주고 내일 월세 450 크레딧까지 내고 나면, 진짜로 남는 게 없네.」" },
+                    { speaker: null, text: "정윤호는 감청색 매장 조끼 주머니에서 손목 단말기를 확인하고는 작게 한숨을 내쉬었다. 개조 수술 하나 받지 않은 순수 인간 하층민으로 살아가는 일은 늘 빠듯한 숫자들의 연속이었다." },
+                    { speaker: null, text: "바로 그때, 손목 단말기가 요란하게 진동하며 동갑내기 절친 송민기의 메시지를 띄웠다." },
+                    { speaker: "mingi", exp: "smile", pos: "center", text: "[야 정윤호! 너 오늘 오후 근무 맞지? 거기 A-12 규격 서보모터 폐기 처분하는 거 남는 거 있냐? 아, 그리고 너네 점장 영감님 지금 매장에 계심?]" },
+                    { speaker: null, text: "보나 마나 어젯밤에도 지하 구역 도박장에서 주머니를 다 털리고선 부품 구걸에 밥 타령을 하려는 게 뻔했다." },
+                    { speaker: null, text: "윤호가 답장을 칠지 말지 고민하던 찰나, 매장 출입문 센서가 울리며 차가운 스모그 바람과 함께 낯선 손님 한 명이 들어섰다." },
+                    { speaker: "sunghwa", exp: "cold", pos: "center", text: "「………….」" },
+                    { speaker: null, text: "하층 구역의 허름한 철물점에서는 좀처럼 보기 힘든 고급 검은색 롱코트 차림의 남자였다. 우산을 접어 털어내는 손목 위로 은빛 시계와 함께 서늘하고 위험한 기운이 감돌았다." },
+                    { speaker: null, text: "카운터에서 졸고 있던 점장 대신, 남자의 시선이 진열대 앞에 서 있는 윤호에게 곧장 꽂혔다." }
+                ],
+                choices: [
+                    {
+                        text: "1. 단말기를 집어넣고 매장 직원답게 친절한 미소로 다가가 손님을 응대한다.",
+                        effect: { rel: { sunghwa: { favor: 6, trust: 4 } }, memory: "박성화와의 첫 만남에서 친절하고 침착하게 응대함" },
+                        next: "ch1_greet_polite"
+                    },
+                    {
+                        text: "2. 남자의 위압적인 분위기와 코트 소매 끝의 은빛 기계 의수를 조용히 관찰한다.",
+                        effect: { rel: { sunghwa: { favor: 8, alert: 5 } }, flag: "noticed_sunghwa_cyber", memory: "박성화의 최고급 전투형 기계 의수를 단번에 알아봄" },
+                        next: "ch1_observe_sunghwa"
+                    },
+                    {
+                        text: "3. 송민기에게 먼저 『지금 바쁘니까 이따 퇴근할 때 보자』고 답장을 보낸 뒤 손님을 맞이한다.",
+                        effect: { rel: { mingi: { intimacy: 6, trust: 5 } }, flag: "promised_mingi_dinner", memory: "송민기에게 퇴근 후 만나자고 약속함" },
+                        next: "ch1_reply_mingi_first"
+                    }
+                ]
+            },
+
+            "ch1_greet_polite": {
+                bg: "hardware_store",
+                time: "14:18",
+                lines: [
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「어서 오세요, 손님. 찾으시는 공구나 규격 부품이 있으십니까?」" },
+                    { speaker: null, text: "평소에는 담백하고 차분한 인상이지만 웃을 때면 한결 부드러워지는 윤호의 얼굴을 마주하자, 남자의 날카롭던 눈매가 미세하게 풀렸다." },
+                    { speaker: "sunghwa", exp: "normal", pos: "right", text: "「소형 텅스텐 합금 볼트와 비인가 정밀 신경 커넥터를 찾고 있는데. 이 매장에 있을지 모르겠군.」" },
+                    { speaker: null, text: "낮고 나긋하지만 묘하게 사람을 긴장시키는 목소리였다. 게다가 그가 말한 부품은 일반 가정용이 아니라 고급 전투형 개조 신체에 쓰이는 물건이었다." },
+                    { speaker: "yunho", exp: "normal", pos: "left", text: "「텅스텐 볼트는 4번 선반에 재고가 있습니다만, 신경 커넥터류는 정식 유통 품목이 아니라 저희 매장에는 들어오지 않습니다.」" },
+                    { speaker: "sunghwa", exp: "smirk", pos: "right", text: "「역시 그런가. 하긴, 이런 칙칙한 하층 구역 매장에 있을 리가 없지.」" }
+                ],
+                next: "ch1_sunghwa_card"
+            },
+
+            "ch1_observe_sunghwa": {
+                bg: "hardware_store",
+                time: "14:18",
+                lines: [
+                    { speaker: null, text: "윤호는 섣불리 다가가는 대신 남자의 걸음걸이와 검은 가죽 장갑 너머로 언뜻 보이는 은빛 티타늄 손목 관절을 눈여겨보았다." },
+                    { speaker: null, text: "시중에서 흔히 굴러다니는 보급형 의수가 아니었다. 상류층이나 대형 조직의 핵심 간부들이나 맞출 수 있는 최고급 인간형 기계 신체였다." },
+                    { speaker: "sunghwa", exp: "smirk", pos: "right", text: "「남의 몸을 꽤 집요하게 보는군. 철물점 알바생치고는 눈썰미가 나쁘지 않아.」" },
+                    { speaker: "yunho", exp: "surprised", pos: "left", text: "「아, 실례했습니다. 매일 기계 부품을 다루다 보니 무심코 시선이 갔네요. 찾으시는 물건이 있으십니까?」" },
+                    { speaker: "sunghwa", exp: "normal", pos: "right", text: "「티타늄 외장 고정용 마이크로 볼트. 그리고…… 입이 무겁고 쓸 만한 기술자를 찾고 있지.」" }
+                ],
+                next: "ch1_sunghwa_card"
+            },
+
+            "ch1_reply_mingi_first": {
+                bg: "hardware_store",
+                time: "14:18",
+                lines: [
+                    { speaker: null, text: "윤호는 재빨리 손목 단말기를 두드려 민기에게 [지금 손님 오셨으니까 퇴근할 때 보자]라고 답장을 날렸다." },
+                    { speaker: null, text: "고개를 들자, 어느새 검은 코트의 남자가 바로 두 걸음 앞까지 다가와 윤호의 명찰을 내려다보고 있었다." },
+                    { speaker: "sunghwa", exp: "smirk", pos: "right", text: "「정윤호. 친구 챙기느라 바쁜 모양이지?」" },
+                    { speaker: "yunho", exp: "normal", pos: "left", text: "「죄송합니다, 손님. 어떤 부품을 찾으십니까?」" },
+                    { speaker: "sunghwa", exp: "normal", pos: "right", text: "「고강도 텅스텐 합금 볼트 한 세트만 주지. 거스름돈은 필요 없다.」" }
+                ],
+                next: "ch1_sunghwa_card"
+            },
+
+            "ch1_sunghwa_card": {
+                bg: "hardware_store",
+                time: "14:28",
+                lines: [
+                    { speaker: null, text: "윤호가 선반에서 텅스텐 합금 볼트 세트를 꺼내 포장해 건네자, 남자는 단말기 결제 대신 추적 불가능한 무기명 실물 칩 화폐 한 장(50 C)을 카운터 위에 올려놓았다." },
+                    { speaker: null, text: "원래 가격은 15 크레딧이었지만, 남자는 거스름돈을 챙길 생각도 없이 은빛 문양이 새겨진 검은 명함 한 장을 윤호의 조끼 주머니에 꽂아 넣었다." },
+                    { speaker: "sunghwa", exp: "smile", pos: "right", text: "「박성화다. 혹시라도 이 좁아터진 철물점 시급보다 훨씬 큰돈이 필요해지거나, 쓸 만한 비공식 정비공을 알고 있다면 연락해.」" },
+                    { speaker: "yunho", exp: "normal", pos: "left", text: "「……손님, 잔돈 35 크레딧은 가져가셔야죠.」" },
+                    { speaker: "sunghwa", exp: "smirk", pos: "right", text: "「친절한 안내에 대한 팁이라고 해두지. 조만간 다시 보게 될 거다, 정윤호.」" },
+                    { speaker: null, text: "딸랑— 종소리와 함께 박성화가 매장을 빠져나갔다. 그로부터 채 10분 뒤, 매장 뒷문이 벌컥 열리더니 기름때 묻은 후드티 차림의 송민기가 고개를 들이밀었다." },
+                    { speaker: "mingi", exp: "surprised", pos: "right", text: "「야 정윤호! 방금 그 시꺼먼 코트 입은 형님 누구냐?! 미들 코어 최대 카르텔 '녹스 홀딩스' 핵심 간부 박성화잖아! 나도 조직 애들 하청으로 무기 수리할 때 멀리서 한 번 본 적 있는데, 네 주머니에 꽂힌 그 명함 뭐야?!」" },
+                    { speaker: null, text: "민기는 눈을 반짝이며 명함을 보자고 손을 내밀었고, 동시에 자기 작업 가방 안에서 웬 은색 금속 케이스 하나를 슬쩍 꺼내 보였다." },
+                    { speaker: "mingi", exp: "smile", pos: "right", text: "「그나저나 윤호야, 내가 어제 폐기물 집하장에서 대박 물건을 하나 주웠거든? 군용 보안 각인이 찍힌 '생체 신경 메모리 코어' 같은데, 안보국 순찰대 눈이 무서워서 그러니까 하루만 네 사물함에 숨겨주면 안 되냐?」" }
+                ],
+                choices: [
+                    {
+                        text: "1. 박성화의 명함을 민기에게 공유하고, 그 위험해 보이는 군용 코어도 친구를 위해 맡아준다.",
+                        effect: { money: 35, item: "박성화의 검은 명함", item2: "의문의 군용 신경 코어", flag: "kept_mingi_core", flag2: "shared_card_mingi", rel: { mingi: { intimacy: 10, trust: 10 }, sunghwa: { favor: 3 } }, memory: "민기가 주운 의문의 군용 신경 코어를 대신 보관해 줌" },
+                        next: "ch2_street_check"
+                    },
+                    {
+                        text: "2. 명함은 위험하니 숨기고, 장물 코어를 보관해 주는 대신 다시는 도박장 근처에 가지 말라고 다짐받는다.",
+                        effect: { money: 35, item: "박성화의 검은 명함", item2: "의문의 군용 신경 코어", flag: "kept_mingi_core", flag2: "scolded_mingi_gamble", rel: { mingi: { intimacy: 6, trust: 8 }, sunghwa: { trust: 6 } }, memory: "민기에게 도박을 끊겠다는 약속을 받고 코어를 맡아줌" },
+                        next: "ch2_street_check"
+                    },
+                    {
+                        text: "3. 군용 장물은 너무 위험하다며 거절하고, 대신 내일 민기의 정비소에 들러 사정을 들어주겠다고 한다.",
+                        effect: { money: 35, item: "박성화의 검은 명함", flag: "refused_mingi_core", rel: { mingi: { intimacy: 2, trust: -3 }, hongjoong: { trust: 5 } }, memory: "민기의 위험한 군용 코어 보관 부탁을 신중하게 거절함" },
+                        next: "ch2_street_check"
+                    }
+                ]
+            },
+
+            // ==================== [제2장: 스모그가 내려앉은 밤거리 (10월 14일 밤)] ====================
+            "ch2_street_check": {
+                chapter: "제2장: 스모그가 내려앉은 밤거리",
+                routeTag: "공통 서사",
+                bg: "street_night",
+                date: "2138. 10. 14 (목)",
+                time: "21:15",
+                location: "제9구역 상업로 밤거리",
+                lines: [
+                    { speaker: null, text: "오후 아홉 시. 기나긴 파트타임 근무를 마친 윤호는 피곤한 어깨를 주무르며 철물점 셔터를 내렸다." },
+                    { speaker: null, text: "밤이 찾아온 제9구역 거리는 인공 산성비가 부슬부슬 내리고 있었다. 건너편 빌딩의 대형 홀로그램 전광판에서는 희귀한 순수 인간 아이돌 '정우영'의 화려한 솔로 무대 영상이 밤거리를 비추고 있었다." },
+                    { speaker: "yunho", exp: "smile", pos: "center", text: "「……우영 씨 무대는 언제 봐도 대단하네. 같은 스물아홉 살인데도 저렇게 반짝이는 세계에 사는 사람이 있구나.」" },
+                    { speaker: null, text: "잠시 전광판을 올려다보던 그때, 골목 앞쪽에서 날카로운 사이렌 소리와 함께 통합안보사령부 특수기동경호단의 무장 장갑차가 거리를 봉쇄했다." },
+                    { speaker: "hongjoong", exp: "serious", pos: "right", text: "「전 대원, 3번 구역 퇴로부터 차단해. 민간인들에게 피해가 가지 않도록 통행 검문을 신속히 진행한다.」" },
+                    { speaker: null, text: "한 치의 흐트러짐도 없는 제복 차림의 장교가 날카롭고 위압적인 눈빛으로 현장을 지휘하고 있었다. 특수기동경호단 소령 김홍중이었다." },
+                    { speaker: "jongho", exp: "normal", pos: "left", text: "「홍중이 형— 아니, 소령님. 방금 이 상업로 반경 200미터 안에서 유출된 군용 기밀 코어의 미세 파장이 스캔되었습니다. 그리고 녹스(NOX) 소속 차량이 낮에 이 근처를 다녀간 기록도 확인됐습니다.」" },
+                    { speaker: null, text: "안경을 쓴 사이버안보국 대위 최종호의 보고가 끝나기 무섭게, 반대편 골목에서 검은 모자를 눌러쓴 건장한 청년(최산)이 윤호의 옆으로 다가왔고, 지하 계단 입구 쪽에서는 의료 가방을 든 금발의 비공인 의사(강여상)가 검문을 피해 발걸음을 멈추었다." },
+                    { speaker: "hongjoong", exp: "serious", pos: "right", text: "「거기 철물점 앞 시민분. 잠시 신원 확인과 소지품 스캔에 협조해 주시지.」" }
+                ],
+                choices: [
+                    {
+                        text: "1. 김홍중 소령과 최종호 대위에게 정중히 신분 단말기를 제시하고 낮에 본 수상한 차량에 대해 귀띔한다.",
+                        effect: { rel: { hongjoong: { trust: 12, favor: 8, respect: 8 }, jongho: { trust: 10, favor: 6 } }, flag: "helped_military_check", memory: "안보국 검문에서 김홍중과 최종호에게 적극적으로 협조함" },
+                        next: "ch2_branch_military"
+                    },
+                    {
+                        text: "2. 옆에서 장난스럽게 미소 짓고 있는 청년(최산)과 자연스럽게 대화를 나누며 검문 분위기를 누그러뜨린다.",
+                        effect: { rel: { san: { favor: 14, intimacy: 12, trust: 8 }, hongjoong: { favor: 4 } }, flag: "bonded_with_san", memory: "검문소에서 최산과 처음 만나 유쾌하게 대화를 나눔" },
+                        next: "ch2_branch_san"
+                    },
+                    {
+                        text: "3. 검문을 무사히 넘긴 직후, 지하 계단 입구에서 곤란해하던 금발의 의사(강여상)에게 우회 통로를 알려준다.",
+                        effect: { rel: { yeosang: { favor: 14, trust: 12, intimacy: 8 } }, flag: "helped_yeosang_alley", memory: "비공인 의료 물자를 든 강여상이 검문을 피하도록 도와줌" },
+                        next: "ch2_branch_yeosang"
+                    }
+                ]
+            },
+
+            "ch2_branch_military": {
+                bg: "street_night",
+                time: "21:25",
+                lines: [
+                    { speaker: "yunho", exp: "normal", pos: "left", text: "「여기 단말기 있습니다. 전 바로 앞 철물점에서 일하는 정윤호라고 합니다. 낮에 매장 앞에 미들 코어 번호판을 단 검은색 호버카가 잠시 정차하긴 했어요.」" },
+                    { speaker: "hongjoong", exp: "normal", pos: "right", text: "「정윤호 씨…… 협조해 줘서 고맙다. 하층 구역 시민들은 보통 군인을 보면 피하기 바쁜데, 침착하고 눈썰미가 좋군.」" },
+                    { speaker: "jongho", exp: "smile", pos: "center", text: "「오, 윤호 형 증언 덕분에 CCTV 대조 시간이 절반으로 줄었어요. 고마워요, 형. 제 단말기 직통 번호 남겨둘 테니 수상한 사람 보면 언제든 연락 주세요.」" },
+                    { speaker: "san", exp: "smile", pos: "left", text: "「야, 종호 너 왜 처음 보는 시민분한테 벌써 형이라고 부르면서 선수 치냐? 반가워, 윤호야! 난 최산이라고 해. 너랑 같은 스물아홉 살이야!」" }
+                ],
+                next: "ch2_night_room"
+            },
+
+            "ch2_branch_san": {
+                bg: "street_night",
+                time: "21:25",
+                lines: [
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「방금 퇴근해서 이분이랑 이야기 나누던 중이었습니다. 제 단말기부터 확인하시겠어요?」" },
+                    { speaker: "san", exp: "smile", pos: "center", text: "「푸하하! 홍중이 형, 들었지? 이렇게 선하고 친절한 시민분을 의심하면 안 되지! 나 오늘 정기 신경 점검 끝나고 외출 허가 정식으로 받고 나온 거라고.」" },
+                    { speaker: "hongjoong", exp: "serious", pos: "right", text: "「……최산, 넌 몸 상태도 특수하면서 왜 자꾸 스모그 심한 하층 구역까지 내려오는 거냐. 정윤호 씨, 내 부하가 실례를 범했군.」" },
+                    { speaker: null, text: "겉보기엔 완벽한 근육질의 건장한 청년이지만, 산의 목덜미 아래에는 군용 특수 인터페이스의 미세한 열기가 감돌고 있었다. 산은 윤호에게 한쪽 눈을 찡긋하며 개인 연락처를 건넸다." }
+                ],
+                next: "ch2_night_room"
+            },
+
+            "ch2_branch_yeosang": {
+                bg: "underground_clinic",
+                time: "21:28",
+                lines: [
+                    { speaker: null, text: "윤호는 신원 확인을 마친 뒤, 군인들의 시선이 다른 골목으로 쏠린 틈을 타 지하 계단 입구에 서 있던 금발의 청년에게 다가갔다." },
+                    { speaker: "yunho", exp: "normal", pos: "left", text: "「저기, 괜찮으세요? 철물점 뒷골목 환기 통로로 내려가시면 검문소 안 거치고 지하 2층으로 바로 가실 수 있어요.」" },
+                    { speaker: "yeosang", exp: "surprised", pos: "right", text: "「……아, 고마워요. 가방 안에 하층민 환자들한테 쓸 비인가 나노 봉합제가 들어 있어서 걸리면 압수당할 뻔했거든요.」" },
+                    { speaker: "yeosang", exp: "smile", pos: "right", text: "「전 강여상이에요. 지하 2층에서 진료소를 운영하고 있어요. 정윤호 씨…… 우리 스물아홉 동갑이네요. 편하게 여상이라고 불러요. 다음에 꼭 보답할게요.」" }
+                ],
+                next: "ch2_night_room"
+            },
+
+            // ==================== [제3장: 지하의 진료소와 무대 뒤의 그림자 (10월 15~18일)] ====================
+            "ch2_night_room": {
+                chapter: "제3장: 지하의 맥박과 화려한 네온의 이면",
+                routeTag: "공통 & 인물 교차",
+                bg: "yunho_room",
+                date: "2138. 10. 15 (금)",
+                time: "19:30",
+                location: "제9구역 304호 원룸 → 언더 시티 B2",
+                lines: [
+                    { speaker: null, text: "다음 날인 10월 15일 금요일. 윤호는 집주인에게 이번 달 월세 450 크레딧을 송금하며 빠듯한 가계부를 정리했다." },
+                    { speaker: null, text: "그날 저녁, 동생 윤슬에게 보낼 상비약을 구하러 언더 시티 지하 2층을 찾은 윤호는 강여상의 진료소 앞에서 뜻밖의 소동을 목격했다." },
+                    { speaker: "wooyoung", exp: "serious", pos: "right", text: "「하아, 하아…… 여상아, 문 좀 빨리 열어줘! 사생팬인지 스타라이트 경호팀인지 모를 놈들이 미들 코어에서부터 미행했다고!」" },
+                    { speaker: null, text: "검은 후드와 마스크로 얼굴을 가렸지만, 그 목소리와 날렵한 춤선 같은 몸놀림은 윤호가 매일 영상으로 보던 인간 아이돌 '정우영'이 틀림없었다!" },
+                    { speaker: "yeosang", exp: "serious", pos: "left", text: "「우영아, 안으로 들어가 있어. ……어? 윤호야, 마침 잘 왔네.」" },
+                    { speaker: null, text: "그 순간 진료소 골목 위쪽 계단에서 우영을 쫓아온 듯한 정체불명의 추격자 발소리와 함께, 반대편 암시장 통로에서는 도박장 빚쟁이들에게 쫓기는 송민기의 다급한 목소리가 동시에 들려왔다." }
+                ],
+                choices: [
+                    {
+                        text: "1. 정우영과 강여상을 진료소 안으로 대피시키고, 추격자들에게 거짓 방향을 알려주어 우영을 지킨다.",
+                        effect: { money: -450, paidRent: true, rel: { wooyoung: { favor: 18, trust: 15, intimacy: 12 }, yeosang: { favor: 12, trust: 10 } }, flag: "saved_wooyoung_clinic", memory: "미행당하던 아이돌 정우영과 강여상을 기지로 구해줌" },
+                        next: "ch3_after_clinic_wooyoung"
+                    },
+                    {
+                        text: "2. 강여상과 함께 진료소 문을 잠가 우영을 숨긴 뒤, 진료소 안에서 여상의 야간 응급 처치 일을 돕는다.",
+                        effect: { money: -450, paidRent: true, rel: { yeosang: { favor: 18, trust: 16, intimacy: 14 }, wooyoung: { favor: 8 } }, flag: "helped_yeosang_surgery", memory: "강여상의 지하 진료소에서 밤늦게까지 의료 보조를 도우며 가까워짐" },
+                        next: "ch3_after_clinic_yeosang"
+                    },
+                    {
+                        text: "3. 암시장 통로에서 빚쟁이들에게 붙잡힐 위기에 처한 송민기 쪽으로 달려가 민기를 빼낸다.",
+                        effect: { money: -450, paidRent: true, rel: { mingi: { favor: 16, trust: 15, intimacy: 14 } }, flag: "rescued_mingi_alley", memory: "언더 시티 골목에서 도박 빚쟁이들에게 쫓기던 송민기를 구해줌" },
+                        next: "ch3_after_clinic_mingi"
+                    }
+                ]
+            },
+
+            "ch3_after_clinic_wooyoung": {
+                bg: "underground_clinic",
+                time: "20:15",
+                lines: [
+                    { speaker: "wooyoung", exp: "surprised", pos: "right", text: "「와…… 방금 시선 돌리는 거 봤어, 여상아? 어젯밤 내 라이브 방송에서도 댓글 남겨줬던 그 정윤호 맞지?!」" },
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「네, 맞아요. 우영 씨 무대 정말 좋아하거든요. 다친 데는 없으세요?」" },
+                    { speaker: "wooyoung", exp: "smile", pos: "right", text: "「응! 너 덕분에 살았어! 야, 우리 같은 스물아홉 살이잖아. 여상이 친구면 내 친구나 다름없으니까 지금부터 말 편하게 놓자, 윤호야! 내 개인 단말기 번호 찍어줄게!」" },
+                    { speaker: null, text: "화려한 무대 위의 스타가 아닌, 외로움 많고 솔직한 청년 정우영이 윤호에게 처음으로 사적인 경계를 풀고 다가왔다." }
+                ],
+                next: "ch4_storm_gathering"
+            },
+
+            "ch3_after_clinic_yeosang": {
+                bg: "underground_clinic",
+                time: "20:40",
+                lines: [
+                    { speaker: "yeosang", exp: "smile", pos: "right", text: "「윤호야, 네가 침착하게 기구 정리를 도와준 덕분에 응급 환자들이랑 우영이까지 무사히 돌볼 수 있었어.」" },
+                    { speaker: "yunho", exp: "normal", pos: "left", text: "「여상이 너야말로 매일 밤 이렇게 위험을 무릅쓰고 하층 구역 사람들을 치료하고 있었던 거잖아. 대단하다, 진짜.」" },
+                    { speaker: "yeosang", exp: "normal", pos: "right", text: "「정식 면허 심사에서 배제된 뒤로는 이게 내가 할 수 있는 유일한 증명이라서. ……동생한테 보낼 영양제는 내가 무료로 챙겨줄게. 대신 종종 나랑 커피 마시러 와줘.」" },
+                    { speaker: null, text: "타인에게 늘 일정한 거리를 두던 강여상의 눈빛에 윤호를 향한 깊은 신뢰와 온기가 스며들었다." }
+                ],
+                next: "ch4_storm_gathering"
+            },
+
+            "ch3_after_clinic_mingi": {
+                bg: "underground_clinic",
+                time: "20:20",
+                lines: [
+                    { speaker: "mingi", exp: "surprised", pos: "right", text: "「헉, 헉…… 야 정윤호! 너 아니었으면 나 오늘 손가락 한 마디 잘릴 뻔했다!」" },
+                    { speaker: "yunho", exp: "serious", pos: "left", text: "「송민기, 너 진짜 언제까지 이렇게 살래? 내가 얼마나 걱정했는지 알아?」" },
+                    { speaker: "mingi", exp: "normal", pos: "right", text: "「……미안하다, 윤호야. 나도 내가 한심한 거 아는데, 이번에 주운 그 군용 코어 분석만 끝나면 진짜 도박 끊고 너랑 정식 수리점 차릴 거야. 내 말 한 번만 믿어줘라.」" },
+                    { speaker: null, text: "늘 능청스럽고 장난만 치던 민기가 처음으로 진지한 눈빛으로 윤호의 소매를 붙잡았다." }
+                ],
+                next: "ch4_storm_gathering"
+            },
+
+            // ==================== [제4장: 균열하는 도시와 '프로젝트 아케론' (10월 22일)] ====================
+            "ch4_storm_gathering": {
+                chapter: "제4장: 균열하는 도시와 프로젝트 아케론",
+                routeTag: "중반 핵심 분기",
+                bg: "nox_lounge",
+                date: "2138. 10. 22 (금)",
+                time: "20:00",
+                location: "아르카디아 미들 코어 & 제9구역 경계",
+                lines: [
+                    { speaker: null, text: "일주일의 시간이 흐르는 동안, 아르카디아의 밤공기는 폭풍 전야처럼 무겁게 가라앉았다." },
+                    { speaker: null, text: "민기가 폐기물 집하장에서 주웠던 '군용 생체 신경 메모리 코어'는 단순한 고철이 아니었다. 그것은 크로노스 코퍼레이션과 군 상층부, 그리고 범죄조직 녹스의 배신자 파벌이 얽힌 기밀 계획— 『프로젝트 아케론(인간 뇌 강제 적출 및 전투 병기화 계획)』의 원본 블랙박스였다." },
+                    { speaker: "sunghwa", exp: "serious", pos: "right", text: "「윤호야. 내 몸을 반신불수로 만들었던 3년 전 폭발 사건의 배후와, 그 코어를 노리는 조직 내부의 배신자들을 오늘 밤 정리할 생각이다.」" },
+                    { speaker: "hongjoong", exp: "serious", pos: "left", text: "「정윤호 씨. 그 코어에는 최산을 비롯한 군용 뇌 이식 요원들의 강제 통제 코드가 들어 있어. 범죄조직 손에 넘어가면 돌이킬 수 없다.」" },
+                    { speaker: "jongho", exp: "serious", pos: "center", text: "「윤호 형! 지금 상층부 감시망이 제9구역 전체를 포위하고 있어요. 오늘 밤 누구의 손을 잡느냐에 따라 모든 게 결정돼요!」" },
+                    { speaker: null, text: "그동안 쌓아온 인연과 약속들이 한 점으로 모이는 순간. 윤호는 이 거대한 소용돌이 속에서 누구의 곁으로 향할지 선택해야만 한다." }
+                ],
+                choices: [
+                    {
+                        text: "1. [박성화 루트 진입] 미들 코어 녹스 본성으로 향해, 기계 신체 후유증과 내부 배신에 맞서는 박성화의 곁을 지킨다.",
+                        effect: { route: "sunghwa", rel: { sunghwa: { favor: 20, trust: 20 } }, memory: "위기의 밤, 다른 누구도 아닌 박성화의 곁으로 향함" },
+                        next: "ch5_route_sunghwa"
+                    },
+                    {
+                        text: "2. [김홍중 루트 진입] 안보국 특수기동경호단 지휘차로 향해, 상층부의 부패에 맞서는 김홍중 소령과 행동을 함께한다.",
+                        effect: { route: "hongjoong", rel: { hongjoong: { favor: 20, trust: 20, respect: 15 } }, memory: "안보국 소령 김홍중의 신념을 믿고 작전에 동행함" },
+                        next: "ch5_route_hongjoong"
+                    },
+                    {
+                        text: "3. [강여상 루트 진입] 봉쇄된 지하 2층 진료소로 달려가, 부상자들과 기밀 의료 데이터를 지키는 강여상을 돕는다.",
+                        effect: { route: "yeosang", rel: { yeosang: { favor: 20, trust: 20 } }, memory: "단속반이 들이닥친 지하 진료소의 강여상을 지키러 감" },
+                        next: "ch5_route_yeosang"
+                    },
+                    {
+                        text: "4. [최산 루트 진입] 군 사령부의 강제 신경 초기화 명령이 떨어진 최산을 구하기 위해 제8구역 격납고로 달려간다.",
+                        effect: { route: "san", rel: { san: { favor: 20, trust: 20 } }, memory: "기억 소거 위기에 처한 최산을 구하기 위해 격납고로 향함" },
+                        next: "ch5_route_san"
+                    },
+                    {
+                        text: "5. [송민기 / 정우영 / 최종호 / 독자 세계관 루트 선택 보기]",
+                        effect: {},
+                        next: "ch4_storm_gathering_page2"
+                    }
+                ]
+            },
+
+            "ch4_storm_gathering_page2": {
+                chapter: "제4장: 균열하는 도시와 프로젝트 아케론",
+                routeTag: "중반 핵심 분기 (2/2)",
+                bg: "street_night",
+                date: "2138. 10. 22 (금)",
+                time: "20:05",
+                location: "아르카디아 미들 코어 & 제9구역 경계",
+                lines: [
+                    { speaker: null, text: "정윤호의 단말기에는 송민기, 정우영, 최종호의 긴급 통신 신호 또한 깜빡이고 있었다. 혹은 그 누구에게도 의지하지 않고 독자적인 길을 택할 수도 있다." }
+                ],
+                choices: [
+                    {
+                        text: "1. [송민기 루트 진입] 코어를 노린 암시장 킬러들에게 포위된 지하 1층 송민기의 정비소로 달려간다.",
+                        effect: { route: "mingi", rel: { mingi: { favor: 20, trust: 20 } }, memory: "암시장 조직에 포위된 절친 송민기를 구하러 정비소로 달려감" },
+                        next: "ch5_route_mingi"
+                    },
+                    {
+                        text: "2. [정우영 루트 진입] 녹스 스폰서 스캔들과 소속사의 강제 통제에 갇힌 정우영을 구하러 스타라이트 사옥으로 간다.",
+                        effect: { route: "wooyoung", rel: { wooyoung: { favor: 20, trust: 20 } }, memory: "소속사에 감금되다시피 한 정우영을 데리러 사옥으로 향함" },
+                        next: "ch5_route_wooyoung"
+                    },
+                    {
+                        text: "3. [최종호 루트 진입] 군 내부 스파이의 역추적 공격을 받고 고립된 최종호의 지하 보안 서버실로 향한다.",
+                        effect: { route: "jongho", rel: { jongho: { favor: 20, trust: 20 } }, memory: "사이버 역추적 위기에 처한 최종호를 돕기 위해 서버실로 향함" },
+                        next: "ch5_route_jongho"
+                    },
+                    {
+                        text: "4. [세계관/특수 독자 루트 진입] 특정 인물에게 치우치지 않고 코어 데이터를 직접 분석해 도시 전체의 판도를 바꾼다.",
+                        effect: { route: "independent", memory: "어느 한 세력에 속하지 않고 스스로 진실과 삶을 결정하기로 함" },
+                        next: "ch5_route_independent"
+                    },
+                    {
+                        text: "◀ 이전 인물 선택지(박성화·김홍중·강여상·최산)로 돌아가기",
+                        effect: {},
+                        next: "ch4_storm_gathering"
+                    }
+                ]
+            },
+
+            // ==================== [제5장 & 제6장: 7인 개인 루트 및 멀티 엔딩 분기] ====================
+
+            // --- 1. 박성화 개인 루트 ---
+            "ch5_route_sunghwa": {
+                chapter: "제5장 [박성화 루트]: 강철 심장의 고독",
+                routeTag: "박성화 집중 서사",
+                bg: "nox_lounge",
+                date: "2138. 10. 29 (금)",
+                time: "23:10",
+                location: "미들 코어 녹스 최상층 펜트하우스",
+                lines: [
+                    { speaker: null, text: "배신자 파벌과의 피비린내 나는 숙청전을 끝낸 박성화는, 외부 정비사조차 물린 채 펜트하우스 침실에 홀로 앉아 손상된 좌측 흉부 기계 외장을 열어두고 있었다." },
+                    { speaker: "sunghwa", exp: "cold", pos: "right", text: "「……들어오지 마라, 정윤호. 지금 내 꼴은 그리 볼 만하지 않으니까. 신경 냉각액이 새어 나와서 손끝 감각도 제대로 통제되지 않아.」" },
+                    { speaker: "yunho", exp: "normal", pos: "left", text: "「성화 형. 가만히 계세요. 제가 철물점이랑 민기 정비소에서 다루던 마이크로 토크 렌치가 마침 주머니에 있어요. 응급 접합은 할 수 있어요.」" },
+                    { speaker: null, text: "누구에게도 약점을 보이지 않던 성화가 윤호의 따뜻한 맨손이 자신의 차가운 티타늄 쇄골에 닿자 작게 숨을 삼켰다." },
+                    { speaker: "sunghwa", exp: "normal", pos: "right", text: "「넌 겁도 없군. 내가 마음만 먹으면 이 기계 손으로 네 목을 단숨에 꺾을 수도 있는데…… 왜 자꾸 내 옆에 남으려는 거지?」" },
+                    { speaker: null, text: "제6장 최후의 결단: 안보국의 수사망이 녹스 본성 턱밑까지 좁혀온 밤, 윤호는 성화와의 관계를 어떻게 매듭지을지 선택해야 한다." }
+                ],
+                choices: [
+                    {
+                        text: "1. 「형이 기계든 범죄자든 상관없어요. 형이 외롭지 않게 끝까지 옆에 있을게요.」 코어를 성화에게 온전히 맡기고 손을 잡는다.",
+                        effect: {},
+                        next: "ch6_end_sunghwa_love"
+                    },
+                    {
+                        text: "2. 성화의 잔혹한 방식에 두려움을 내비치며, 코어를 안보국에 넘기고 이제 그만 평범한 삶으로 돌아가겠다고 말한다.",
+                        effect: {},
+                        next: "ch6_end_sunghwa_tragic"
+                    }
+                ]
+            },
+            "ch6_end_sunghwa_love": {
+                chapter: "제6장 종장: 잔광이 머무는 곳",
+                bg: "nox_lounge",
+                lines: [
+                    { speaker: "sunghwa", exp: "smile", pos: "center", text: "「……바보 같은 대답이군, 정윤호. 하지만 네가 직접 한 말이니 절대 무르지 못할 줄 알아라.」" },
+                    { speaker: null, text: "성화는 은빛 금속 의수가 아닌 살아 있는 오른손으로 윤호의 뺨을 감싸 안으며 깊고 나른한 미소를 지었다." }
+                ],
+                endingId: "end_sunghwa_love"
+            },
+            "ch6_end_sunghwa_tragic": {
+                chapter: "제6장 종장: 닫힌 새장",
+                bg: "nox_lounge",
+                lines: [
+                    { speaker: "sunghwa", exp: "cold", pos: "center", text: "「돌아간다고? 내가 내 속살까지 다 보여줬는데, 이제 와서 날 혼자 두고 떠나겠다는 소리는 허락하지 않는다, 윤호야.」" },
+                    { speaker: null, text: "철컥— 펜트하우스의 모든 보안 셔터가 잠기며, 성화의 서늘하고도 집요한 시선이 윤호를 가두었다." }
+                ],
+                endingId: "end_sunghwa_tragic"
+            },
+
+            // --- 2. 김홍중 개인 루트 ---
+            "ch5_route_hongjoong": {
+                chapter: "제5장 [김홍중 루트]: 제복에 새겨진 무게",
+                routeTag: "김홍중 집중 서사",
+                bg: "security_hq",
+                date: "2138. 10. 30 (토)",
+                time: "01:20",
+                location: "통합안보사령부 특수기동경호단 지휘실",
+                lines: [
+                    { speaker: null, text: "밤샘 작전 끝에 '프로젝트 아케론'의 증거를 확보한 김홍중 소령은, 어수선하게 서류가 쌓인 개인 지휘실 책상에 기대어 식어버린 블랙커피를 마시고 있었다." },
+                    { speaker: "hongjoong", exp: "serious", pos: "right", text: "「예전에 전장에서 최산을 잃었을 때…… 상층부의 뇌 이식 명령을 막지 못했던 게 내 평생의 부채였다. 민간인인 너까지 위험에 끌어들이고 싶지 않았는데 미안하군, 윤호야.」" },
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「홍중이 형이 시민들을 지키려고 밤잠까지 설쳐가며 애쓰는 걸 제가 다 봤는걸요. 가끔은 형도 남한테 기대셔도 돼요.」" },
+                    { speaker: "hongjoong", exp: "smile", pos: "right", text: "「……네 앞에서는 자꾸 군인으로서의 경계심을 잊게 되는군.」" },
+                    { speaker: null, text: "제6장 최후의 결단: 상층부 청문회와 외곽 방벽 파견 명령이 동시에 내려온 날, 윤호는 홍중에게 어떤 말을 건넬까." }
+                ],
+                choices: [
+                    {
+                        text: "1. 「외곽 방벽으로 떠나지 마세요. 이 도시에서 저와 함께 끝까지 싸우며 살아가요, 홍중이 형.」 진심을 고백한다.",
+                        effect: {},
+                        next: "ch6_end_hongjoong_love"
+                    },
+                    {
+                        text: "2. 군인으로서의 사명을 다하려는 홍중의 결정을 존중하며, 언제까지고 이 도시에서 기다리겠다고 격려한다.",
+                        effect: {},
+                        next: "ch6_end_hongjoong_duty"
+                    }
+                ]
+            },
+            "ch6_end_hongjoong_love": {
+                chapter: "제6장 종장: 새벽의 약속",
+                bg: "street_night",
+                lines: [
+                    { speaker: "hongjoong", exp: "smile", pos: "center", text: "「그래. 명령보다 소중한 사람이 생겼으니, 이번만큼은 내 마음을 따르겠다. 고맙다, 윤호야.」" }
+                ],
+                endingId: "end_hongjoong_love"
+            },
+            "ch6_end_hongjoong_duty": {
+                chapter: "제6장 종장: 명예로운 이별",
+                bg: "security_hq",
+                lines: [
+                    { speaker: "hongjoong", exp: "normal", pos: "center", text: "「네가 내 신념을 이해해 주니 더 이상 두려울 게 없군. 반드시 무사히 돌아오마, 정윤호.」" }
+                ],
+                endingId: "end_hongjoong_duty"
+            },
+
+            // --- 3. 강여상 개인 루트 ---
+            "ch5_route_yeosang": {
+                chapter: "제5장 [강여상 루트]: 하얀 장갑 아래의 상처",
+                routeTag: "강여상 집중 서사",
+                bg: "underground_clinic",
+                date: "2138. 10. 30 (토)",
+                time: "22:00",
+                location: "언더 시티 B2 강여상의 비밀 진료소",
+                lines: [
+                    { speaker: null, text: "크로노스 의료 감사팀의 강제 단속을 윤호와 함께 막아낸 밤, 여상은 처음으로 진료실 구석에 앉아 수술용 장갑을 벗고 자신의 손끝에 남은 오래된 흉터를 내려다보았다." },
+                    { speaker: "yeosang", exp: "normal", pos: "right", text: "「의대 최종 평가 때 상류층 인사의 불법 장기 우선 배정을 거부했다가 면허 취득에서 영구 배제됐었어. 그 뒤론 누구와도 깊게 엮이지 않으려고 했는데…… 넌 자꾸 내 선 안으로 들어오네, 윤호야.」" },
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「여상이 네가 아무리 무뚝뚝한 척해도, 환자 한 명 한 명 진심으로 살려내는 걸 내가 제일 잘 아니까요.」" },
+                    { speaker: null, text: "제6장 최후의 결단: 폭로 이후 상층부 병원에서 여상에게 정식 면허 복권과 스카이 섹터 영입을 제안해 왔다." }
+                ],
+                choices: [
+                    {
+                        text: "1. 여상의 손을 따뜻하게 맞잡으며, 상류층 병원 대신 이곳에서 연인이자 반려로 함께 살아가자고 마음을 전한다.",
+                        effect: {},
+                        next: "ch6_end_yeosang_love"
+                    },
+                    {
+                        text: "2. 연애 감정을 강요하기보다, 진료소의 정식 운영 파트너로서 평생 여상의 곁을 든든하게 보좌하겠다고 약속한다.",
+                        effect: {},
+                        next: "ch6_end_yeosang_partner"
+                    }
+                ]
+            },
+            "ch6_end_yeosang_love": {
+                chapter: "제6장 종장: 두 사람만의 진료소",
+                bg: "underground_clinic",
+                lines: [
+                    { speaker: "yeosang", exp: "smile", pos: "center", text: "「스카이 섹터의 무균실보다 네 옆자리가 훨씬 따뜻하네. 앞으로 내 전담 주치의는 너야, 정윤호.」" }
+                ],
+                endingId: "end_yeosang_love"
+            },
+            "ch6_end_yeosang_partner": {
+                chapter: "제6장 종장: 언더 시티의 안식처",
+                bg: "underground_clinic",
+                lines: [
+                    { speaker: "yeosang", exp: "smile", pos: "center", text: "「고마워, 윤호야. 네가 내 파트너라서 이제 어떤 응급 환자가 와도 두렵지 않아.」" }
+                ],
+                endingId: "end_yeosang_partner"
+            },
+
+            // --- 4. 최산 개인 루트 ---
+            "ch5_route_san": {
+                chapter: "제5장 [최산 루트]: 보존된 뇌와 살아있는 온기",
+                routeTag: "최산 집중 서사",
+                bg: "security_hq",
+                date: "2138. 10. 31 (일)",
+                time: "00:15",
+                location: "제8구역 군 특수 정비동 격납고",
+                lines: [
+                    { speaker: null, text: "과부하 경고가 울리는 정비 베드 위에서, 최산은 전투용 외부 장갑이 열린 어깨를 드러낸 채 쓴웃음을 지었다." },
+                    { speaker: "san", exp: "normal", pos: "right", text: "「들켰네, 윤호야. 맞아, 난 2년 전 전투에서 이미 죽었어. 지금 이 몸은 군에서 만든 전투용 안드로이드고, 내 머릿속에만 옛날 인간 시절의 뇌가 생명 유지 장치에 담겨 있을 뿐이야.」" },
+                    { speaker: "yunho", exp: "serious", pos: "left", text: "「산아, 네가 기계 몸이든 뭐든 내 눈엔 그냥 나랑 같이 게임하고 장난치던 친구 최산이야! 초기화 따위 절대 못 하게 할 거야!」" },
+                    { speaker: "san", exp: "surprised", pos: "right", text: "「……윤호야.」" },
+                    { speaker: null, text: "제6장 최후의 결단: 특수부대 추격조가 격납고 문을 강제 개방하려는 순간, 산의 신경 인터페이스가 임계점에 도달한다." }
+                ],
+                choices: [
+                    {
+                        text: "1. 홍중과 종호가 남겨둔 우회 코드로 군사 네트워크 락을 완전히 해제하고, 산의 손을 잡고 함께 탈출한다.",
+                        effect: {},
+                        next: "ch6_end_san_love"
+                    },
+                    {
+                        text: "2. 추격조의 사격이 쏟아지자, 산이 스스로 출력 제한을 해제해 윤호를 방패처럼 감싸 안으며 돌파한다.",
+                        effect: {},
+                        next: "ch6_end_san_sacrifice"
+                    }
+                ]
+            },
+            "ch6_end_san_love": {
+                chapter: "제6장 종장: 온전한 너의 이름",
+                bg: "yunho_room",
+                lines: [
+                    { speaker: "san", exp: "smile", pos: "center", text: "「내 인공 피부가 네 체온을 똑같이 느낄 수 있게 만들어져서 정말 다행이야. 사랑해, 윤호야.」" }
+                ],
+                endingId: "end_san_love"
+            },
+            "ch6_end_san_sacrifice": {
+                chapter: "제6장 종장: 리부트된 미소",
+                bg: "hardware_store",
+                lines: [
+                    { speaker: "san", exp: "smile", pos: "center", text: "「저기요, 직원분! 우리 어디서 본 적 있지 않아요? 이상하게 당신 얼굴을 보니까 마음이 놓여서요.」" }
+                ],
+                endingId: "end_san_sacrifice"
+            },
+
+            // --- 5. 송민기 개인 루트 ---
+            "ch5_route_mingi": {
+                chapter: "제5장 [송민기 루트]: 도박판 끝의 진심",
+                routeTag: "송민기 집중 서사",
+                bg: "underground_clinic",
+                date: "2138. 10. 31 (일)",
+                time: "21:00",
+                location: "언더 시티 B1 송민기의 정비소",
+                lines: [
+                    { speaker: null, text: "암시장 해결사들의 습격으로 엉망이 된 정비소 바닥에서, 민기는 피멍이 든 얼굴로 윤호의 작업 조끼 자락을 꽉 쥐었다." },
+                    { speaker: "mingi", exp: "serious", pos: "right", text: "「윤호야…… 나 어릴 때부터 부모도 없이 굴러먹으면서 아무도 날 안 믿어줬거든? 근데 너만은 끝까지 날 안 버렸잖아. 나 사실은 친구 이상으로 너 좋아하고 있었어, 이 바보야.」" },
+                    { speaker: "yunho", exp: "surprised", pos: "left", text: "「민기야……」" },
+                    { speaker: null, text: "제6장 최후의 결단: 코어 거래 대금으로 받은 정당한 보상금으로 두 사람은 어떤 미래를 선택할까." }
+                ],
+                choices: [
+                    {
+                        text: "1. 도박장 빚을 전부 청산하고, 제9구역에 두 사람의 이름을 내건 정식 기계·안드로이드 수리 공방을 함께 연다.",
+                        effect: {},
+                        next: "ch6_end_mingi_love"
+                    },
+                    {
+                        text: "2. 답답한 아르카디아의 규칙 따위 전부 뒤로하고, 민기와 함께 외곽 횡단 열차에 올라타 자유로운 모험을 떠난다.",
+                        effect: {},
+                        next: "ch6_end_mingi_runaway"
+                    }
+                ]
+            },
+            "ch6_end_mingi_love": {
+                chapter: "제6장 종장: 우리들의 공방",
+                bg: "hardware_store",
+                lines: [
+                    { speaker: "mingi", exp: "smile", pos: "center", text: "「야 정윤호 사장님! 오늘부터 내 평생 잭팟은 너 하나뿐이니까 도망갈 생각 마라!」" }
+                ],
+                endingId: "end_mingi_love"
+            },
+            "ch6_end_mingi_runaway": {
+                chapter: "제6장 종장: 방벽 너머의 질주",
+                bg: "street_night",
+                lines: [
+                    { speaker: "mingi", exp: "smile", pos: "center", text: "「꽉 잡아라, 정윤호! 너랑 나만 있으면 어느 도시로 가든 무적이라고!」" }
+                ],
+                endingId: "end_mingi_runaway"
+            },
+
+            // --- 6. 정우영 개인 루트 ---
+            "ch5_route_wooyoung": {
+                chapter: "제5장 [정우영 루트]: 홀로그램 너머의 진짜 얼굴",
+                routeTag: "정우영 집중 서사",
+                bg: "starlight_stage",
+                date: "2138. 11. 01 (월)",
+                time: "22:30",
+                location: "스타라이트 미디어 단독 콘서트장 백스테이지",
+                lines: [
+                    { speaker: null, text: "가상 인격과 오락용 안드로이드가 판치는 시대에 '유일무이한 인간 아이돌'이라는 왕관을 쓰고 살아온 정우영이, 불 꺼진 무대 뒤에서 윤호의 어깨에 이마를 기댔다." },
+                    { speaker: "wooyoung", exp: "normal", pos: "right", text: "「사람들은 무대 위의 화려한 정우영만 원해. 내가 조금만 지치거나 약한 모습을 보이면 금방이라도 버릴 것처럼 굴거든…… 근데 윤호 넌 날 그냥 스물아홉 살 정우영으로 봐줬잖아.」" },
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「무대 위에서 춤추는 우영이도 멋있지만, 난 내 앞에서 어묵 국물 마시며 투정 부리는 우영이가 제일 좋아.」" },
+                    { speaker: null, text: "제6장 최후의 결단: 소속사 재계약 및 녹스 후원 폭로 기자회견을 앞둔 순간, 두 사람의 선택은." }
+                ],
+                choices: [
+                    {
+                        text: "1. 소속사의 통제를 벗어나 독립 레이블을 세우도록 돕고, 무대 뒤에서 언제나 우영을 안아주는 연인이 된다.",
+                        effect: {},
+                        next: "ch6_end_wooyoung_love"
+                    },
+                    {
+                        text: "2. 우영이 스캔들 없이 더 높은 곳에서 빛날 수 있도록, 비밀을 지킨 채 가장 든든한 첫 번째 팬의 자리로 돌아간다.",
+                        effect: {},
+                        next: "ch6_end_wooyoung_star"
+                    }
+                ]
+            },
+            "ch6_end_wooyoung_love": {
+                chapter: "제6장 종장: 오직 한 사람을 위한 앙코르",
+                bg: "starlight_stage",
+                lines: [
+                    { speaker: "wooyoung", exp: "smile", pos: "center", text: "「윤호야, 오늘 무대 맨 앞자리 비워뒀어. 내 모든 노래는 이제 너한테만 바치는 거야!」" }
+                ],
+                endingId: "end_wooyoung_love"
+            },
+            "ch6_end_wooyoung_star": {
+                chapter: "제6장 종장: 영원한 스타라이트",
+                bg: "starlight_stage",
+                lines: [
+                    { speaker: "wooyoung", exp: "smile", pos: "center", text: "「이 도시에선 아무리 어두운 밤이라도 절 믿어준 한 사람 덕분에 춤출 수 있었습니다. 고마워요, 내 가장 소중한 팬분!」" }
+                ],
+                endingId: "end_wooyoung_star"
+            },
+
+            // --- 7. 최종호 개인 루트 ---
+            "ch5_route_jongho": {
+                chapter: "제5장 [최종호 루트]: 0과 1 사이의 진심",
+                routeTag: "최종호 집중 서사",
+                bg: "security_hq",
+                date: "2138. 11. 01 (월)",
+                time: "23:45",
+                location: "안보국 지하 4층 메인 보안 서버실",
+                lines: [
+                    { speaker: null, text: "수십 개의 모니터 불빛만이 깜빡이는 서늘한 서버실에서, 밤샘 해킹 방어전을 마친 최종호가 피곤한 눈을 비비며 안경을 벗었다." },
+                    { speaker: "jongho", exp: "normal", pos: "right", text: "「원래 전 남의 단말기 기록이나 추적하면서 거리를 두는 편이거든요. 감정에 휘둘리면 분석이 틀어지니까요. ……근데 윤호 형이 위험해질 뻔했을 땐 손이 떨려서 타자도 못 치겠더라고요.」" },
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「종호야, 따뜻한 캔커피 사 왔어. 이제 그만 모니터 끄고 내 방에 가서 같이 쉬자.」" },
+                    { speaker: "jongho", exp: "smile", pos: "right", text: "「……형이 그렇게 다정하게 말하면, 저 진짜로 형 방에 눌러앉아 버립니다?」" },
+                    { speaker: null, text: "제6장 최후의 결단: 프로젝트 아케론의 최종 서버 데이터를 처리하는 마지막 밤, 두 사람의 관계는 어디로 향할까." }
+                ],
+                choices: [
+                    {
+                        text: "1. 「눌러앉아도 돼, 종호야.」 서툰 감정 표현 뒤에 숨은 종호의 외로움을 감싸 안으며 연인으로 마음을 나눈다.",
+                        effect: {},
+                        next: "ch6_end_jongho_love"
+                    },
+                    {
+                        text: "2. 종호와 함께 부패한 권력층의 기밀을 감시하고 정의를 실현하는 비밀 정보 파트너로서 굳건한 동맹을 맺는다.",
+                        effect: {},
+                        next: "ch6_end_jongho_partner"
+                    }
+                ]
+            },
+            "ch6_end_jongho_love": {
+                chapter: "제6장 종장: 로그오프 뒤의 온기",
+                bg: "yunho_room",
+                lines: [
+                    { speaker: "jongho", exp: "smile", pos: "center", text: "「윤호 형 옆에 있으면 어떤 방화벽보다 안전해요. 오늘 밤은 알람 다 끄고 형 품에서 푹 잘래요.」" }
+                ],
+                endingId: "end_jongho_love"
+            },
+            "ch6_end_jongho_partner": {
+                chapter: "제6장 종장: 아르카디아의 파수꾼",
+                bg: "security_hq",
+                lines: [
+                    { speaker: "jongho", exp: "smile", pos: "center", text: "「형은 현장을 맡아주세요. 등 뒤의 모든 통신망과 보안 문은 제가 완벽하게 열어둘 테니까요.」" }
+                ],
+                endingId: "end_jongho_partner"
+            },
+
+            // --- 8. 세계관 중심 & 특수 엔딩 독자 루트 ---
+            "ch5_route_independent": {
+                chapter: "제5장 [세계관 & 독자 루트]: 한 시민의 선택",
+                routeTag: "세계관·특수 서사",
+                bg: "yunho_room",
+                date: "2138. 11. 02 (화)",
+                time: "02:00",
+                location: "제9구역 304호 원룸 및 중앙 통신탑",
+                lines: [
+                    { speaker: null, text: "정윤호는 특정 인물의 그늘에 기대는 대신, 자신의 두 발로 이 디스토피아 도시의 격랑을 마주하기로 결심했다." },
+                    { speaker: null, text: "책상 위에는 프로젝트 아케론의 진실이 담긴 데이터, 그동안 모은 비상금 계좌, 그리고 여러 세력의 제안서들이 놓여 있다. 이제 윤호가 내릴 마지막 결정이 아르카디아와 자신의 운명을 결정짓는다." }
+                ],
+                choices: [
+                    {
+                        text: "1. [세계관 엔딩 - 도시 변혁] 모든 기밀 데이터를 공동 국제기구와 전 시민 네크워크에 동시 폭로해 도시의 권력 구조를 바꾼다.",
+                        effect: {},
+                        next: "ch6_end_world_reformer"
+                    },
+                    {
+                        text: "2. [세계관 엔딩 - 일상 회귀] 분쟁의 불씨를 조용히 정리하고, 제9구역 철물점과 소박한 일상을 지키며 살아간다.",
+                        effect: {},
+                        next: "ch6_end_world_ordinary"
+                    },
+                    {
+                        text: "3. [세계관 엔딩 - 도시 탈출] 모은 자금으로 이주 허가권을 구매해 동생 윤슬이 있는 학술 도시 '벨룸'으로 떠난다.",
+                        effect: {},
+                        next: "ch6_end_world_departure"
+                    },
+                    {
+                        text: "4. [특수 엔딩 3종 분기 보기] (독자 해결사 / 시민권 말소 / 회색빛 침묵)",
+                        effect: {},
+                        next: "ch5_route_special_sub"
+                    }
+                ]
+            },
+
+            "ch5_route_special_sub": {
+                chapter: "제5장 [특수 엔딩 분기]: 경계선 너머의 결말",
+                routeTag: "특수 엔딩",
+                bg: "street_night",
+                lines: [
+                    { speaker: null, text: "일반적인 선택과는 다른 극단적이거나 독자적인 행보가 초래한 세 가지 특수 결말 중 하나를 경험할 수 있습니다." }
+                ],
+                choices: [
+                    {
+                        text: "1. [특수 엔딩 - 독자 해결] 누구에게도 소속되지 않고 코어 중개료를 독점해 하층과 중층을 잇는 전설적인 독립 브로커가 된다.",
+                        effect: {},
+                        next: "ch6_end_special_solo"
+                    },
+                    {
+                        text: "2. [특수 엔딩 - 관계 파탄] 모든 세력의 제안을 배신하고 잠적하여, 시민 코드가 말소된 채 지하 최하층 어둠 속으로 사라진다.",
+                        effect: {},
+                        next: "ch6_end_special_burnout"
+                    },
+                    {
+                        text: "3. [특수 엔딩 - 진실 미발견] 모든 사건에서 손을 떼고 문을 걸어 잠근 채, 끝내 도시의 비밀을 알지 못한 채 일상을 반복한다.",
+                        effect: {},
+                        next: "ch6_end_special_ignorance"
+                    }
+                ]
+            },
+
+            "ch6_end_world_reformer": { bg: "street_night", lines: [{ speaker: "yunho", exp: "serious", pos: "center", text: "「아무리 높은 벽이라도 균열은 가장 작은 나사못에서부터 시작되는 법이니까.」" }], endingId: "end_world_reformer" },
+            "ch6_end_world_ordinary": { bg: "hardware_store", lines: [{ speaker: "yunho", exp: "smile", pos: "center", text: "「어서 오세요, 메가볼트 철물점입니다. 오늘도 무사히 하루가 시작되었네요.」" }], endingId: "end_world_ordinary" },
+            "ch6_end_world_departure": { bg: "street_night", lines: [{ speaker: "yunho", exp: "smile", pos: "center", text: "「윤슬아, 오빠가 지금 초고속 열차 탔어. 곧 벨룸에서 만나자.」" }], endingId: "end_world_departure" },
+            "ch6_end_special_solo": { bg: "nox_lounge", lines: [{ speaker: "yunho", exp: "smile", pos: "center", text: "「제9구역의 중개인을 찾으신다고요? 조건만 맞다면 어떤 물건이든 구해드리죠.」" }], endingId: "end_special_solo" },
+            "ch6_end_special_burnout": { bg: "street_night", lines: [{ speaker: null, text: "단말기의 전원이 완전히 꺼지고, 잿빛 산성비만이 이름 없는 그림자 위로 쏟아져 내렸다." }], endingId: "end_special_burnout" },
+            "ch6_end_special_ignorance": { bg: "hardware_store", lines: [{ speaker: null, text: "라디오에서 낯익은 이름들이 스쳐 지나갔지만, 윤호는 조용히 볼륨을 줄이고 선반의 먼지를 닦았다." }], endingId: "end_special_ignorance" }
+        };
+
+        /* =========================================================================
+           5. 게임 상태 관리 및 비공개 관계 분위기 엔진
+           ========================================================================= */
+        function createInitialState() {
+            return {
+                currentNodeId: "ch1_start",
+                lineIndex: 0,
+                money: 620,
+                paidRent: false,
+                route: "common",
+                inventory: ["개인 단말기 (구형)", "메가볼트 매장 작업 조끼", "304호 카드키"],
+                memories: ["2138년 10월 14일, 제9구역 메가볼트 철물점에서 오후 근무 시작"],
+                flags: {},
+                historyLog: [],
+                relations: {
+                    sunghwa: { name: "박성화 (33세)", role: "범죄조직 '녹스' 고위 간부", call: "성화 형 / 박성화 씨", keyMetric: "신뢰 · 경계심", intimacy: 5, trust: 0, favor: 10, alert: 25 },
+                    hongjoong: { name: "김홍중 (33세)", role: "안보국 특수기동경호단 소령", call: "홍중이 형 / 소령님", keyMetric: "신뢰 · 존경", intimacy: 0, trust: 10, favor: 0, alert: 5, respect: 10 },
+                    yeosang: { name: "강여상 (29세)", role: "지하 생활권 비공인 의료인", call: "여상 / 여상 씨", keyMetric: "신뢰 · 친밀도", intimacy: 0, trust: 5, favor: 5, alert: 5 },
+                    san: { name: "최산 (29세)", role: "인간 뇌 보존 군용 안드로이드", call: "산 / 산 씨", keyMetric: "친밀도 · 유대감", intimacy: 5, trust: 5, favor: 5, alert: 0 },
+                    mingi: { name: "송민기 (29세)", role: "하층민 정비공 & 절친", call: "민기 (반말)", keyMetric: "의존도 · 신뢰", intimacy: 80, trust: 65, favor: 50, alert: 0 },
+                    wooyoung: { name: "정우영 (29세)", role: "대형 기획사 인간 아이돌", call: "우영 / 우영 씨", keyMetric: "친밀도 · 호감", intimacy: 0, trust: 0, favor: 10, alert: 10 },
+                    jongho: { name: "최종호 (28세)", role: "사이버안보·정보분석국 대위", call: "종호 (종호는 '윤호 형' 호칭)", keyMetric: "신뢰 · 친밀도", intimacy: 0, trust: 5, favor: 0, alert: 10 }
+                }
+            };
+        }
+
+        let gameState = createInitialState();
+        let unlockedEndings = JSON.parse(localStorage.getItem("afterglow_unlocked_endings") || "[]");
+
+        let isTyping = false;
+        let typingTimer = null;
+        let currentFullText = "";
+        let textSpeed = 26;
+        let speedLabel = "보통";
+        let autoPlay = false;
+        let autoTimer = null;
+        let weatherEnabled = true;
+
+        window.onload = function () {
+            updateTitleEndingCount();
+            renderSaveSlots();
+        };
+
+        // 타이틀 화면 제어
+        function showTitleScreen() {
+            if (autoPlay) toggleAutoPlay();
+            updateTitleEndingCount();
+            document.getElementById("ending-screen").classList.add("hidden");
+            document.getElementById("ending-screen").classList.remove("flex");
+            document.getElementById("title-screen").classList.remove("hidden");
+        }
+
+        function startNewGame() {
+            gameState = createInitialState();
+            document.getElementById("title-screen").classList.add("hidden");
+            document.getElementById("ending-screen").classList.add("hidden");
+            document.getElementById("ending-screen").classList.remove("flex");
+            loadNode("ch1_start", 0);
+        }
+
+        function continueLastGame() {
+            const raw = localStorage.getItem("arcadia_vn_save_1");
+            if (raw) {
+                gameState = JSON.parse(raw);
+            }
+            document.getElementById("title-screen").classList.add("hidden");
+            loadNode(gameState.currentNodeId, gameState.lineIndex);
+        }
+
+        function updateTitleEndingCount() {
+            const el = document.getElementById("title-ending-count");
+            if (el) el.innerText = `${unlockedEndings.length} / ${Object.keys(ENDINGS_DB).length}`;
+        }
+
+        // 호감도 숫자를 노출하지 않고 정성적인 관계 분위기로 변환 (지침 9번 준수)
+        function describeRelationAtmosphere(charKey, r) {
+            const score = (r.favor || 0) + (r.trust || 0) + (r.intimacy || 0) - (r.alert || 0);
+            if (score >= 85) return "깊은 유대와 특별한 감정이 흐르는 각별한 사이";
+            if (score >= 45) return "서로를 깊이 신뢰하며 마음을 터놓기 시작한 사이";
+            if (score >= 20) return "호의적인 관심을 가지고 대화를 이어가는 사이";
+            if (r.alert >= 20) return "흥미를 느끼면서도 아직 서로를 탐색하고 경계하는 상태";
+            return "스쳐 지나간 안면이 있는 평범한 시민 관계";
+        }
+
+        // 노드 로드
+        function loadNode(nodeId, startLine = 0) {
+            const node = STORY_NODES[nodeId];
+            if (!node) return;
+
+            gameState.currentNodeId = nodeId;
+            gameState.lineIndex = startLine;
+
+            if (node.chapter) document.getElementById("chapter-indicator").innerText = node.chapter;
+            if (node.routeTag) document.getElementById("route-indicator").innerText = node.routeTag;
+            if (node.date) document.getElementById("hud-date").innerText = node.date;
+            if (node.time) document.getElementById("hud-time").innerText = node.time;
+            if (node.location) document.getElementById("hud-location").innerText = node.location;
+            document.getElementById("hud-money").innerText = `${gameState.money} C`;
+
+            if (node.bg && BG_ART[node.bg]) {
+                document.getElementById("bg-layer").innerHTML = BG_ART[node.bg];
+            }
+
+            document.getElementById("choice-overlay").classList.add("hidden");
+            document.getElementById("choice-overlay").classList.remove("flex");
+
+            showCurrentLine();
+        }
+
+        function showCurrentLine() {
+            const node = STORY_NODES[gameState.currentNodeId];
+            if (!node) return;
+
+            if (gameState.lineIndex >= node.lines.length) {
+                if (node.endingId) {
+                    triggerEnding(node.endingId);
+                    return;
+                }
+                if (node.choices && node.choices.length > 0) {
+                    presentChoices(node.choices);
+                } else if (node.next) {
+                    loadNode(node.next, 0);
+                }
+                return;
+            }
+
+            const lineObj = node.lines[gameState.lineIndex];
+            const speakerBox = document.getElementById("speaker-box");
+            const speakerName = document.getElementById("speaker-name");
+            const speakerTitle = document.getElementById("speaker-title");
+            const speakerDot = document.getElementById("speaker-dot");
+
+            if (lineObj.speaker && CHAR_INFO[lineObj.speaker]) {
+                const cInfo = CHAR_INFO[lineObj.speaker];
+                speakerBox.classList.remove("hidden");
+                speakerName.innerText = cInfo.name;
+                speakerTitle.innerText = cInfo.title;
+                speakerDot.style.backgroundColor = cInfo.color;
+                updateStanding(lineObj.speaker, lineObj.exp || "normal", lineObj.pos || "center");
+            } else {
+                speakerBox.classList.add("hidden");
+            }
+
+            const logName = lineObj.speaker ? CHAR_INFO[lineObj.speaker].name : "서술";
+            const lastLog = gameState.historyLog[gameState.historyLog.length - 1];
+            if (!lastLog || lastLog.text !== lineObj.text) {
+                gameState.historyLog.push({ speaker: logName, text: lineObj.text });
+            }
+
+            typeText(lineObj.text, !!lineObj.speaker);
+        }
+
+        function updateStanding(charKey, expression, position) {
+            const slots = {
+                left: document.getElementById("char-slot-left"),
+                center: document.getElementById("char-slot-center"),
+                right: document.getElementById("char-slot-right")
+            };
+
+            if (position === "center") {
+                slots.left.classList.add("hidden", "opacity-0");
+                slots.right.classList.add("hidden", "opacity-0");
+            } else {
+                slots.center.classList.add("hidden", "opacity-0");
+            }
+
+            Object.keys(slots).forEach(pos => {
+                if (pos !== position) {
+                    slots[pos].style.filter = "brightness(0.55) drop-shadow(0 15px 25px rgba(0,0,0,0.85))";
+                }
+            });
+
+            const targetSlot = slots[position] || slots.center;
+            targetSlot.innerHTML = generateStandingSVG(charKey, expression);
+            targetSlot.classList.remove("hidden");
+            setTimeout(() => {
+                targetSlot.classList.remove("translate-y-6", "opacity-0");
+                targetSlot.style.filter = "brightness(1) drop-shadow(0 15px 25px rgba(0,0,0,0.85))";
+            }, 20);
+        }
+
+        function typeText(text, isDialogue) {
+            if (typingTimer) clearInterval(typingTimer);
+            if (autoTimer) clearTimeout(autoTimer);
+
+            const textEl = document.getElementById("dialogue-text");
+            currentFullText = text;
+            isTyping = true;
+            textEl.classList.remove("typing-cursor");
+
+            textEl.className = isDialogue
+                ? "text-white text-base md:text-lg leading-relaxed font-medium tracking-wide pr-4"
+                : "text-slate-300 text-base md:text-lg leading-relaxed font-normal italic tracking-wide pr-4";
+
+            if (textSpeed === 0) {
+                textEl.innerText = currentFullText;
+                finishTyping();
+                return;
+            }
+
+            textEl.innerText = "";
+            let idx = 0;
+            typingTimer = setInterval(() => {
+                textEl.innerText += currentFullText.charAt(idx);
+                idx++;
+                if (idx >= currentFullText.length) {
+                    finishTyping();
+                }
+            }, textSpeed);
+        }
+
+        function finishTyping() {
+            if (typingTimer) clearInterval(typingTimer);
+            isTyping = false;
+            const textEl = document.getElementById("dialogue-text");
+            textEl.innerText = currentFullText;
+            textEl.classList.add("typing-cursor");
+
+            if (autoPlay) {
+                autoTimer = setTimeout(() => {
+                    handleNextDialogue();
+                }, 1700);
+            }
+        }
+
+        function handleNextDialogue() {
+            if (!document.getElementById("choice-overlay").classList.contains("hidden")) return;
+            if (!document.getElementById("ending-screen").classList.contains("hidden")) return;
+
+            if (isTyping) {
+                finishTyping();
+            } else {
+                gameState.lineIndex++;
+                showCurrentLine();
+            }
+        }
+
+        function presentChoices(choices) {
+            if (autoPlay) toggleAutoPlay();
+
+            const overlay = document.getElementById("choice-overlay");
+            const list = document.getElementById("choice-list");
+            list.innerHTML = "";
+
+            choices.forEach((ch) => {
+                const btn = document.createElement("button");
+                btn.className = "w-full text-left bg-slate-900/95 hover:bg-emerald-950/90 border border-slate-600/80 hover:border-emerald-400 px-6 py-4 rounded-2xl shadow-xl transition duration-200 flex items-center justify-between group";
+                btn.innerHTML = `
+                    <span class="text-slate-100 group-hover:text-white font-medium text-sm md:text-base">${ch.text}</span>
+                    <span class="text-emerald-400 opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition font-bold ml-3 shrink-0">선택 ▶</span>
+                `;
+                btn.onclick = () => selectChoice(ch);
+                list.appendChild(btn);
+            });
+
+            overlay.classList.remove("hidden");
+            overlay.classList.add("flex");
+        }
+
+        function selectChoice(choice) {
+            gameState.historyLog.push({ speaker: "선택", text: `▶ ${choice.text}` });
+
+            if (choice.effect) {
+                if (choice.effect.money) {
+                    gameState.money += choice.effect.money;
+                    document.getElementById("hud-money").innerText = `${gameState.money} C`;
+                }
+                if (choice.effect.paidRent) gameState.paidRent = true;
+                if (choice.effect.route) gameState.route = choice.effect.route;
+                if (choice.effect.flag) gameState.flags[choice.effect.flag] = true;
+                if (choice.effect.flag2) gameState.flags[choice.effect.flag2] = true;
+                if (choice.effect.memory && !gameState.memories.includes(choice.effect.memory)) {
+                    gameState.memories.push(choice.effect.memory);
+                }
+                if (choice.effect.item && !gameState.inventory.includes(choice.effect.item)) {
+                    gameState.inventory.push(choice.effect.item);
+                    showToast(`소지품 추가: ${choice.effect.item}`);
+                }
+                if (choice.effect.item2 && !gameState.inventory.includes(choice.effect.item2)) {
+                    gameState.inventory.push(choice.effect.item2);
+                }
+                if (choice.effect.rel) {
+                    for (const [charKey, changes] of Object.entries(choice.effect.rel)) {
+                        const target = gameState.relations[charKey];
+                        if (target) {
+                            if (changes.intimacy) target.intimacy = Math.max(0, Math.min(100, target.intimacy + changes.intimacy));
+                            if (changes.trust) target.trust = Math.max(0, Math.min(100, target.trust + changes.trust));
+                            if (changes.favor) target.favor = Math.max(0, Math.min(100, target.favor + changes.favor));
+                            if (changes.alert) target.alert = Math.max(0, target.alert + changes.alert);
+                            if (changes.respect) target.respect = (target.respect || 0) + changes.respect;
+                        }
+                    }
+                }
+            }
+
+            if (choice.next) {
+                loadNode(choice.next, 0);
+            }
+        }
+
+        // 엔딩 달성 및 연출
+        function triggerEnding(endingId) {
+            const endData = ENDINGS_DB[endingId];
+            if (!endData) return;
+
+            if (!unlockedEndings.includes(endingId)) {
+                unlockedEndings.push(endingId);
+                localStorage.setItem("afterglow_unlocked_endings", JSON.stringify(unlockedEndings));
+                showToast(`새로운 엔딩 달성: ${endData.title}`);
+            }
+
+            document.getElementById("ending-type-badge").innerText = endData.category;
+            document.getElementById("ending-title").innerText = endData.title;
+            document.getElementById("ending-subtitle").innerText = endData.subtitle;
+            document.getElementById("ending-desc").innerText = endData.desc;
+
+            const screen = document.getElementById("ending-screen");
+            screen.classList.remove("hidden");
+            screen.classList.add("flex");
+            updateTitleEndingCount();
+        }
+
+        function returnToHubAfterEnding() {
+            document.getElementById("ending-screen").classList.add("hidden");
+            document.getElementById("ending-screen").classList.remove("flex");
+            loadNode("ch4_storm_gathering", 0);
+        }
+
+        /* =========================================================================
+           6. 모달 및 편의 기능
+           ========================================================================= */
+        function toggleAutoPlay() {
+            autoPlay = !autoPlay;
+            const btn = document.getElementById("btn-auto");
+            if (autoPlay) {
+                btn.classList.add("text-emerald-400", "font-bold");
+                btn.innerText = "자동 진행: 켜짐";
+                if (!isTyping) handleNextDialogue();
+            } else {
+                btn.classList.remove("text-emerald-400", "font-bold");
+                btn.innerText = "자동 진행(Auto)";
+                if (autoTimer) clearTimeout(autoTimer);
+            }
+        }
+
+        function cycleTextSpeed() {
+            if (textSpeed === 26) {
+                textSpeed = 10;
+                speedLabel = "빠름";
+            } else if (textSpeed === 10) {
+                textSpeed = 0;
+                speedLabel = "즉시";
+            } else {
+                textSpeed = 26;
+                speedLabel = "보통";
+            }
+            document.getElementById("btn-speed").innerText = `속도: ${speedLabel}`;
+            const setBtn = document.getElementById("setting-speed-btn");
+            if (setBtn) setBtn.innerText = speedLabel;
+        }
+
+        function toggleWeatherEffect() {
+            weatherEnabled = !weatherEnabled;
+            const layer = document.getElementById("weather-layer");
+            const btn = document.getElementById("setting-weather-btn");
+            if (weatherEnabled) {
+                layer.classList.remove("hidden");
+                btn.innerText = "켜짐";
+            } else {
+                layer.classList.add("hidden");
+                btn.innerText = "꺼짐";
+            }
+        }
+
+        function openModal(id) {
+            if (id === "modal-log") renderLogModal();
+            if (id === "modal-relations") renderRelationsModal();
+            if (id === "modal-status") renderStatusModal();
+            if (id === "modal-saveload") renderSaveSlots();
+            if (id === "modal-endings") renderEndingsModal();
+
+            const el = document.getElementById(id);
+            el.classList.remove("hidden");
+            el.classList.add("flex");
+        }
+
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            el.classList.add("hidden");
+            el.classList.remove("flex");
+        }
+
+        function renderLogModal() {
+            const container = document.getElementById("log-content");
+            container.innerHTML = gameState.historyLog.map(item => `
+                <div class="border-b border-slate-800/80 pb-3">
+                    <span class="text-xs font-bold ${item.speaker === '선택' ? 'text-amber-400' : 'text-emerald-400'} block mb-1">${item.speaker}</span>
+                    <p class="text-slate-200 leading-relaxed">${item.text}</p>
+                </div>
+            `).join("");
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function renderRelationsModal() {
+            const container = document.getElementById("relations-content");
+            container.innerHTML = Object.entries(gameState.relations).map(([key, r]) => {
+                const isFocused = gameState.route === key;
+                return `
+                <div class="bg-slate-950 border ${isFocused ? 'border-emerald-500/70' : 'border-slate-800'} p-4 rounded-xl space-y-2.5">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-slate-100 text-base flex items-center gap-2">
+                                ${r.name}
+                                ${isFocused ? '<span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full">현재 중심 서사</span>' : ''}
+                            </h4>
+                            <span class="text-xs text-emerald-400">${r.role}</span>
+                        </div>
+                        <span class="text-[11px] bg-slate-900 border border-slate-700 px-2.5 py-1 rounded-full text-slate-300">호칭: ${r.call}</span>
+                    </div>
+                    <div class="bg-slate-900/90 border border-slate-800/90 p-3 rounded-lg space-y-1">
+                        <div class="text-[11px] text-slate-400">핵심 관계 축: <span class="text-slate-200 font-medium">${r.keyMetric}</span></div>
+                        <div class="text-xs text-amber-300 font-medium">현재 분위기: "${describeRelationAtmosphere(key, r)}"</div>
+                    </div>
+                </div>
+            `}).join("");
+        }
+
+        function renderStatusModal() {
+            document.getElementById("stat-modal-money").innerText = `${gameState.money} C`;
+            document.getElementById("stat-modal-rent").innerText = gameState.paidRent ? "납부 완료 (0 C)" : "450 C (10/15 기한)";
+            const routeNames = {
+                common: "제9구역 공통 일상",
+                sunghwa: "박성화 & 범죄조직 녹스 서사",
+                hongjoong: "김홍중 & 안보국 특수기동경호단 서사",
+                yeosang: "강여상 & 지하 생활권 의료 서사",
+                san: "최산 & 군용 안드로이드 정체성 서사",
+                mingi: "송민기 & 암시장 정비공 서사",
+                wooyoung: "정우영 & 엔터테인먼트 이면 서사",
+                jongho: "최종호 & 사이버안보 정보전 서사",
+                independent: "독자 행동 & 세계관 중심 서사"
+            };
+            document.getElementById("stat-modal-focus").innerText = routeNames[gameState.route] || "공통 서사";
+
+            const inv = document.getElementById("inventory-list");
+            inv.innerHTML = gameState.inventory.map(item => `
+                <div class="bg-slate-950 border border-slate-800 px-3.5 py-2.5 rounded-xl text-slate-200 flex items-center gap-2">
+                    <span class="text-emerald-400">▪</span>
+                    <span>${item}</span>
+                </div>
+            `).join("");
+
+            const mem = document.getElementById("memory-list");
+            mem.innerHTML = (gameState.memories || []).map(m => `<div>• ${m}</div>`).join("");
+        }
+
+        function renderEndingsModal() {
+            const container = document.getElementById("endings-content");
+            container.innerHTML = Object.values(ENDINGS_DB).map(end => {
+                const unlocked = unlockedEndings.includes(end.id);
+                return `
+                    <div class="p-4 rounded-xl border ${unlocked ? 'bg-slate-950 border-emerald-500/50' : 'bg-slate-950/50 border-slate-800 opacity-60'} space-y-1.5">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[11px] font-bold ${unlocked ? 'text-emerald-400' : 'text-slate-500'}">${end.category}</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full ${unlocked ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-400'}">${unlocked ? '달성 완료' : '미발견'}</span>
+                        </div>
+                        <h4 class="font-bold text-base ${unlocked ? 'text-white' : 'text-slate-400'}">${unlocked ? end.title : '？？？ (미발견 엔딩)'}</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">${unlocked ? end.desc : '이야기 속의 선택과 인연의 누적에 따라 개방되는 결말입니다.'}</p>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function renderSaveSlots() {
+            const container = document.getElementById("save-slots");
+            let html = "";
+            for (let i = 1; i <= 3; i++) {
+                const raw = localStorage.getItem(`arcadia_vn_save_${i}`);
+                const data = raw ? JSON.parse(raw) : null;
+                html += `
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex justify-between items-center">
+                        <div>
+                            <div class="font-bold text-slate-200">슬롯 ${i} ${data ? `<span class="text-emerald-400 text-xs ml-2">${data.savedAt}</span>` : '<span class="text-slate-500 text-xs ml-2">(비어 있음)</span>'}</div>
+                            <div class="text-xs text-slate-400 mt-1">${data ? `${STORY_NODES[data.currentNodeId]?.chapter || ''} / 소지금 ${data.money} C` : '저장된 데이터가 없습니다.'}</div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="saveGame(${i})" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold">저장</button>
+                            ${data ? `<button onclick="loadGame(${i})" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3.5 py-1.5 rounded-lg text-xs font-semibold">불러오기</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        function saveGame(slot) {
+            const payload = {
+                ...gameState,
+                savedAt: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
+            };
+            localStorage.setItem(`arcadia_vn_save_${slot}`, JSON.stringify(payload));
+            renderSaveSlots();
+            showToast(`슬롯 ${slot}에 진행 상황이 저장되었습니다.`);
+        }
+
+        function loadGame(slot) {
+            const raw = localStorage.getItem(`arcadia_vn_save_${slot}`);
+            if (!raw) return;
+            gameState = JSON.parse(raw);
+            closeModal("modal-saveload");
+            document.getElementById("title-screen").classList.add("hidden");
+            document.getElementById("ending-screen").classList.add("hidden");
+            document.getElementById("ending-screen").classList.remove("flex");
+            loadNode(gameState.currentNodeId, gameState.lineIndex);
+            showToast(`슬롯 ${slot} 데이터를 불러왔습니다.`);
+        }
+
+        function executeCustomAction() {
+            const input = document.getElementById("custom-input-box");
+            const val = input.value.trim();
+            if (!val) return;
+
+            closeModal("modal-custom");
+            input.value = "";
+
+            const node = STORY_NODES[gameState.currentNodeId];
+            const insertIdx = Math.min(gameState.lineIndex + 1, node.lines.length);
+            node.lines.splice(insertIdx, 0,
+                { speaker: "yunho", exp: "normal", pos: "center", text: `(${val})` },
+                { speaker: null, text: `윤호는 잠시 『${val}』 행동을 취한 뒤, 다시 눈앞의 상황에 집중했다.` }
+            );
+            gameState.memories.push(`직접 행동: ${val}`);
+
+            showToast("보조 행동이 현재 장면에 반영되었습니다.");
+            handleNextDialogue();
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById("vn-toast");
+            t.innerText = msg;
+            t.classList.remove("translate-x-60", "opacity-0");
+            setTimeout(() => {
+                t.classList.add("translate-x-60", "opacity-0");
+            }, 2600);
+        }
+
+        window.addEventListener("keydown", (e) => {
+            if ((e.key === " " || e.key === "Enter") &&
+                document.getElementById("modal-custom").classList.contains("hidden") &&
+                document.getElementById("title-screen").classList.contains("hidden")) {
+                const choiceHidden = document.getElementById("choice-overlay").classList.contains("hidden");
+                const endingHidden = document.getElementById("ending-screen").classList.contains("hidden");
+                if (choiceHidden && endingHidden) {
+                    e.preventDefault();
+                    handleNextDialogue();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
