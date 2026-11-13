@@ -439,6 +439,69 @@
 
     <script>
         /* =========================================================================
+           [중요] ★ 캐릭터 이미지 / 아이콘 교체 전용 설정 구역 (GPT 작업용) ★
+           -------------------------------------------------------------------------
+           나중에 캐릭터 스탠딩 사진이나 아이콘 이미지 URL(또는 파일 경로)을 넣으실 때는
+           아래 CHARACTER_IMAGES 객체의 각 표정(normal, smile, serious, cold, surprised, smirk)에
+           이미지 주소를 입력하시면 기존 임시 그래픽 대신 해당 사진이 즉시 화면에 출력됩니다!
+           예시: normal: "images/yunho_normal.png" 또는 "https://.../yunho.png"
+           ========================================================================= */
+        const CHARACTER_IMAGES = {
+            yunho: {
+                normal: "",     // [이미지 넣을 곳] 정윤호 - 기본 표정
+                smile: "",      // [이미지 넣을 곳] 정윤호 - 미소/다정한 표정
+                serious: "",    // [이미지 넣을 곳] 정윤호 - 진지/고민 표정
+                surprised: ""   // [이미지 넣을 곳] 정윤호 - 놀람/당황 표정
+            },
+            sunghwa: {
+                normal: "",     // [이미지 넣을 곳] 박성화 - 기본 표정
+                smile: "",      // [이미지 넣을 곳] 박성화 - 부드러운 미소
+                smirk: "",      // [이미지 넣을 곳] 박성화 - 나른한 비소/여유
+                cold: "",       // [이미지 넣을 곳] 박성화 - 서늘하고 차가운 표정
+                serious: ""     // [이미지 넣을 곳] 박성화 - 위압적인 진지한 표정
+            },
+            hongjoong: {
+                normal: "",     // [이미지 넣을 곳] 김홍중 - 기본 단정한 표정
+                smile: "",      // [이미지 넣을 곳] 김홍중 - 옅은 미소
+                serious: "",    // [이미지 넣을 곳] 김홍중 - 엄격한 장교 표정
+                surprised: ""   // [이미지 넣을 곳] 김홍중 - 놀란 표정
+            },
+            yeosang: {
+                normal: "",     // [이미지 넣을 곳] 강여상 - 기본 무표정/온화함
+                smile: "",      // [이미지 넣을 곳] 강여상 - 나긋한 미소
+                serious: "",    // [이미지 넣을 곳] 강여상 - 진료/집중 표정
+                surprised: ""   // [이미지 넣을 곳] 강여상 - 놀란 표정
+            },
+            san: {
+                normal: "",     // [이미지 넣을 곳] 최산 - 기본 표정
+                smile: "",      // [이미지 넣을 곳] 최산 - 장난기 넘치는 환한 웃음
+                serious: "",    // [이미지 넣을 곳] 최산 - 군용 전투원 특유의 서늘한 표정
+                surprised: ""   // [이미지 넣을 곳] 최산 - 당황/놀람 표정
+            },
+            mingi: {
+                normal: "",     // [이미지 넣을 곳] 송민기 - 기본 나른한 표정
+                smile: "",      // [이미지 넣을 곳] 송민기 - 능청스럽고 장난스러운 웃음
+                serious: "",    // [이미지 넣을 곳] 송민기 - 흔치 않은 진지한 표정
+                surprised: ""   // [이미지 넣을 곳] 송민기 - 기겁/당황 표정
+            },
+            wooyoung: {
+                normal: "",     // [이미지 넣을 곳] 정우영 - 기본 세련된 표정
+                smile: "",      // [이미지 넣을 곳] 정우영 - 화려하고 애교 섞인 미소
+                serious: "",    // [이미지 넣을 곳] 정우영 - 무대 뒤 지치고 예민한 표정
+                surprised: ""   // [이미지 넣을 곳] 정우영 - 깜짝 놀란 표정
+            },
+            jongho: {
+                normal: "",     // [이미지 넣을 곳] 최종호 - 기본 차분/피곤한 표정
+                smile: "",      // [이미지 넣을 곳] 최종호 - 은근한 미소
+                serious: "",    // [이미지 넣을 곳] 최종호 - 해킹/정보 분석 집중 표정
+                surprised: ""   // [이미지 넣을 곳] 최종호 - 놀란 표정
+            }
+        };
+
+        // 캐릭터 슬롯에 이미지 자리 표시 배지를 띄울지 여부 (나중에 사진 넣은 뒤 false로 바꾸면 배지가 숨겨집니다)
+        const SHOW_IMAGE_PLACEHOLDER_BADGE = true;
+
+        /* =========================================================================
            1. 배경 아트워크 (7종 장소/분위기 고해상도 SVG)
            ========================================================================= */
         const BG_ART = {
@@ -569,7 +632,7 @@
         };
 
         /* =========================================================================
-           2. 캐릭터 스탠딩 일러스트 생성기
+           2. 캐릭터 스탠딩 일러스트 생성기 (이미지 자동 감지 & 플레이스홀더 표시 포함)
            ========================================================================= */
         const CHAR_INFO = {
             yunho: { name: "정윤호", title: "29세 / 주인공", color: "#34d399", hair: "#3b2f2f", coat: "#334155", inner: "#94a3b8" },
@@ -585,6 +648,23 @@
         function generateStandingSVG(charKey, expression = "normal") {
             const c = CHAR_INFO[charKey];
             if (!c) return "";
+
+            // 1) 만약 CHARACTER_IMAGES에 실제 이미지 경로가 등록되어 있다면 <img> 태그를 반환합니다.
+            const customImgUrl = CHARACTER_IMAGES[charKey] && (CHARACTER_IMAGES[charKey][expression] || CHARACTER_IMAGES[charKey].normal);
+            if (customImgUrl && customImgUrl.trim() !== "") {
+                return `
+                    <div class="relative flex flex-col items-center" data-char="${charKey}" data-exp="${expression}">
+                        <img src="${customImgUrl}" alt="${c.name} (${expression})" class="w-[290px] md:w-[370px] max-h-[560px] object-contain select-none"/>
+                    </div>
+                `;
+            }
+
+            // 2) 이미지가 아직 없을 때 표시할 위치 안내 배지 (GPT에게 이미지 교체를 맡길 때 식별용)
+            const badgeHtml = SHOW_IMAGE_PLACEHOLDER_BADGE ? `
+                <div class="mb-2 px-3 py-1 rounded-full bg-slate-950/90 border border-dashed border-emerald-400/70 text-[11px] text-emerald-300 font-mono shadow-lg text-center">
+                    [캐릭터 이미지 슬롯] ID: <strong class="text-white">${charKey}</strong> / 표정: <strong class="text-amber-300">${expression}</strong>
+                </div>
+            ` : "";
 
             let eyePath = `<line x1="155" y1="155" x2="180" y2="155" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
                            <line x1="220" y1="155" x2="245" y2="155" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>`;
@@ -614,29 +694,33 @@
                                                <line x1="186" y1="154" x2="214" y2="154" stroke="#94a3b8" stroke-width="2.5"/>` : "";
 
             return `
-                <svg viewBox="0 0 400 560" class="w-[290px] md:w-[360px] h-auto select-none">
-                    <defs>
-                        <linearGradient id="coat_${charKey}" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="${c.coat}"/>
-                            <stop offset="100%" stop-color="#05070a"/>
-                        </linearGradient>
-                    </defs>
-                    <path d="M 65 560 L 95 295 Q 130 265 200 265 Q 270 265 305 295 L 335 560 Z" fill="url(#coat_${charKey})" stroke="${c.color}" stroke-width="2" stroke-opacity="0.45"/>
-                    <polygon points="160,268 240,268 215,430 185,430" fill="${c.inner}"/>
-                    <rect x="176" y="218" width="48" height="62" rx="10" fill="#f1dca7"/>
-                    ${cyberDetail}
-                    <path d="M 138 130 Q 138 232 200 238 Q 262 232 262 130 Q 262 75 200 75 Q 138 75 138 130 Z" fill="#f8e5b8"/>
-                    ${browPath}
-                    ${eyePath}
-                    <circle cx="168" cy="156" r="4.5" fill="#1e293b"/>
-                    <circle cx="232" cy="156" r="4.5" fill="#1e293b"/>
-                    <line x1="200" y1="164" x2="197" y2="186" stroke="#d4a373" stroke-width="2.5" stroke-linecap="round"/>
-                    ${mouthPath}
-                    ${glassesDetail}
-                    <path d="M 130 145 Q 125 65 200 62 Q 275 65 270 145 Q 255 98 205 105 Q 160 100 130 145 Z" fill="${c.hair}"/>
-                    <polygon points="145,270 176,250 188,370 130,340" fill="${c.coat}" stroke="#334155" stroke-width="1.5"/>
-                    <polygon points="255,270 224,250 212,370 270,340" fill="${c.coat}" stroke="#334155" stroke-width="1.5"/>
-                </svg>
+                <!-- [GPT 캐릭터 이미지 삽입 위치] data-char="${charKey}" data-exp="${expression}" -->
+                <div class="relative flex flex-col items-center" data-char="${charKey}" data-exp="${expression}">
+                    ${badgeHtml}
+                    <svg viewBox="0 0 400 560" class="w-[280px] md:w-[345px] h-auto select-none">
+                        <defs>
+                            <linearGradient id="coat_${charKey}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${c.coat}"/>
+                                <stop offset="100%" stop-color="#05070a"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M 65 560 L 95 295 Q 130 265 200 265 Q 270 265 305 295 L 335 560 Z" fill="url(#coat_${charKey})" stroke="${c.color}" stroke-width="2" stroke-opacity="0.45"/>
+                        <polygon points="160,268 240,268 215,430 185,430" fill="${c.inner}"/>
+                        <rect x="176" y="218" width="48" height="62" rx="10" fill="#f1dca7"/>
+                        ${cyberDetail}
+                        <path d="M 138 130 Q 138 232 200 238 Q 262 232 262 130 Q 262 75 200 75 Q 138 75 138 130 Z" fill="#f8e5b8"/>
+                        ${browPath}
+                        ${eyePath}
+                        <circle cx="168" cy="156" r="4.5" fill="#1e293b"/>
+                        <circle cx="232" cy="156" r="4.5" fill="#1e293b"/>
+                        <line x1="200" y1="164" x2="197" y2="186" stroke="#d4a373" stroke-width="2.5" stroke-linecap="round"/>
+                        ${mouthPath}
+                        ${glassesDetail}
+                        <path d="M 130 145 Q 125 65 200 62 Q 275 65 270 145 Q 255 98 205 105 Q 160 100 130 145 Z" fill="${c.hair}"/>
+                        <polygon points="145,270 176,250 188,370 130,340" fill="${c.coat}" stroke="#334155" stroke-width="1.5"/>
+                        <polygon points="255,270 224,250 212,370 270,340" fill="${c.coat}" stroke="#334155" stroke-width="1.5"/>
+                    </svg>
+                </div>
             `;
         }
 
@@ -796,44 +880,60 @@
         };
 
         /* =========================================================================
-           4. 장편 6챕터 스토리 스크립트 (제1장~제6장 완결 및 7인 루트·멀티 엔딩)
+           4. 장편 6챕터 스토리 스크립트 (대폭 확장판: 캐릭터 순차 등장 & 일상·서사 디테일 강화)
+           -------------------------------------------------------------------------
+           * 캐릭터가 한꺼번에 몰려나오지 않고 날마다 자연스러운 계기로 1~2명씩 등장합니다.
+           * 10/14 낮(철물점): 정윤호의 일상 → 박성화(낯선 손님) → 송민기(죽마고우)
+           * 10/14 밤(퇴근길~원룸): 김홍중(야간 검문 장교) & 최종호(통신 분석관)
+           * 10/15 오후(철물점~오락실): 최산(고전 게임팩과 리볼버 그립을 찾으러 온 손님)
+           * 10/16 저녁(언더 시티 B2): 강여상(다친 손 치료와 동생 상비약) → 정우영(여상의 진료소에 숨어든 아이돌)
            ========================================================================= */
         const STORY_NODES = {
             // ==================== [제1장: 잿빛 하늘 아래의 나사못 (10월 14일 낮)] ====================
             "ch1_start": {
                 chapter: "제1장: 잿빛 하늘 아래의 나사못",
-                routeTag: "공통 서사",
+                routeTag: "공통 일상 · 제1일 낮",
                 bg: "hardware_store",
                 date: "2138. 10. 14 (목)",
-                time: "14:15",
+                time: "14:10",
                 location: "제9구역 메가볼트 철물점",
                 lines: [
                     { speaker: null, text: "지잉— 철컥. 매장 천장에 매달린 구형 환기팬이 기름때 낀 날개를 무겁게 돌리며 낮게 웅웅거렸다." },
-                    { speaker: null, text: "통유리창 너머로는 상층 스카이 섹터의 거대한 인공 지반에 가려 대낮인데도 초저녁처럼 침침한 하층 제9구역의 거리가 내다보였다." },
-                    { speaker: "yunho", exp: "normal", pos: "center", text: "「……이번 달에 동생 윤슬이 학비 보태주고 내일 월세 450 크레딧까지 내고 나면, 진짜로 남는 게 없네.」" },
-                    { speaker: null, text: "정윤호는 감청색 매장 조끼 주머니에서 손목 단말기를 확인하고는 작게 한숨을 내쉬었다. 개조 수술 하나 받지 않은 순수 인간 하층민으로 살아가는 일은 늘 빠듯한 숫자들의 연속이었다." },
-                    { speaker: null, text: "바로 그때, 손목 단말기가 요란하게 진동하며 동갑내기 절친 송민기의 메시지를 띄웠다." },
-                    { speaker: "mingi", exp: "smile", pos: "center", text: "[야 정윤호! 너 오늘 오후 근무 맞지? 거기 A-12 규격 서보모터 폐기 처분하는 거 남는 거 있냐? 아, 그리고 너네 점장 영감님 지금 매장에 계심?]" },
-                    { speaker: null, text: "보나 마나 어젯밤에도 지하 구역 도박장에서 주머니를 다 털리고선 부품 구걸에 밥 타령을 하려는 게 뻔했다." },
-                    { speaker: null, text: "윤호가 답장을 칠지 말지 고민하던 찰나, 매장 출입문 센서가 울리며 차가운 스모그 바람과 함께 낯선 손님 한 명이 들어섰다." },
+                    { speaker: null, text: "통유리창 밖으로는 상층 구역인 '스카이 섹터'의 거대한 인공 지반에 가려, 대낮인데도 초저녁처럼 침침한 하층 제9구역의 거리가 내다보였다." },
+                    { speaker: null, text: "잿빛 스모그 사이로 낡은 홀로그램 간판들이 흐릿하게 번지고, 방수 코트를 뒤집어쓴 하층민 노동자들과 도색이 벗겨진 구형 짐꾼 안드로이드들이 젖은 아스팔트 위를 바쁘게 오가고 있었다." },
+                    { speaker: "yunho", exp: "normal", pos: "center", text: "「3번 선반에 티타늄 나사 스무 상자, 보급형 유압 실린더 여덟 개…… 휴, 오늘 입고된 물량은 얼추 정리했네.」" },
+                    { speaker: null, text: "정윤호는 무채색 셔츠 위에 '메가볼트(MegaBolt)' 로고가 찍힌 감청색 작업 조끼를 걸친 채, 소형 재고 스캐너를 내려놓으며 가볍게 기지개를 켰다." },
+                    { speaker: null, text: "스물아홉 살. 모두가 흔하게 받는 기초 신경 임플란트나 인공 장기 수술 하나 받지 않은 '순수 인간' 신체인 그에게, 이 대형 철물 자재 매장의 장기 파트타임 일자리는 꽤 소중한 밥줄이었다." },
+                    { speaker: null, text: "점심시간이 막 지난 오후 두 시 무렵의 매장은 한산했다. 카운터 안쪽에서는 오십 대 중반의 지점장이 홀로그램 신문을 띄워놓고 꾸벅꾸벅 졸고 있었고, 구석의 구형 라디오에서는 지지직거리는 노이즈와 함께 경쾌한 댄스곡이 흘러나왔다." },
+                    { speaker: null, text: "요즘 미들 코어에서 가장 인기가 높다는 몇 안 되는 인간 아이돌, '정우영'의 솔로곡이었다. 윤호는 자기도 모르게 콧노래를 흥얼거리며 선반 위의 먼지를 털어냈다." },
+                    { speaker: null, text: "바로 그때, 왼쪽 손목에 찬 구형 단말기가 짧게 두 번 진동하며 반투명한 알림창을 띄웠다." },
+                    { speaker: "yunho", exp: "serious", pos: "center", text: "「……아, 맞다. 내일이 벌써 15일이구나.」" },
+                    { speaker: null, text: "첫 번째 알림은 제9구역 주거관리망에서 보낸 정기 임대료 납부 고지서였다. 『304호 정윤호 님, 10월분 임대료 450 C 납부 기한이 내일 자정까지입니다.』" },
+                    { speaker: null, text: "나흘 전 월급날 받은 1,650 크레딧에서 학술 도시 '벨룸'에 있는 동생 윤슬이의 생활비로 400 크레딧을 먼저 송금하고, 공과금과 통신비를 떼고 나니 현재 수중에 남은 돈은 딱 620 크레딧뿐이었다." },
+                    { speaker: "yunho", exp: "normal", pos: "center", text: "「내일 월세 450 크레딧 내고 나면…… 다음 달 월급날까지 170 크레딧으로 버텨야 하네. 당분간 배달 음식은 꿈도 꾸지 말고 편의점 마감 도시락만 먹어야겠다.」" },
+                    { speaker: null, text: "윤호가 쓴웃음을 지으며 두 번째 메시지 창을 열자, 너무나 익숙한 동갑내기 절친 '송민기'의 이름이 떠올랐다." },
+                    { speaker: null, text: "『[발신: 송민기] 야 정윤호! 너 오늘 오후 근무 맞지? 거기 A-12 규격 소형 서보모터 폐기 처분하는 거 남는 거 있냐? 아, 그리고 나 어제부터 쫄쫄 굶었는데 너네 점장 영감님 지금 매장에 계심?』" },
+                    { speaker: "yunho", exp: "smile", pos: "center", text: "「이 자식, 어젯밤에도 지하 구역 도박장에서 돈 다 날렸구나. 오자마자 부품 구걸에 밥 타령이네.」" },
+                    { speaker: null, text: "윤호가 설레설레 고개를 저으며 답장을 치려던 찰나였다. *딸랑—* 매장 정문 출입문 센서가 울리며 차가운 스모그 바람이 훅 밀려들었다." },
                     { speaker: "sunghwa", exp: "cold", pos: "center", text: "「………….」" },
-                    { speaker: null, text: "하층 구역의 허름한 철물점에서는 좀처럼 보기 힘든 고급 검은색 롱코트 차림의 남자였다. 우산을 접어 털어내는 손목 위로 은빛 시계와 함께 서늘하고 위험한 기운이 감돌았다." },
-                    { speaker: null, text: "카운터에서 졸고 있던 점장 대신, 남자의 시선이 진열대 앞에 서 있는 윤호에게 곧장 꽂혔다." }
+                    { speaker: null, text: "매장 안으로 들어선 사람은 하층 제9구역에서는 좀처럼 마주치기 힘든 분위기의 남자였다." },
+                    { speaker: null, text: "결이 고운 검은색 롱코트에 한 치의 흐트러짐 없이 넘긴 검은 머리. 빗방울이 맺힌 우산을 접어 털어내는 손목 위로 은빛의 최고급 기계식 시계가 서늘하게 빛났다." },
+                    { speaker: null, text: "무표정할 때는 숨이 막힐 듯 날카롭고 위압적인 인상이었으나, 매장 안을 훑어보던 남자의 깊은 눈동자가 진열대 사이에 서 있는 윤호에게 닿아 멈추었다." }
                 ],
                 choices: [
                     {
-                        text: "1. 단말기를 집어넣고 매장 직원답게 친절한 미소로 다가가 손님을 응대한다.",
-                        effect: { rel: { sunghwa: { favor: 6, trust: 4 } }, memory: "박성화와의 첫 만남에서 친절하고 침착하게 응대함" },
+                        text: "1. 단말기를 집어넣고 매장 직원답게 친절하고 부드러운 미소로 다가가 손님을 응대한다.",
+                        effect: { rel: { sunghwa: { favor: 6, trust: 4 } }, memory: "철물점을 찾은 낯선 손님(박성화)에게 친절하고 침착하게 첫인사를 건넴" },
                         next: "ch1_greet_polite"
                     },
                     {
-                        text: "2. 남자의 위압적인 분위기와 코트 소매 끝의 은빛 기계 의수를 조용히 관찰한다.",
-                        effect: { rel: { sunghwa: { favor: 8, alert: 5 } }, flag: "noticed_sunghwa_cyber", memory: "박성화의 최고급 전투형 기계 의수를 단번에 알아봄" },
+                        text: "2. 남자의 위압적인 분위기와 검은 가죽 장갑 아래로 언뜻 보이는 은빛 티타늄 손목 관절을 조용히 관찰한다.",
+                        effect: { rel: { sunghwa: { favor: 8, alert: 5 } }, flag: "noticed_sunghwa_cyber", memory: "박성화의 최고급 인간형 기계 의수를 단번에 알아봄" },
                         next: "ch1_observe_sunghwa"
                     },
                     {
-                        text: "3. 송민기에게 먼저 『지금 바쁘니까 이따 퇴근할 때 보자』고 답장을 보낸 뒤 손님을 맞이한다.",
-                        effect: { rel: { mingi: { intimacy: 6, trust: 5 } }, flag: "promised_mingi_dinner", memory: "송민기에게 퇴근 후 만나자고 약속함" },
+                        text: "3. 송민기에게 먼저 『지금 손님 오셨으니까 이따 마감할 때쯤 오든지 해』라고 짧게 답장을 보낸 뒤 손님을 맞이한다.",
+                        effect: { rel: { mingi: { intimacy: 6, trust: 5 } }, flag: "promised_mingi_dinner", memory: "바쁜 와중에도 송민기의 메시지를 챙겨 답장함" },
                         next: "ch1_reply_mingi_first"
                     }
                 ]
@@ -844,11 +944,12 @@
                 time: "14:18",
                 lines: [
                     { speaker: "yunho", exp: "smile", pos: "left", text: "「어서 오세요, 손님. 찾으시는 공구나 규격 부품이 있으십니까?」" },
-                    { speaker: null, text: "평소에는 담백하고 차분한 인상이지만 웃을 때면 한결 부드러워지는 윤호의 얼굴을 마주하자, 남자의 날카롭던 눈매가 미세하게 풀렸다." },
-                    { speaker: "sunghwa", exp: "normal", pos: "right", text: "「소형 텅스텐 합금 볼트와 비인가 정밀 신경 커넥터를 찾고 있는데. 이 매장에 있을지 모르겠군.」" },
-                    { speaker: null, text: "낮고 나긋하지만 묘하게 사람을 긴장시키는 목소리였다. 게다가 그가 말한 부품은 일반 가정용이 아니라 고급 전투형 개조 신체에 쓰이는 물건이었다." },
-                    { speaker: "yunho", exp: "normal", pos: "left", text: "「텅스텐 볼트는 4번 선반에 재고가 있습니다만, 신경 커넥터류는 정식 유통 품목이 아니라 저희 매장에는 들어오지 않습니다.」" },
-                    { speaker: "sunghwa", exp: "smirk", pos: "right", text: "「역시 그런가. 하긴, 이런 칙칙한 하층 구역 매장에 있을 리가 없지.」" }
+                    { speaker: null, text: "평소에는 차분하고 단정한 인상이지만 웃을 때면 한결 순하고 다정해지는 윤호의 얼굴을 마주하자, 남자의 미간에 서려 있던 서늘한 긴장감이 미세하게 풀렸다." },
+                    { speaker: "sunghwa", exp: "normal", pos: "right", text: "「소형 텅스텐 합금 고정 볼트와, 미세 신경 전도 그리스를 찾고 있는데. 이런 일반 매장에도 취급하는지 모르겠군.」" },
+                    { speaker: null, text: "낮고 나긋하지만 귓가에 묵직하게 감기는 목소리였다. 윤호는 남자가 말한 품목을 듣고 속으로 작게 놀랐다. 그건 일반 가정용 안드로이드가 아니라, 인간의 신경계와 직접 연결된 고급 기계 신체를 정비할 때나 쓰는 물건이었기 때문이다." },
+                    { speaker: "yunho", exp: "normal", pos: "left", text: "「텅스텐 마이크로 볼트는 4번 선반 안쪽에 순정 규격 재고가 있습니다. 다만 신경 전도 그리스는 의료용 겸용 등급이라 정식 허가 없이는 일반 매장에 들어오지 않아서요. 대신 급한 윤활이나 접합 때문이시라면 무자극 실리콘 실란트로 임시 처치는 가능하실 텐데요.」" },
+                    { speaker: "sunghwa", exp: "smirk", pos: "right", text: "「호오…… 대충 없다고 둘러대지 않고 대체재까지 정확히 짚어내는군. 단순한 파트타이머는 아닌가 보지?」" },
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「여기서 일한 지 벌써 몇 년째라 어깨너머로 주워들은 게 많을 뿐입니다. 이쪽으로 오시죠, 볼트 세트 꺼내 드리겠습니다.」" }
                 ],
                 next: "ch1_sunghwa_card"
             },
@@ -857,11 +958,12 @@
                 bg: "hardware_store",
                 time: "14:18",
                 lines: [
-                    { speaker: null, text: "윤호는 섣불리 다가가는 대신 남자의 걸음걸이와 검은 가죽 장갑 너머로 언뜻 보이는 은빛 티타늄 손목 관절을 눈여겨보았다." },
-                    { speaker: null, text: "시중에서 흔히 굴러다니는 보급형 의수가 아니었다. 상류층이나 대형 조직의 핵심 간부들이나 맞출 수 있는 최고급 인간형 기계 신체였다." },
-                    { speaker: "sunghwa", exp: "smirk", pos: "right", text: "「남의 몸을 꽤 집요하게 보는군. 철물점 알바생치고는 눈썰미가 나쁘지 않아.」" },
-                    { speaker: "yunho", exp: "surprised", pos: "left", text: "「아, 실례했습니다. 매일 기계 부품을 다루다 보니 무심코 시선이 갔네요. 찾으시는 물건이 있으십니까?」" },
-                    { speaker: "sunghwa", exp: "normal", pos: "right", text: "「티타늄 외장 고정용 마이크로 볼트. 그리고…… 입이 무겁고 쓸 만한 기술자를 찾고 있지.」" }
+                    { speaker: null, text: "윤호는 섣불리 다가가는 대신, 남자가 걸음을 옮길 때 코트 자락 아래로 느껴지는 묵직한 무게중심과 가죽 장갑 틈새로 비치는 은빛 티타늄 관절을 눈여겨보았다." },
+                    { speaker: null, text: "하층 구역 노동자들이 쓰는 투박한 산업용 의수가 아니었다. 외형만 보면 순수 인간과 구별하기 힘들 만큼 정교하게 설계된 맞춤형 기계 신체. 그것도 내부에 상당한 출력 장치가 내장된 물건이었다." },
+                    { speaker: "sunghwa", exp: "smirk", pos: "right", text: "「남의 몸을 꽤 집요하게 관찰하는군. 보통 내 눈을 마주치면 고개부터 돌리던데, 겁이 없는 건가, 아니면 눈썰미가 좋은 건가?」" },
+                    { speaker: "yunho", exp: "surprised", pos: "left", text: "「아, 실례했습니다. 매일 기계 자재를 다루다 보니 본 적 없는 고급 합금 외장이 눈에 띄어서 무심코 시선이 갔네요.」" },
+                    { speaker: "sunghwa", exp: "normal", pos: "right", text: "「사과할 필요 없다. 오자마자 구구절절 설명할 수고를 덜었으니까. 티타늄 외장 고정용 마이크로 볼트와 절연 실란트 한 세트를 주지.」" },
+                    { speaker: "yunho", exp: "normal", pos: "left", text: "「네, 4번 선반에 재고가 있습니다. 잠시만 기다려 주십시오.」" }
                 ],
                 next: "ch1_sunghwa_card"
             },
@@ -870,152 +972,242 @@
                 bg: "hardware_store",
                 time: "14:18",
                 lines: [
-                    { speaker: null, text: "윤호는 재빨리 손목 단말기를 두드려 민기에게 [지금 손님 오셨으니까 퇴근할 때 보자]라고 답장을 날렸다." },
-                    { speaker: null, text: "고개를 들자, 어느새 검은 코트의 남자가 바로 두 걸음 앞까지 다가와 윤호의 명찰을 내려다보고 있었다." },
-                    { speaker: "sunghwa", exp: "smirk", pos: "right", text: "「정윤호. 친구 챙기느라 바쁜 모양이지?」" },
-                    { speaker: "yunho", exp: "normal", pos: "left", text: "「죄송합니다, 손님. 어떤 부품을 찾으십니까?」" },
-                    { speaker: "sunghwa", exp: "normal", pos: "right", text: "「고강도 텅스텐 합금 볼트 한 세트만 주지. 거스름돈은 필요 없다.」" }
+                    { speaker: null, text: "윤호는 손님이 진열대를 천천히 둘러보는 사이, 재빨리 단말기를 조작해 민기에게 『점장님 계시니까 뒷문으로 얼쩡거리지 말고 이따 와라』라고 답장을 보냈다." },
+                    { speaker: null, text: "단말기 화면을 끄고 고개를 들자, 어느새 검은 코트의 남자가 바로 두 걸음 앞까지 소리 없이 다가와 윤호의 가슴팍에 달린 명찰을 내려다보고 있었다." },
+                    { speaker: "sunghwa", exp: "smirk", pos: "right", text: "「정윤호. 다정하게 누군가를 챙기느라 바쁜 모양이지?」" },
+                    { speaker: "yunho", exp: "surprised", pos: "left", text: "「죄송합니다, 손님. 철없는 친구 녀석한테 급한 연락이 와서요. 어떤 부품을 찾으십니까?」" },
+                    { speaker: "sunghwa", exp: "normal", pos: "right", text: "「고강도 텅스텐 마이크로 볼트와 절연 실란트 한 세트만 포장해 주지.」" },
+                    { speaker: "yunho", exp: "normal", pos: "left", text: "「네, 바로 준비해 드리겠습니다.」" }
                 ],
                 next: "ch1_sunghwa_card"
             },
 
             "ch1_sunghwa_card": {
                 bg: "hardware_store",
-                time: "14:28",
+                time: "14:35",
                 lines: [
-                    { speaker: null, text: "윤호가 선반에서 텅스텐 합금 볼트 세트를 꺼내 포장해 건네자, 남자는 단말기 결제 대신 추적 불가능한 무기명 실물 칩 화폐 한 장(50 C)을 카운터 위에 올려놓았다." },
-                    { speaker: null, text: "원래 가격은 15 크레딧이었지만, 남자는 거스름돈을 챙길 생각도 없이 은빛 문양이 새겨진 검은 명함 한 장을 윤호의 조끼 주머니에 꽂아 넣었다." },
-                    { speaker: "sunghwa", exp: "smile", pos: "right", text: "「박성화다. 혹시라도 이 좁아터진 철물점 시급보다 훨씬 큰돈이 필요해지거나, 쓸 만한 비공식 정비공을 알고 있다면 연락해.」" },
-                    { speaker: "yunho", exp: "normal", pos: "left", text: "「……손님, 잔돈 35 크레딧은 가져가셔야죠.」" },
-                    { speaker: "sunghwa", exp: "smirk", pos: "right", text: "「친절한 안내에 대한 팁이라고 해두지. 조만간 다시 보게 될 거다, 정윤호.」" },
-                    { speaker: null, text: "딸랑— 종소리와 함께 박성화가 매장을 빠져나갔다. 그로부터 채 10분 뒤, 매장 뒷문이 벌컥 열리더니 기름때 묻은 후드티 차림의 송민기가 고개를 들이밀었다." },
-                    { speaker: "mingi", exp: "surprised", pos: "right", text: "「야 정윤호! 방금 그 시꺼먼 코트 입은 형님 누구냐?! 미들 코어 최대 카르텔 '녹스 홀딩스' 핵심 간부 박성화잖아! 나도 조직 애들 하청으로 무기 수리할 때 멀리서 한 번 본 적 있는데, 네 주머니에 꽂힌 그 명함 뭐야?!」" },
-                    { speaker: null, text: "민기는 눈을 반짝이며 명함을 보자고 손을 내밀었고, 동시에 자기 작업 가방 안에서 웬 은색 금속 케이스 하나를 슬쩍 꺼내 보였다." },
-                    { speaker: "mingi", exp: "smile", pos: "right", text: "「그나저나 윤호야, 내가 어제 폐기물 집하장에서 대박 물건을 하나 주웠거든? 군용 보안 각인이 찍힌 '생체 신경 메모리 코어' 같은데, 안보국 순찰대 눈이 무서워서 그러니까 하루만 네 사물함에 숨겨주면 안 되냐?」" }
+                    { speaker: null, text: "윤호가 선반에서 부품을 꺼내 꼼꼼히 완충 포장까지 마쳐 건네자, 남자는 단말기 결제 대신 추적 기록이 남지 않는 구형 무기명 실물 칩 화폐 한 장(50 C)을 카운터 위에 툭 내려놓았다." },
+                    { speaker: "yunho", exp: "normal", pos: "left", text: "「손님, 볼트랑 실란트 합쳐서 15 크레딧입니다. 거스름돈 35 크레딧 여기 있습니다.」" },
+                    { speaker: "sunghwa", exp: "smile", pos: "right", text: "「넣어 둬. 까다로운 규격을 군말 없이 찾아준 팁이라고 해두지.」" },
+                    { speaker: null, text: "무표정할 때는 서릿발처럼 차가워 보였던 남자가 입꼬리를 올려 미소를 짓자, 놀라울 만큼 나른하고 다정한 분위기가 스쳤다. 남자는 코트 안주머니에서 은빛 각인이 새겨진 얇은 검은색 금속 명함 한 장을 꺼내 윤호의 작업 조끼 주머니에 가볍게 꽂아 넣었다." },
+                    { speaker: "sunghwa", exp: "normal", pos: "right", text: "「박성화다. 살다 보면 이 좁아터진 철물점 시급으로는 감당 안 되는 일이 생길 수도 있을 텐데…… 그럴 때 연락해. 입 무겁고 손끝 야무진 사람은 언제든 환영이니까.」" },
+                    { speaker: null, text: "딸랑— 종소리와 함께 박성화가 매장을 빠져나갔다. 창밖 도로에 대기하고 있던 미들 코어 번호판의 최고급 검은색 세단이 소리 없이 미끄러져 사라진 지 십오 분쯤 지났을까." },
+                    { speaker: null, text: "끼익— 매장 창고 쪽 뒷문이 반쯤 열리더니, 탈색한 머리가 덥수룩하게 헝클어진 키 큰 청년 하나가 눈치를 살피며 고개를 들이밀었다. 송민기였다." },
+                    { speaker: "mingi", exp: "smile", pos: "right", text: "「야 정윤호! 너네 점장 영감님 방금 화장실 간 거 맞지? 휴, 배고파 죽는 줄 알았다!」" },
+                    { speaker: "yunho", exp: "normal", pos: "left", text: "「송민기, 너 진짜 대낮부터 기름때 묻은 후드티 입고 매장 뒷문으로 들어오지 말랬지. 어젯밤에도 또 지하 2층 슬롯머신 당기러 갔었냐?」" },
+                    { speaker: "mingi", exp: "surprised", pos: "right", text: "「야, 말을 왜 그렇게 섭섭하게 하냐! 어제는 슬롯이 아니라 카드 판이었고, 진짜 마지막 한 판만 더 붙었으면 따는 흐름이었다니까?! ……어? 잠깐만, 윤호야. 네 조끼 주머니에 꽂힌 그 시꺼먼 금속 카드 뭐야?」" },
+                    { speaker: null, text: "장난스럽게 너스레를 떨던 민기의 눈매가 순식간에 날카로워졌다. 윤호가 주머니에서 방금 받은 명함을 꺼내 보이자, 민기가 숨을 헉 들이켰다." },
+                    { speaker: "mingi", exp: "serious", pos: "right", text: "「야…… 너 이 사람 도대체 어떻게 만났어? 이거 미들 코어 최대 카르텔 '녹스(NOX)'의 실세, 박성화 개인 직통 카드잖아! 나도 저번에 조직 하청으로 개조 총기 수리해 줄 때 멀리서 딱 한 번 봤는데, 반 이상이 기계 몸인데도 피도 눈물도 없기로 소문난 양반이라고!」" },
+                    { speaker: "yunho", exp: "surprised", pos: "left", text: "「뭐? 범죄조직 간부라고? 그냥 볼트랑 실란트 사 가신 손님이었는데……」" },
+                    { speaker: "mingi", exp: "normal", pos: "right", text: "「하아, 네가 그 특유의 순해 빠진 얼굴로 친절하게 굴었으니까 그냥 넘어간 거지, 괜히 엮이면 골치 아파진다. 그나저나 윤호야…… 내 말 좀 들어봐.」" },
+                    { speaker: null, text: "민기는 주변 눈치를 한 번 더 살피더니, 자신이 메고 온 낡은 공구 가방 깊숙한 곳에서 손바닥만 한 은색 차폐 케이스 하나를 슬쩍 꺼내 보였다." },
+                    { speaker: "mingi", exp: "smile", pos: "right", text: "「내가 오늘 새벽에 외곽 폐기물 집하장 쪽에서 부품을 좀 털었거든? 근데 고철 더미 속에서 이 '군용 생체 신경 메모리 코어'를 주웠단 말이야. 암호가 몇 겹으로 걸려 있어서 바로는 못 풀겠는데, 암시장에 넘기면 내 도박 빚 한 방에 다 갚고도 남아! 근데 내 정비소는 단속반 눈에 잘 띄니까, 딱 이틀만 네 매장 사물함에 숨겨주면 안 되냐?」" }
                 ],
                 choices: [
                     {
-                        text: "1. 박성화의 명함을 민기에게 공유하고, 그 위험해 보이는 군용 코어도 친구를 위해 맡아준다.",
-                        effect: { money: 35, item: "박성화의 검은 명함", item2: "의문의 군용 신경 코어", flag: "kept_mingi_core", flag2: "shared_card_mingi", rel: { mingi: { intimacy: 10, trust: 10 }, sunghwa: { favor: 3 } }, memory: "민기가 주운 의문의 군용 신경 코어를 대신 보관해 줌" },
-                        next: "ch2_street_check"
+                        text: "1. 「한 번만 더 도박장 근처에 가면 그땐 진짜 절교다.」 잔소리를 하면서도 친구가 걱정되어 코어를 사물함에 숨겨준다.",
+                        effect: { money: 35, item: "박성화의 검은 명함", item2: "차폐된 군용 신경 코어", flag: "kept_mingi_core", flag2: "scolded_mingi_gamble", rel: { mingi: { intimacy: 10, trust: 10, favor: 8 } }, memory: "송민기에게 도박을 끊겠다는 다짐을 받고 군용 신경 코어를 대신 보관해 줌" },
+                        next: "ch1_afternoon_end"
                     },
                     {
-                        text: "2. 명함은 위험하니 숨기고, 장물 코어를 보관해 주는 대신 다시는 도박장 근처에 가지 말라고 다짐받는다.",
-                        effect: { money: 35, item: "박성화의 검은 명함", item2: "의문의 군용 신경 코어", flag: "kept_mingi_core", flag2: "scolded_mingi_gamble", rel: { mingi: { intimacy: 6, trust: 8 }, sunghwa: { trust: 6 } }, memory: "민기에게 도박을 끊겠다는 약속을 받고 코어를 맡아줌" },
-                        next: "ch2_street_check"
+                        text: "2. 박성화의 명함 정보도 민기와 공유하고, 나중에 코어 해독이 끝나면 안전하게 처분할 방법을 같이 찾자며 코어를 맡아준다.",
+                        effect: { money: 35, item: "박성화의 검은 명함", item2: "차폐된 군용 신경 코어", flag: "kept_mingi_core", flag2: "shared_card_mingi", rel: { mingi: { intimacy: 12, trust: 12, favor: 10 }, sunghwa: { favor: 4 } }, memory: "송민기와 박성화의 명함 정보를 공유하고 코어 처분을 함께 고민하기로 함" },
+                        next: "ch1_afternoon_end"
                     },
                     {
-                        text: "3. 군용 장물은 너무 위험하다며 거절하고, 대신 내일 민기의 정비소에 들러 사정을 들어주겠다고 한다.",
-                        effect: { money: 35, item: "박성화의 검은 명함", flag: "refused_mingi_core", rel: { mingi: { intimacy: 2, trust: -3 }, hongjoong: { trust: 5 } }, memory: "민기의 위험한 군용 코어 보관 부탁을 신중하게 거절함" },
-                        next: "ch2_street_check"
+                        text: "3. 「군용 보안 각인이 찍힌 물건이면 장난으로 끝날 일이 아니야.」 코어 보관은 단호히 거절하되, 굶었다는 민기에게 저녁밥 값을 쥐여준다.",
+                        effect: { money: 25, item: "박성화의 검은 명함", flag: "refused_mingi_core", rel: { mingi: { intimacy: 5, trust: 4, favor: 6 }, hongjoong: { trust: 5 } }, memory: "민기의 위험한 군용 코어 보관은 거절했지만 저녁밥 값을 챙겨주며 친구를 걱정함" },
+                        next: "ch1_afternoon_end"
                     }
                 ]
             },
 
-            // ==================== [제2장: 스모그가 내려앉은 밤거리 (10월 14일 밤)] ====================
+            "ch1_afternoon_end": {
+                bg: "hardware_store",
+                time: "18:40",
+                lines: [
+                    { speaker: "mingi", exp: "smile", pos: "right", text: "「크으, 역시 내 친구 정윤호밖에 없다! 점장 영감님 오시기 전에 난 이만 튄다! 조만간 내가 큰돈 만지면 맛있는 거 쏠게!」" },
+                    { speaker: null, text: "민기가 후드 모자를 뒤집어쓰고 뒷문 너머 어둑한 골목으로 후다닥 사라지자, 매장 안에는 다시 환기팬 돌아가는 소리와 라디오 음악 소리만이 남았다." },
+                    { speaker: "yunho", exp: "normal", pos: "center", text: "「저 녀석 진짜 별일 없어야 할 텐데…… 자, 이제 야간 교대 시간까지 남은 재고나 마저 채워 넣자.」" }
+                ],
+                next: "ch2_street_check"
+            },
+
+            // ==================== [제2장: 빗속의 검문소와 두 장교 (10월 14일 밤)] ====================
             "ch2_street_check": {
-                chapter: "제2장: 스모그가 내려앉은 밤거리",
-                routeTag: "공통 서사",
+                chapter: "제2장: 빗속의 검문소와 두 장교",
+                routeTag: "공통 일상 · 제1일 밤",
                 bg: "street_night",
                 date: "2138. 10. 14 (목)",
                 time: "21:15",
                 location: "제9구역 상업로 밤거리",
                 lines: [
-                    { speaker: null, text: "오후 아홉 시. 기나긴 파트타임 근무를 마친 윤호는 피곤한 어깨를 주무르며 철물점 셔터를 내렸다." },
-                    { speaker: null, text: "밤이 찾아온 제9구역 거리는 인공 산성비가 부슬부슬 내리고 있었다. 건너편 빌딩의 대형 홀로그램 전광판에서는 희귀한 순수 인간 아이돌 '정우영'의 화려한 솔로 무대 영상이 밤거리를 비추고 있었다." },
-                    { speaker: "yunho", exp: "smile", pos: "center", text: "「……우영 씨 무대는 언제 봐도 대단하네. 같은 스물아홉 살인데도 저렇게 반짝이는 세계에 사는 사람이 있구나.」" },
-                    { speaker: null, text: "잠시 전광판을 올려다보던 그때, 골목 앞쪽에서 날카로운 사이렌 소리와 함께 통합안보사령부 특수기동경호단의 무장 장갑차가 거리를 봉쇄했다." },
-                    { speaker: "hongjoong", exp: "serious", pos: "right", text: "「전 대원, 3번 구역 퇴로부터 차단해. 민간인들에게 피해가 가지 않도록 통행 검문을 신속히 진행한다.」" },
-                    { speaker: null, text: "한 치의 흐트러짐도 없는 제복 차림의 장교가 날카롭고 위압적인 눈빛으로 현장을 지휘하고 있었다. 특수기동경호단 소령 김홍중이었다." },
-                    { speaker: "jongho", exp: "normal", pos: "left", text: "「홍중이 형— 아니, 소령님. 방금 이 상업로 반경 200미터 안에서 유출된 군용 기밀 코어의 미세 파장이 스캔되었습니다. 그리고 녹스(NOX) 소속 차량이 낮에 이 근처를 다녀간 기록도 확인됐습니다.」" },
-                    { speaker: null, text: "안경을 쓴 사이버안보국 대위 최종호의 보고가 끝나기 무섭게, 반대편 골목에서 검은 모자를 눌러쓴 건장한 청년(최산)이 윤호의 옆으로 다가왔고, 지하 계단 입구 쪽에서는 의료 가방을 든 금발의 비공인 의사(강여상)가 검문을 피해 발걸음을 멈추었다." },
-                    { speaker: "hongjoong", exp: "serious", pos: "right", text: "「거기 철물점 앞 시민분. 잠시 신원 확인과 소지품 스캔에 협조해 주시지.」" }
+                    { speaker: null, text: "오후 아홉 시 정각. 여덟 시간의 근무를 마친 윤호는 무거운 철물점 셔터를 내리고 거리로 나섰다." },
+                    { speaker: null, text: "밤이 찾아온 제9구역에는 예고됐던 인공 산성비가 부슬부슬 내리고 있었다. 젖은 아스팔트 위로 네온사인 불빛이 길게 늘어지고, 골목 어귀의 포장마차에서는 합성 어묵탕 국물 끓는 김이 하얗게 피어올랐다." },
+                    { speaker: "yunho", exp: "normal", pos: "center", text: "「으슬으슬 춥네…… 편의점 들러서 마감 할인 도시락 하나 사 들고 빨리 방에 들어가야겠다.」" },
+                    { speaker: null, text: "윤호가 코트 깃을 여미며 원룸으로 향하는 큰길목 사거리에 접어들었을 때였다. 평소 같으면 취객들과 배달 드론만 오가던 도로 앞쪽에 파란 경광등이 번쩍이며 군용 바리케이드가 세워져 있었다." },
+                    { speaker: null, text: "일반 구역 경찰이 아니었다. 검은 제복에 금빛 견장을 단 '통합안보사령부' 소속 병력이었다. 그 중심에서 체격은 크지 않지만 단정하고 서릿발 같은 기세를 뿜어내는 장교 한 명이 대원들에게 지시를 내리고 있었다." },
+                    { speaker: "hongjoong", exp: "serious", pos: "right", text: "「민간인 퇴근 시간대다. 불필요한 위압감을 주지 말고 신원 단말기 스캔과 기본 화물 확인만 신속하게 진행해. 우리가 찾는 건 비인가 군용 통신 파장과 외부 유출 부품이다.」" },
+                    { speaker: null, text: "또렷하고 정확한 발음, 군더더기 없이 빠른 말투. 특수기동경호단 소속의 김홍중 소령이었다. 그때 장갑차 내부 콘솔 앞에 앉아 있던 안경 쓴 젊은 장교(최종호 대위)가 태블릿을 들고 홍중의 곁으로 다가왔다." },
+                    { speaker: "jongho", exp: "normal", pos: "left", text: "「소령님. 제9구역 상업로 일대 최근 12시간 통신 로그와 차량 출입 기록 필터링 끝났습니다. 오늘 오후 두 시경 미들 코어 소속 의전 차량 한 대가 이 골목을 다녀갔고, 지하 1층 정비 구역 쪽에서 미약한 군용 암호화 신호가 한 번 튀었습니다.」" },
+                    { speaker: "hongjoong", exp: "serious", pos: "right", text: "「수고했다, 종호야. 지하 구역 입구 쪽은 계속 모니터링 유지해. ……음?」" },
+                    { speaker: null, text: "이야기를 나누던 김홍중 소령과 최종호 대위의 시선이 우산을 쓰고 검문소 앞에 멈춰 선 윤호에게 향했다." },
+                    { speaker: "hongjoong", exp: "normal", pos: "right", text: "「밤늦게 퇴근하시는 모양이군. 불편을 끼쳐 미안하지만, 통합안보사령부 임시 검문 중이다. 신원 단말기를 잠시 보여주시겠나?」" },
+                    { speaker: "jongho", exp: "normal", pos: "left", text: "「단말기를 이쪽 스캐너에 가볍게 태그해 주시면 됩니다. ……어? 정윤호 씨, 바로 저기 메가볼트 철물점 직원이시네요.」" }
                 ],
                 choices: [
                     {
-                        text: "1. 김홍중 소령과 최종호 대위에게 정중히 신분 단말기를 제시하고 낮에 본 수상한 차량에 대해 귀띔한다.",
-                        effect: { rel: { hongjoong: { trust: 12, favor: 8, respect: 8 }, jongho: { trust: 10, favor: 6 } }, flag: "helped_military_check", memory: "안보국 검문에서 김홍중과 최종호에게 적극적으로 협조함" },
-                        next: "ch2_branch_military"
+                        text: "1. 침착하게 신원 단말기를 태그하고, 「추운 날씨에 밤늦게까지 고생이 많으십니다」라며 두 장교에게 따뜻한 인사말을 건넨다.",
+                        effect: { rel: { hongjoong: { favor: 10, trust: 10, respect: 6 }, jongho: { favor: 8, trust: 8 } }, memory: "야간 검문소에서 만난 김홍중 소령과 최종호 대위에게 예의 바르고 다정하게 대함" },
+                        next: "ch2_check_warm"
                     },
                     {
-                        text: "2. 옆에서 장난스럽게 미소 짓고 있는 청년(최산)과 자연스럽게 대화를 나누며 검문 분위기를 누그러뜨린다.",
-                        effect: { rel: { san: { favor: 14, intimacy: 12, trust: 8 }, hongjoong: { favor: 4 } }, flag: "bonded_with_san", memory: "검문소에서 최산과 처음 만나 유쾌하게 대화를 나눔" },
-                        next: "ch2_branch_san"
+                        text: "2. 종호가 언급한 '오후 두 시경 미들 코어 차량' 이야기를 듣고, 낮에 매장에 들렀던 검은 코트 손님의 인상착의를 조심스럽게 귀띔해 준다.",
+                        effect: { rel: { hongjoong: { favor: 12, trust: 15, respect: 10 }, jongho: { favor: 12, trust: 12 }, sunghwa: { alert: 5 } }, flag: "helped_military_check", memory: "김홍중과 최종호에게 낮에 철물점을 다녀간 의전 차량에 대한 단서를 제공함" },
+                        next: "ch2_check_inform"
                     },
                     {
-                        text: "3. 검문을 무사히 넘긴 직후, 지하 계단 입구에서 곤란해하던 금발의 의사(강여상)에게 우회 통로를 알려준다.",
-                        effect: { rel: { yeosang: { favor: 14, trust: 12, intimacy: 8 } }, flag: "helped_yeosang_alley", memory: "비공인 의료 물자를 든 강여상이 검문을 피하도록 도와줌" },
-                        next: "ch2_branch_yeosang"
+                        text: "3. 혹시라도 민기나 사물함 이야기가 나올까 봐 말을 아끼며, 평범하고 성실한 퇴근길 시민처럼 담백하게 검문만 마친다.",
+                        effect: { rel: { hongjoong: { trust: 5 }, jongho: { favor: 5 }, mingi: { trust: 5 } }, memory: "검문소에서 김홍중 소령, 최종호 대위와 첫 대면을 가짐" },
+                        next: "ch2_check_quiet"
                     }
                 ]
             },
 
-            "ch2_branch_military": {
+            "ch2_check_warm": {
                 bg: "street_night",
-                time: "21:25",
+                time: "21:22",
                 lines: [
-                    { speaker: "yunho", exp: "normal", pos: "left", text: "「여기 단말기 있습니다. 전 바로 앞 철물점에서 일하는 정윤호라고 합니다. 낮에 매장 앞에 미들 코어 번호판을 단 검은색 호버카가 잠시 정차하긴 했어요.」" },
-                    { speaker: "hongjoong", exp: "normal", pos: "right", text: "「정윤호 씨…… 협조해 줘서 고맙다. 하층 구역 시민들은 보통 군인을 보면 피하기 바쁜데, 침착하고 눈썰미가 좋군.」" },
-                    { speaker: "jongho", exp: "smile", pos: "center", text: "「오, 윤호 형 증언 덕분에 CCTV 대조 시간이 절반으로 줄었어요. 고마워요, 형. 제 단말기 직통 번호 남겨둘 테니 수상한 사람 보면 언제든 연락 주세요.」" },
-                    { speaker: "san", exp: "smile", pos: "left", text: "「야, 종호 너 왜 처음 보는 시민분한테 벌써 형이라고 부르면서 선수 치냐? 반가워, 윤호야! 난 최산이라고 해. 너랑 같은 스물아홉 살이야!」" }
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「네, 맞습니다. 방금 매장 마감하고 집에 가는 길이거든요. 비도 오고 바람도 찬데 두 분 다 밤늦게까지 고생이 많으시네요.」" },
+                    { speaker: null, text: "하층 제9구역 주민들은 안보국 군복만 보면 경계하거나 볼멘소리를 내기 일쑤였기에, 윤호의 담백하고 다정한 인사에 홍중의 날카롭던 눈매가 조금 누그러졌다." },
+                    { speaker: "hongjoong", exp: "smile", pos: "right", text: "「……우리 임무인걸. 그렇게 말해 주는 시민은 오랜만이군. 고맙다, 정윤호 씨. 난 특수기동경호단 김홍중 소령이다.」" },
+                    { speaker: "jongho", exp: "smile", pos: "left", text: "「기록 깨끗하네요. 스물아홉 살이시면 저보다 한 살 형이시네요. 전 사이버안보국 최종호 대위입니다. 요즘 이 근처 지하 구역이 좀 뒤숭숭하니까 밤길 조심해서 들어가세요, 윤호 형.」" },
+                    { speaker: null, text: "무뚝뚝하고 차가워 보였던 연하의 정보 장교가 은근슬쩍 '윤호 형'이라고 부르며 비상 신고용 직통 코드를 윤호의 단말기에 등록해 주었다." }
                 ],
-                next: "ch2_night_room"
+                next: "ch2_night_room_rest"
             },
 
-            "ch2_branch_san": {
+            "ch2_check_inform": {
                 bg: "street_night",
-                time: "21:25",
+                time: "21:22",
                 lines: [
-                    { speaker: "yunho", exp: "smile", pos: "left", text: "「방금 퇴근해서 이분이랑 이야기 나누던 중이었습니다. 제 단말기부터 확인하시겠어요?」" },
-                    { speaker: "san", exp: "smile", pos: "center", text: "「푸하하! 홍중이 형, 들었지? 이렇게 선하고 친절한 시민분을 의심하면 안 되지! 나 오늘 정기 신경 점검 끝나고 외출 허가 정식으로 받고 나온 거라고.」" },
-                    { speaker: "hongjoong", exp: "serious", pos: "right", text: "「……최산, 넌 몸 상태도 특수하면서 왜 자꾸 스모그 심한 하층 구역까지 내려오는 거냐. 정윤호 씨, 내 부하가 실례를 범했군.」" },
-                    { speaker: null, text: "겉보기엔 완벽한 근육질의 건장한 청년이지만, 산의 목덜미 아래에는 군용 특수 인터페이스의 미세한 열기가 감돌고 있었다. 산은 윤호에게 한쪽 눈을 찡긋하며 개인 연락처를 건넸다." }
+                    { speaker: "yunho", exp: "normal", pos: "left", text: "「네, 그 매장에서 일하고 있습니다. 혹시 아까 말씀하신 오후 두 시쯤 미들 코어 차량이라면…… 검은색 세단을 타고 오신 손님이 한 분 계시긴 했습니다. 텅스텐 마이크로 볼트를 사 가셨거든요.」" },
+                    { speaker: "hongjoong", exp: "serious", pos: "right", text: "「텅스텐 마이크로 볼트라고? 일반 차량이나 보급형 기기에 쓰이는 물건이 아닌데. 종호야, 방금 증언 메모해 둬.」" },
+                    { speaker: "jongho", exp: "surprised", pos: "left", text: "「오, 제가 위성 카메라 사각지대 때문에 차에서 내린 사람 인상착의를 못 잡았는데, 윤호 형 덕분에 퍼즐이 딱 맞춰졌어요. 눈썰미가 보통이 아니시네요!」" },
+                    { speaker: "hongjoong", exp: "smile", pos: "right", text: "「큰 도움이 되었다, 정윤호 씨. 난 김홍중 소령이고 이쪽은 최종호 대위다. 혹시라도 그 손님이 다시 나타나거나 수상한 일이 생기면 언제든 우리 직통 번호로 연락해 주게.」" }
                 ],
-                next: "ch2_night_room"
+                next: "ch2_night_room_rest"
             },
 
-            "ch2_branch_yeosang": {
-                bg: "underground_clinic",
-                time: "21:28",
+            "ch2_check_quiet": {
+                bg: "street_night",
+                time: "21:22",
                 lines: [
-                    { speaker: null, text: "윤호는 신원 확인을 마친 뒤, 군인들의 시선이 다른 골목으로 쏠린 틈을 타 지하 계단 입구에 서 있던 금발의 청년에게 다가갔다." },
-                    { speaker: "yunho", exp: "normal", pos: "left", text: "「저기, 괜찮으세요? 철물점 뒷골목 환기 통로로 내려가시면 검문소 안 거치고 지하 2층으로 바로 가실 수 있어요.」" },
-                    { speaker: "yeosang", exp: "surprised", pos: "right", text: "「……아, 고마워요. 가방 안에 하층민 환자들한테 쓸 비인가 나노 봉합제가 들어 있어서 걸리면 압수당할 뻔했거든요.」" },
-                    { speaker: "yeosang", exp: "smile", pos: "right", text: "「전 강여상이에요. 지하 2층에서 진료소를 운영하고 있어요. 정윤호 씨…… 우리 스물아홉 동갑이네요. 편하게 여상이라고 불러요. 다음에 꼭 보답할게요.」" }
+                    { speaker: "yunho", exp: "normal", pos: "left", text: "「네, 오후 근무 마치고 바로 귀가하는 길입니다.」" },
+                    { speaker: "jongho", exp: "normal", pos: "left", text: "「신원 확인 완료됐습니다. 범죄 이력도 없고 생체 신호도 아주 안정적이네요. 협조해 주셔서 감사합니다, 정윤호 씨.」" },
+                    { speaker: "hongjoong", exp: "normal", pos: "right", text: "「밤길이 미끄러우니 조심해서 들어가시게. 우리가 당분간 이 구역 야간 순찰을 돌 예정이니 마주치더라도 너무 놀라지 말고.」" },
+                    { speaker: null, text: "짧지만 강렬한 인상을 남긴 두 군인을 뒤로하고, 윤호는 다시 우산을 고쳐 쥐며 자신의 원룸이 있는 골목으로 발걸음을 옮겼다." }
                 ],
-                next: "ch2_night_room"
+                next: "ch2_night_room_rest"
             },
 
-            // ==================== [제3장: 지하의 진료소와 무대 뒤의 그림자 (10월 15~18일)] ====================
-            "ch2_night_room": {
-                chapter: "제3장: 지하의 맥박과 화려한 네온의 이면",
-                routeTag: "공통 & 인물 교차",
+            "ch2_night_room_rest": {
                 bg: "yunho_room",
-                date: "2138. 10. 15 (금)",
-                time: "19:30",
-                location: "제9구역 304호 원룸 → 언더 시티 B2",
+                time: "22:10",
+                location: "제9구역 낡은 맨션 304호 (윤호의 방)",
                 lines: [
-                    { speaker: null, text: "다음 날인 10월 15일 금요일. 윤호는 집주인에게 이번 달 월세 450 크레딧을 송금하며 빠듯한 가계부를 정리했다." },
-                    { speaker: null, text: "그날 저녁, 동생 윤슬에게 보낼 상비약을 구하러 언더 시티 지하 2층을 찾은 윤호는 강여상의 진료소 앞에서 뜻밖의 소동을 목격했다." },
-                    { speaker: "wooyoung", exp: "serious", pos: "right", text: "「하아, 하아…… 여상아, 문 좀 빨리 열어줘! 사생팬인지 스타라이트 경호팀인지 모를 놈들이 미들 코어에서부터 미행했다고!」" },
-                    { speaker: null, text: "검은 후드와 마스크로 얼굴을 가렸지만, 그 목소리와 날렵한 춤선 같은 몸놀림은 윤호가 매일 영상으로 보던 인간 아이돌 '정우영'이 틀림없었다!" },
-                    { speaker: "yeosang", exp: "serious", pos: "left", text: "「우영아, 안으로 들어가 있어. ……어? 윤호야, 마침 잘 왔네.」" },
-                    { speaker: null, text: "그 순간 진료소 골목 위쪽 계단에서 우영을 쫓아온 듯한 정체불명의 추격자 발소리와 함께, 반대편 암시장 통로에서는 도박장 빚쟁이들에게 쫓기는 송민기의 다급한 목소리가 동시에 들려왔다." }
+                    { speaker: null, text: "삐빅, 철컥. 좁은 복도 끝에 위치한 304호 문을 열고 들어서자, 정리가 덜 된 옷가지들과 구형 게임 콘솔이 놓인 아늑한 원룸이 윤호를 맞이했다." },
+                    { speaker: null, text: "따뜻한 물로 샤워를 마친 윤호는 편의점에서 사 온 4 크레딧짜리 합성 우동 컵라면을 호호 불어가며 먹었다. 비록 좁고 낡은 방이었지만, 하루 일과를 마치고 혼자만의 공간에서 숨을 돌리는 이 시간이 윤호는 가장 좋았다." },
+                    { speaker: "yunho", exp: "smile", pos: "center", text: "「자, 그럼 자기 전에 동생 윤슬이한테 안부 메시지나 하나 남기고, 다음 달 월세 이체 예약 걸어두자.」" },
+                    { speaker: null, text: "창밖으로 쏟아지는 빗소리를 자장가 삼아, 윤호의 길고도 묘했던 목요일 밤이 깊어갔다." }
+                ],
+                next: "ch3_day2_store_san"
+            },
+
+            // ==================== [제3장: 강철의 체온과 한밤의 진료소 (10월 15~16일)] ====================
+            "ch3_day2_store_san": {
+                chapter: "제3장: 강철의 체온과 한밤의 진료소",
+                routeTag: "공통 일상 · 제2일 오후 (최산과의 만남)",
+                bg: "hardware_store",
+                date: "2138. 10. 15 (금)",
+                time: "15:20",
+                location: "제9구역 메가볼트 철물점",
+                lines: [
+                    { speaker: null, text: "이튿날인 10월 15일 금요일 오후. 아침 일찍 집주인에게 이번 달 월세 450 크레딧을 송금한 윤호는 한결 가벼워진 지갑을 확인하며 철물점 카운터를 지키고 있었다." },
+                    { speaker: null, text: "오늘따라 지점장은 본사 자재 회의 때문에 일찍 자리를 비워 매장 안에는 윤호 혼자뿐이었다. 무료한 시간을 달래려 카운터 아래에 챙겨 온 휴대용 구형 게임기 카트리지를 닦고 있을 때였다." },
+                    { speaker: "san", exp: "smile", pos: "center", text: "「와, 잠깐만요! 지금 손에 들고 계신 거 2090년대에 나온 '스타 발키리' 오리지널 합본 팩 아니에요?!」" },
+                    { speaker: null, text: "출입문이 열리더니, 넓은 어깨와 탄탄한 근육질 체격을 가진 건장한 청년 한 명이 눈을 반짝이며 카운터 앞으로 성큼성큼 다가왔다." },
+                    { speaker: null, text: "짧고 단정한 검은 머리에 실용적인 야상 점퍼 차림. 가만히 서 있을 때는 숙련된 군인처럼 서늘하고 날카로운 인상이었지만, 활짝 웃는 순간 장난기 넘치는 대형견처럼 분위기가 확 달라지는 남자였다." },
+                    { speaker: "yunho", exp: "surprised", pos: "left", text: "「어? 이 고전 게임을 아세요? 요즘은 다들 VR 캡슐 게임만 해서 이건 아는 사람도 거의 없는데!」" },
+                    { speaker: "san", exp: "smile", pos: "right", text: "「당연하죠! 저 옛날에 군 학교 다닐 때 기숙사에서 몰래 이거 하다가 보스전 깨면 소리 지르고 그랬거든요! 아, 반가워서 인사도 늦었네요. 전 최산이라고 해요. 그쪽 명찰 보니까 정윤호 씨? 혹시 몇 살이에요?」" },
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「저 스물아홉 살입니다. 2109년생이요.」" },
+                    { speaker: "san", exp: "smile", pos: "right", text: "「진짜요?! 야, 나도 스물아홉인데! 동갑이네! 우리 어색하게 존댓말 쓰지 말고 바로 말 놓자, 윤호야! 난 산이라고 불러!」" },
+                    { speaker: null, text: "어찌나 친화력이 좋고 살가운지, 윤호는 처음 만난 지 오 분도 채 되지 않아 산과 오래된 친구처럼 게임 이야기로 꽃을 피웠다." },
+                    { speaker: null, text: "산이 찾던 고장력 합금 스프링을 건네주던 순간이었다. 부품을 받으려 내민 산의 손끝이 윤호의 손등에 스쳤고, 순간 미세한 정전기와 함께 일반 인간보다 살짝 높은 기계적 발열감이 전해졌다." },
+                    { speaker: "san", exp: "serious", pos: "right", text: "「……앗, 미안. 내가 오늘 오전에 정기 점검을 받고 나와서 몸에 잔열이 좀 남았나 봐.」" },
+                    { speaker: null, text: "순간 산의 얼굴에 스친 복잡한 그늘. 그의 야상 점퍼 깃 아래, 목덜미 뒤쪽에는 일반 신체 개조자와는 전혀 다른 '전신 의체(인간의 뇌를 수용한 군용 안드로이드)' 전용 생명 유지 냉각 포트가 희미하게 자리 잡고 있었다." }
                 ],
                 choices: [
                     {
-                        text: "1. 정우영과 강여상을 진료소 안으로 대피시키고, 추격자들에게 거짓 방향을 알려주어 우영을 지킨다.",
-                        effect: { money: -450, paidRent: true, rel: { wooyoung: { favor: 18, trust: 15, intimacy: 12 }, yeosang: { favor: 12, trust: 10 } }, flag: "saved_wooyoung_clinic", memory: "미행당하던 아이돌 정우영과 강여상을 기지로 구해줌" },
+                        text: "1. 산이 민망해하지 않도록 모르는 척 자연스럽게 넘어가며, 「손이 원래 따뜻한 편인가 보네! 다음에 우리 집에서 같이 그 고전 게임 보스전 깨자」라고 웃어 준다.",
+                        effect: { money: -450, paidRent: true, rel: { san: { favor: 18, intimacy: 16, trust: 14 } }, flag: "bonded_with_san", memory: "철물점에 찾아온 동갑내기 최산과 게임 취미를 공유하며 금세 절친해짐" },
+                        next: "ch3_san_after"
+                    },
+                    {
+                        text: "2. 매장에 구비된 소형 냉각 쿨링 패치를 하나 꺼내 건네주며, 「어디 불편한 데는 없어? 열이 좀 있는 것 같아서 걱정되네」라고 다정하게 챙겨 준다.",
+                        effect: { money: -450, paidRent: true, rel: { san: { favor: 20, intimacy: 14, trust: 16 } }, flag: "cared_for_san_heat", memory: "최산의 신체 발열을 눈치채고도 편견 없이 다정하게 쿨링 패치를 챙겨줌" },
+                        next: "ch3_san_after"
+                    }
+                ]
+            },
+
+            "ch3_san_after": {
+                bg: "hardware_store",
+                time: "15:45",
+                lines: [
+                    { speaker: "san", exp: "smile", pos: "right", text: "「……고마워, 윤호야. 보통 내 몸이 조금이라도 이상한 걸 눈치채면 다들 슬슬 피하거나 신기하게 쳐다보거든. 너 진짜 좋은 녀석이구나.」" },
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「피하긴 왜 피해. 나도 이 동네에서 마음 터놓고 게임 얘기할 동갑 친구 생겨서 완전 반가운데.」" },
+                    { speaker: "san", exp: "smile", pos: "right", text: "「헤헤, 약속한 거다! 내 단말기 번호 찍어뒀으니까 쉬는 날에 꼭 연락해, 윤호야! 내가 맛있는 거 사 들고 놀러 갈게!」" },
+                    { speaker: null, text: "산이 환하게 손을 흔들며 매장을 나서자, 침침했던 철물점 안이 한결 밝아진 기분이었다." }
+                ],
+                next: "ch3_day3_clinic_yeosang"
+            },
+
+            "ch3_day3_clinic_yeosang": {
+                chapter: "제3장: 강철의 체온과 한밤의 진료소",
+                routeTag: "공통 일상 · 제3일 저녁 (강여상 & 정우영과의 만남)",
+                bg: "underground_clinic",
+                date: "2138. 10. 16 (토)",
+                time: "19:30",
+                location: "언더 시티 B2 강여상의 비밀 진료소",
+                lines: [
+                    { speaker: null, text: "다음 날인 10월 16일 토요일 저녁. 낮 근무 중 무거운 철제 자재를 옮기다 손바닥이 살짝 찢어진 윤호는, 겸사겸사 동생 윤슬이에게 보낼 호흡기 상비약도 구할 겸 지하 생활권(언더 시티) B2층으로 내려왔다." },
+                    { speaker: null, text: "습하고 어두운 지하 상가 복도 끝에 하얀 십자가 네온이 조용히 켜진 작은 문이 있었다. 정부가 암묵적으로 묵인하는 언더 시티의 실력파 비공인 의료인, '강여상'의 진료소였다." },
+                    { speaker: "yeosang", exp: "normal", pos: "center", text: "「들어오세요. ……아, 손바닥 열상에 호흡기 상비약 구매시군요. 이쪽 처치대 의자에 먼저 앉으세요.」" },
+                    { speaker: null, text: "밝은 금발 앞머리에 단정한 셔츠와 흰 가운을 걸친 청년이 낮고 나긋한 목소리로 윤호를 맞이했다. 무표정할 때는 속을 알 수 없이 신비롭고 차분한 인상이었지만, 상처를 소독하는 손길만큼은 놀라울 정도로 섬세하고 꼼꼼했다." },
+                    { speaker: "yunho", exp: "normal", pos: "left", text: "「소독약이 생각보다 안 따갑네요. 저기…… 진료 기록 차트 보니까 선생님이랑 저랑 같은 스물아홉 살인 것 같은데, 전 정윤호라고 합니다.」" },
+                    { speaker: "yeosang", exp: "smile", pos: "right", text: "「강여상이에요. 원래 환자분들과 사적인 대화는 잘 안 하는 편인데…… 윤호 씨는 저번에 민기 씨가 입 마르도록 칭찬하던 그 철물점 친구분이시죠? 편하게 여상이라고 부르세요.」" },
+                    { speaker: null, text: "여상이 나노 봉합 패치를 윤호의 손바닥에 붙여주며 옅은 미소를 지은 바로 그때였다. 진료소 뒷문이 다급하게 열리더니, 검은 볼캡과 마스크로 얼굴을 꽁꽁 가린 마른 체형의 남자가 숨을 헐떡이며 뛰어들어왔다." },
+                    { speaker: "wooyoung", exp: "serious", pos: "right", text: "「하아, 하아…… 여상아! 큰일 났어, 나 미들 코어에서 변장하고 혼자 나왔는데 사생팬인지 파파라치인지 모를 놈들이 지하 계단까지 따라붙었어!」" },
+                    { speaker: "yeosang", exp: "surprised", pos: "left", text: "「우영아, 진정하고 안쪽 커튼 뒤로 들어가 있어. ……윤호야, 놀랐지? 내 오랜 친구야.」" },
+                    { speaker: null, text: "마스크를 벗으며 땀에 젖은 앞머리를 쓸어 넘긴 남자의 얼굴을 본 순간, 윤호는 숨을 멈췄다. 화려하고 세련된 이목구비와 장난기 어린 눈매. 윤호가 매일 밤 직캠 영상으로 보던 대스타, 인간 아이돌 '정우영'이었다!" },
+                    { speaker: "wooyoung", exp: "surprised", pos: "right", text: "「어?! 잠깐만, 여상아 이 사람은 누구야? ……어어? 손목 단말기 배경화면에 붙어 있는 거 내 솔로 앨범 홀로그램 스티커 맞지?!」" },
+                    { speaker: null, text: "우영이 눈을 동그랗게 뜨며 반가워할 틈도 없이, 진료소 밖 복도 위쪽에서 우영을 쫓아온 파파라치들의 발소리가 가까워졌고, 설상가상으로 반대편 암시장 통로에서는 도박장 수금원들에게 쫓기는 송민기의 고함 소리가 동시에 울려 퍼졌다." }
+                ],
+                choices: [
+                    {
+                        text: "1. 정우영에게 내 여벌 작업 점퍼를 입혀 숨기고, 문밖으로 나가 파파라치들에게 반대쪽 길을 알려주어 우영을 지켜낸다.",
+                        effect: { rel: { wooyoung: { favor: 22, intimacy: 18, trust: 16 }, yeosang: { favor: 10, trust: 10 } }, flag: "saved_wooyoung_clinic", memory: "강여상의 진료소에서 파파라치에게 쫓기던 아이돌 정우영을 기지로 구해줌" },
                         next: "ch3_after_clinic_wooyoung"
                     },
                     {
-                        text: "2. 강여상과 함께 진료소 문을 잠가 우영을 숨긴 뒤, 진료소 안에서 여상의 야간 응급 처치 일을 돕는다.",
-                        effect: { money: -450, paidRent: true, rel: { yeosang: { favor: 18, trust: 16, intimacy: 14 }, wooyoung: { favor: 8 } }, flag: "helped_yeosang_surgery", memory: "강여상의 지하 진료소에서 밤늦게까지 의료 보조를 도우며 가까워짐" },
+                        text: "2. 강여상과 함께 진료소 보안 셔터를 내리고, 몰려든 야간 응급 환자들을 처치하는 여상의 곁에서 밤늦게까지 일손을 돕는다.",
+                        effect: { rel: { yeosang: { favor: 22, intimacy: 16, trust: 18 }, wooyoung: { favor: 10 } }, flag: "helped_yeosang_surgery", memory: "강여상의 지하 진료소에 남아 밤늦게까지 의료 보조와 정리를 도우며 깊은 대화를 나눔" },
                         next: "ch3_after_clinic_yeosang"
                     },
                     {
-                        text: "3. 암시장 통로에서 빚쟁이들에게 붙잡힐 위기에 처한 송민기 쪽으로 달려가 민기를 빼낸다.",
-                        effect: { money: -450, paidRent: true, rel: { mingi: { favor: 16, trust: 15, intimacy: 14 } }, flag: "rescued_mingi_alley", memory: "언더 시티 골목에서 도박 빚쟁이들에게 쫓기던 송민기를 구해줌" },
+                        text: "3. 진료소 문을 여상이 잠그도록 도운 뒤, 암시장 골목에서 수금원들에게 붙잡힐 위기에 처한 송민기를 구하러 달려간다.",
+                        effect: { rel: { mingi: { favor: 18, intimacy: 15, trust: 16 }, yeosang: { trust: 8 } }, flag: "rescued_mingi_alley", memory: "언더 시티 골목에서 도박 빚쟁이들에게 몰린 송민기를 구출함" },
                         next: "ch3_after_clinic_mingi"
                     }
                 ]
@@ -1023,36 +1215,38 @@
 
             "ch3_after_clinic_wooyoung": {
                 bg: "underground_clinic",
-                time: "20:15",
+                time: "20:30",
                 lines: [
-                    { speaker: "wooyoung", exp: "surprised", pos: "right", text: "「와…… 방금 시선 돌리는 거 봤어, 여상아? 어젯밤 내 라이브 방송에서도 댓글 남겨줬던 그 정윤호 맞지?!」" },
-                    { speaker: "yunho", exp: "smile", pos: "left", text: "「네, 맞아요. 우영 씨 무대 정말 좋아하거든요. 다친 데는 없으세요?」" },
-                    { speaker: "wooyoung", exp: "smile", pos: "right", text: "「응! 너 덕분에 살았어! 야, 우리 같은 스물아홉 살이잖아. 여상이 친구면 내 친구나 다름없으니까 지금부터 말 편하게 놓자, 윤호야! 내 개인 단말기 번호 찍어줄게!」" },
-                    { speaker: null, text: "화려한 무대 위의 스타가 아닌, 외로움 많고 솔직한 청년 정우영이 윤호에게 처음으로 사적인 경계를 풀고 다가왔다." }
+                    { speaker: null, text: "윤호의 침착한 기지 덕분에 파파라치 무리가 헛다리를 짚고 지상 계단으로 사라지자, 커튼 뒤에 숨어 있던 정우영이 활짝 웃으며 걸어 나왔다." },
+                    { speaker: "wooyoung", exp: "smile", pos: "right", text: "「와…… 방금 연기하는 거 완전 자연스러웠어! 여상아, 네 친구 진짜 멋있다! 정윤호라고 했지? 우리 동갑이니까 바로 말 편하게 놓자, 윤호야!」" },
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「아, 네…… 아니, 응! 우영아, 다친 데는 없어? 실제로 보니까 진짜 신기하다. 나 네 무대 영상 매일 보거든.」" },
+                    { speaker: "wooyoung", exp: "smile", pos: "right", text: "「헤헤, 팬이라고 해 주면서 막상 사생들처럼 선 안 넘고 날 먼저 지켜준 사람은 네가 처음이야. 자, 여기 내 개인 비밀 연락처! 기획사 매니저들도 모르는 번호니까 심심할 때 꼭 연락해, 알았지?」" },
+                    { speaker: null, text: "화려한 스포트라이트 뒤에서 늘 외로움을 느끼던 우영이 윤호에게 처음으로 온전한 신뢰와 호감을 보이며 다가왔다." }
                 ],
                 next: "ch4_storm_gathering"
             },
 
             "ch3_after_clinic_yeosang": {
                 bg: "underground_clinic",
-                time: "20:40",
+                time: "21:10",
                 lines: [
-                    { speaker: "yeosang", exp: "smile", pos: "right", text: "「윤호야, 네가 침착하게 기구 정리를 도와준 덕분에 응급 환자들이랑 우영이까지 무사히 돌볼 수 있었어.」" },
-                    { speaker: "yunho", exp: "normal", pos: "left", text: "「여상이 너야말로 매일 밤 이렇게 위험을 무릅쓰고 하층 구역 사람들을 치료하고 있었던 거잖아. 대단하다, 진짜.」" },
-                    { speaker: "yeosang", exp: "normal", pos: "right", text: "「정식 면허 심사에서 배제된 뒤로는 이게 내가 할 수 있는 유일한 증명이라서. ……동생한테 보낼 영양제는 내가 무료로 챙겨줄게. 대신 종종 나랑 커피 마시러 와줘.」" },
-                    { speaker: null, text: "타인에게 늘 일정한 거리를 두던 강여상의 눈빛에 윤호를 향한 깊은 신뢰와 온기가 스며들었다." }
+                    { speaker: null, text: "소동이 지나간 뒤에도 여상의 진료소에는 다친 하층민 노동자들의 발길이 이어졌다. 윤호는 집에 바로 돌아가는 대신 팔을 걷어붙이고 의료 기구 소독과 차트 정리를 도왔다." },
+                    { speaker: "yeosang", exp: "smile", pos: "right", text: "「윤호야, 네가 남아서 도와준 덕분에 오늘 밤 고비를 무사히 넘겼어. 우영이도 뒷문 통로로 안전하게 숙소에 복귀했고.」" },
+                    { speaker: "yunho", exp: "normal", pos: "left", text: "「여상이 너야말로 혼자서 이 많은 환자들을 다 감당하고 있었던 거잖아. 밥은 또 거른 거 아니야?」" },
+                    { speaker: "yeosang", exp: "normal", pos: "right", text: "「……내가 밥 거른 건 어떻게 알았어? 치료할 땐 집중하느라 배고픈 줄도 모르다가, 다 끝나고 나면 조금 공허해지긴 해.」" },
+                    { speaker: "yeosang", exp: "smile", pos: "right", text: "「동생한테 보낼 상비약은 내가 특별히 조제한 걸로 챙겨뒀어. 돈은 안 받을 테니까, 대신 다음 주에도 나랑 커피 마시러 들러 줘, 윤호야.」" }
                 ],
                 next: "ch4_storm_gathering"
             },
 
             "ch3_after_clinic_mingi": {
                 bg: "underground_clinic",
-                time: "20:20",
+                time: "20:40",
                 lines: [
-                    { speaker: "mingi", exp: "surprised", pos: "right", text: "「헉, 헉…… 야 정윤호! 너 아니었으면 나 오늘 손가락 한 마디 잘릴 뻔했다!」" },
-                    { speaker: "yunho", exp: "serious", pos: "left", text: "「송민기, 너 진짜 언제까지 이렇게 살래? 내가 얼마나 걱정했는지 알아?」" },
-                    { speaker: "mingi", exp: "normal", pos: "right", text: "「……미안하다, 윤호야. 나도 내가 한심한 거 아는데, 이번에 주운 그 군용 코어 분석만 끝나면 진짜 도박 끊고 너랑 정식 수리점 차릴 거야. 내 말 한 번만 믿어줘라.」" },
-                    { speaker: null, text: "늘 능청스럽고 장난만 치던 민기가 처음으로 진지한 눈빛으로 윤호의 소매를 붙잡았다." }
+                    { speaker: null, text: "윤호는 지하 배수로의 복잡한 환기 통로를 이용해 도박장 수금원들의 시선을 따돌리고, 막다른 골목에 몰려 있던 송민기의 손목을 잡아채어 자신의 단골 자재 창고로 숨어들었다." },
+                    { speaker: "mingi", exp: "surprised", pos: "right", text: "「헉, 헉…… 야 정윤호! 너 아니었으면 나 오늘 진짜로 손가락 부러질 뻔했다!」" },
+                    { speaker: "yunho", exp: "serious", pos: "left", text: "「송민기, 너 진짜 언제까지 이렇게 아슬아슬하게 살래? 네가 다치면 어쩌려고 그래!」" },
+                    { speaker: "mingi", exp: "serious", pos: "right", text: "「……미안하다, 윤호야. 나도 내가 구제 불능인 거 아는데, 네가 나 때문에 화내고 걱정해 줄 때마다 정신이 번쩍 든다. 이번 군용 코어 일만 잘 마무리되면 진짜 도박 끊고 네 옆에서 성실하게 살게. 약속한다.」" }
                 ],
                 next: "ch4_storm_gathering"
             },
@@ -1060,18 +1254,19 @@
             // ==================== [제4장: 균열하는 도시와 '프로젝트 아케론' (10월 22일)] ====================
             "ch4_storm_gathering": {
                 chapter: "제4장: 균열하는 도시와 프로젝트 아케론",
-                routeTag: "중반 핵심 분기",
+                routeTag: "중반 핵심 분기 · 폭풍 전야",
                 bg: "nox_lounge",
                 date: "2138. 10. 22 (금)",
                 time: "20:00",
                 location: "아르카디아 미들 코어 & 제9구역 경계",
                 lines: [
-                    { speaker: null, text: "일주일의 시간이 흐르는 동안, 아르카디아의 밤공기는 폭풍 전야처럼 무겁게 가라앉았다." },
-                    { speaker: null, text: "민기가 폐기물 집하장에서 주웠던 '군용 생체 신경 메모리 코어'는 단순한 고철이 아니었다. 그것은 크로노스 코퍼레이션과 군 상층부, 그리고 범죄조직 녹스의 배신자 파벌이 얽힌 기밀 계획— 『프로젝트 아케론(인간 뇌 강제 적출 및 전투 병기화 계획)』의 원본 블랙박스였다." },
-                    { speaker: "sunghwa", exp: "serious", pos: "right", text: "「윤호야. 내 몸을 반신불수로 만들었던 3년 전 폭발 사건의 배후와, 그 코어를 노리는 조직 내부의 배신자들을 오늘 밤 정리할 생각이다.」" },
-                    { speaker: "hongjoong", exp: "serious", pos: "left", text: "「정윤호 씨. 그 코어에는 최산을 비롯한 군용 뇌 이식 요원들의 강제 통제 코드가 들어 있어. 범죄조직 손에 넘어가면 돌이킬 수 없다.」" },
-                    { speaker: "jongho", exp: "serious", pos: "center", text: "「윤호 형! 지금 상층부 감시망이 제9구역 전체를 포위하고 있어요. 오늘 밤 누구의 손을 잡느냐에 따라 모든 게 결정돼요!」" },
-                    { speaker: null, text: "그동안 쌓아온 인연과 약속들이 한 점으로 모이는 순간. 윤호는 이 거대한 소용돌이 속에서 누구의 곁으로 향할지 선택해야만 한다." }
+                    { speaker: null, text: "그로부터 일주일의 시간이 흐르는 동안, 윤호는 낮에는 철물점에서 일하고 밤에는 일곱 명의 인물들과 크고 작은 연락과 만남을 이어가며 서서히 각자의 삶 깊숙이 스며들었다." },
+                    { speaker: null, text: "하지만 평화로워 보이던 일상의 이면에서 거대한 태풍이 몰려오고 있었다. 민기가 폐기물 집하장에서 주웠던 '군용 생체 신경 메모리 코어'의 정체가 마침내 드러난 것이다." },
+                    { speaker: null, text: "그 코어는 초거대 기업 크로노스와 군 상층부 부패 파벌, 그리고 범죄조직 녹스의 배신자들이 결탁한 비밀 계획— 『프로젝트 아케론(전사자 및 하층민의 뇌를 강제 적출해 복종형 병기로 개조하는 계획)』의 원본 블랙박스였다." },
+                    { speaker: "sunghwa", exp: "serious", pos: "right", text: "「윤호야. 3년 전 내 몸의 절반을 앗아갔던 폭발 테러의 배후가 바로 그 코어를 만든 자들이었다. 오늘 밤, 조직 내부의 배신자들을 내 손으로 직접 숙청할 생각이다.」" },
+                    { speaker: "hongjoong", exp: "serious", pos: "left", text: "「정윤호. 그 코어 안에는 최산을 비롯한 군용 뇌 이식 대원들의 신경을 강제로 초기화하는 마스터 코드가 들어 있어. 상층부가 증거 인멸을 위해 제9구역 전체에 비상 봉쇄령을 내렸다.」" },
+                    { speaker: "jongho", exp: "serious", pos: "center", text: "「윤호 형! 지금 안보국 강경파와 녹스의 무장 병력, 그리고 크로노스 용병단까지 일제히 움직이기 시작했어요! 오늘 밤 형이 누구의 손을 잡느냐에 따라 모든 사람의 운명이 갈릴 거예요!」" },
+                    { speaker: null, text: "비상 사이렌이 울려 퍼지는 10월 22일 밤. 정윤호는 그동안 쌓아온 마음과 신뢰를 바탕으로, 이 긴 밤을 누구와 함께 헤쳐 나갈지 결정해야만 한다." }
                 ],
                 choices: [
                     {
@@ -1141,7 +1336,7 @@
                 ]
             },
 
-            // ==================== [제5장 & 제6장: 7인 개인 루트 및 멀티 엔딩 분기] ====================
+            // ==================== [제5장 & 제6장: 7인 개인 루트 및 멀티 엔딩 분기 (서사 대폭 보강)] ====================
 
             // --- 1. 박성화 개인 루트 ---
             "ch5_route_sunghwa": {
@@ -1152,21 +1347,25 @@
                 time: "23:10",
                 location: "미들 코어 녹스 최상층 펜트하우스",
                 lines: [
-                    { speaker: null, text: "배신자 파벌과의 피비린내 나는 숙청전을 끝낸 박성화는, 외부 정비사조차 물린 채 펜트하우스 침실에 홀로 앉아 손상된 좌측 흉부 기계 외장을 열어두고 있었다." },
-                    { speaker: "sunghwa", exp: "cold", pos: "right", text: "「……들어오지 마라, 정윤호. 지금 내 꼴은 그리 볼 만하지 않으니까. 신경 냉각액이 새어 나와서 손끝 감각도 제대로 통제되지 않아.」" },
-                    { speaker: "yunho", exp: "normal", pos: "left", text: "「성화 형. 가만히 계세요. 제가 철물점이랑 민기 정비소에서 다루던 마이크로 토크 렌치가 마침 주머니에 있어요. 응급 접합은 할 수 있어요.」" },
-                    { speaker: null, text: "누구에게도 약점을 보이지 않던 성화가 윤호의 따뜻한 맨손이 자신의 차가운 티타늄 쇄골에 닿자 작게 숨을 삼켰다." },
-                    { speaker: "sunghwa", exp: "normal", pos: "right", text: "「넌 겁도 없군. 내가 마음만 먹으면 이 기계 손으로 네 목을 단숨에 꺾을 수도 있는데…… 왜 자꾸 내 옆에 남으려는 거지?」" },
-                    { speaker: null, text: "제6장 최후의 결단: 안보국의 수사망이 녹스 본성 턱밑까지 좁혀온 밤, 윤호는 성화와의 관계를 어떻게 매듭지을지 선택해야 한다." }
+                    { speaker: null, text: "조직 내부의 배신자 파벌을 상대로 벌인 피비린내 나는 숙청전이 마침내 끝났다. 그러나 승리를 거둔 박성화는 전담 의료진조차 물린 채, 어두운 펜트하우스 침실 소파에 홀로 기대앉아 있었다." },
+                    { speaker: null, text: "무리한 전투 출력으로 인해 손상된 그의 왼쪽 흉부와 어깨의 은빛 티타늄 외장이 열려 있었고, 그 사이로 푸른 신경 냉각액이 핏방울처럼 번지고 있었다." },
+                    { speaker: "sunghwa", exp: "cold", pos: "right", text: "「……거기 멈춰 서라, 정윤호. 불도 켜지 마. 지금 내 꼴은 순수 인간인 네가 보기에 그리 유쾌한 광경이 아닐 테니까.」" },
+                    { speaker: "yunho", exp: "serious", pos: "left", text: "「그런 말 마세요, 성화 형. 냉각 밸브 압력이 떨어져서 손끝까지 떨고 계시잖아요. 가만히 계세요, 제가 철물점에서 챙겨 온 정밀 토크 렌치랑 절연 실란트로 응급 처치부터 해 드릴게요.」" },
+                    { speaker: null, text: "윤호는 망설임 없이 성화의 무릎 앞에 한쪽 무릎을 꿇고 앉아, 차갑게 식어가는 그의 금속 쇄골과 신경 포트 주변을 조심스럽게 닦아냈다." },
+                    { speaker: "sunghwa", exp: "normal", pos: "right", text: "「……겁도 없는 녀석이군. 난 반 이상이 괴물 같은 기계 덩어리이고, 방금 전까지도 사람의 목숨을 거둔 범죄자다. 내가 마음만 먹으면 이 손으로 네 목을 단숨에 꺾을 수도 있는데, 왜 도망치지 않는 거지?」" },
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「형이 날 해치지 않을 거라는 거 아니까요. 그리고 아무리 단단한 티타늄으로 감싸 놨어도, 형이 아파하고 외로워하는 게 제 눈엔 다 보이는걸요.」" },
+                    { speaker: "sunghwa", exp: "surprised", pos: "right", text: "「……정윤호.」" },
+                    { speaker: null, text: "누구에게도 약점을 내보이지 않던 성화가 낮게 숨을 삼키며, 기계가 아닌 따뜻한 살결이 남은 오른손을 뻗어 윤호의 뒷덜미를 끌어안았다." },
+                    { speaker: null, text: "그리고 다가온 제6장 최후의 밤. 통합안보사령부의 포위망이 미들 코어 턱밑까지 좁혀온 순간, 윤호는 성화와의 마지막 운명을 선택해야 한다." }
                 ],
                 choices: [
                     {
-                        text: "1. 「형이 기계든 범죄자든 상관없어요. 형이 외롭지 않게 끝까지 옆에 있을게요.」 코어를 성화에게 온전히 맡기고 손을 잡는다.",
+                        text: "1. 「형이 기계든 범죄자든 상관없어요. 형이 다시는 혼자 차갑게 식지 않도록 끝까지 곁에 있을게요.」 성화의 손을 맞잡는다.",
                         effect: {},
                         next: "ch6_end_sunghwa_love"
                     },
                     {
-                        text: "2. 성화의 잔혹한 방식에 두려움을 내비치며, 코어를 안보국에 넘기고 이제 그만 평범한 삶으로 돌아가겠다고 말한다.",
+                        text: "2. 끝없는 피와 폭력의 세계에 두려움을 내비치며, 이제 그만 제9구역의 평범한 삶으로 돌아가고 싶다고 어렵게 입을 뗀다.",
                         effect: {},
                         next: "ch6_end_sunghwa_tragic"
                     }
@@ -1176,8 +1375,8 @@
                 chapter: "제6장 종장: 잔광이 머무는 곳",
                 bg: "nox_lounge",
                 lines: [
-                    { speaker: "sunghwa", exp: "smile", pos: "center", text: "「……바보 같은 대답이군, 정윤호. 하지만 네가 직접 한 말이니 절대 무르지 못할 줄 알아라.」" },
-                    { speaker: null, text: "성화는 은빛 금속 의수가 아닌 살아 있는 오른손으로 윤호의 뺨을 감싸 안으며 깊고 나른한 미소를 지었다." }
+                    { speaker: "sunghwa", exp: "smile", pos: "center", text: "「……바보 같은 대답이군, 정윤호. 하지만 네가 직접 내뱉은 말이니 평생 무르지 못할 줄 알아라.」" },
+                    { speaker: null, text: "차가운 금속 심장 위로 윤호의 따뜻한 체온이 포개어지며, 어두운 펜트하우스 창밖으로 아르카디아의 붉은 잔광이 타올랐다." }
                 ],
                 endingId: "end_sunghwa_love"
             },
@@ -1185,8 +1384,8 @@
                 chapter: "제6장 종장: 닫힌 새장",
                 bg: "nox_lounge",
                 lines: [
-                    { speaker: "sunghwa", exp: "cold", pos: "center", text: "「돌아간다고? 내가 내 속살까지 다 보여줬는데, 이제 와서 날 혼자 두고 떠나겠다는 소리는 허락하지 않는다, 윤호야.」" },
-                    { speaker: null, text: "철컥— 펜트하우스의 모든 보안 셔터가 잠기며, 성화의 서늘하고도 집요한 시선이 윤호를 가두었다." }
+                    { speaker: "sunghwa", exp: "cold", pos: "center", text: "「돌아간다고? 내가 내 가장 깊은 약점까지 다 보여줬는데, 이제 와서 날 혼자 두고 떠나겠다는 소리는 허락하지 않는다, 윤호야.」" },
+                    { speaker: null, text: "철컥— 펜트하우스의 모든 방탄 셔터가 내려앉으며, 성화의 집요하고도 서늘한 그림자가 윤호를 영원히 감싸 안았다." }
                 ],
                 endingId: "end_sunghwa_tragic"
             },
@@ -1200,20 +1399,21 @@
                 time: "01:20",
                 location: "통합안보사령부 특수기동경호단 지휘실",
                 lines: [
-                    { speaker: null, text: "밤샘 작전 끝에 '프로젝트 아케론'의 증거를 확보한 김홍중 소령은, 어수선하게 서류가 쌓인 개인 지휘실 책상에 기대어 식어버린 블랙커피를 마시고 있었다." },
-                    { speaker: "hongjoong", exp: "serious", pos: "right", text: "「예전에 전장에서 최산을 잃었을 때…… 상층부의 뇌 이식 명령을 막지 못했던 게 내 평생의 부채였다. 민간인인 너까지 위험에 끌어들이고 싶지 않았는데 미안하군, 윤호야.」" },
-                    { speaker: "yunho", exp: "smile", pos: "left", text: "「홍중이 형이 시민들을 지키려고 밤잠까지 설쳐가며 애쓰는 걸 제가 다 봤는걸요. 가끔은 형도 남한테 기대셔도 돼요.」" },
-                    { speaker: "hongjoong", exp: "smile", pos: "right", text: "「……네 앞에서는 자꾸 군인으로서의 경계심을 잊게 되는군.」" },
-                    { speaker: null, text: "제6장 최후의 결단: 상층부 청문회와 외곽 방벽 파견 명령이 동시에 내려온 날, 윤호는 홍중에게 어떤 말을 건넬까." }
+                    { speaker: null, text: "군 상층부의 방해 공작을 뚫고 '프로젝트 아케론'의 핵심 증거를 확보한 새벽. 늘 한 치의 흐트러짐도 없이 군복을 갖춰 입던 김홍중 소령이, 지휘실 책상에 홀로 앉아 군번줄을 쥔 채 깊은 한숨을 내쉬고 있었다." },
+                    { speaker: "hongjoong", exp: "serious", pos: "right", text: "「2년 전 외곽 전쟁 때…… 내 직속 부하였던 최산이 눈앞에서 전사했다. 그 아이를 살리고 싶다는 내 오만함이 상층부의 안드로이드 뇌 이식 프로젝트에 이용당했어.」" },
+                    { speaker: "hongjoong", exp: "normal", pos: "right", text: "「원칙과 시민 보호를 입에 담으면서도 정작 내 안은 늘 무너져 내리고 있었는데…… 평범한 시민인 네가 위험을 무릅쓰고 내 옆을 지켜줄 줄은 몰랐다, 윤호야.」" },
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「홍중이 형은 오만한 게 아니라 누구보다 책임감이 강해서 혼자 다 짊어지려 하신 거잖아요. 제 앞에서는 완벽한 지휘관 말고, 그냥 사람 김홍중으로 쉬셔도 돼요.」" },
+                    { speaker: "hongjoong", exp: "smile", pos: "right", text: "「……네가 그렇게 웃으며 말할 때마다, 내가 평생 쌓아 온 방어선이 맥없이 무너지는 기분이다.」" },
+                    { speaker: null, text: "제6장 최후의 결단: 상층부 비리 폭로 청문회 직후, 홍중에게 외곽 방벽 사령부 전출 명령서가 내려온다. 윤호의 선택은." }
                 ],
                 choices: [
                     {
-                        text: "1. 「외곽 방벽으로 떠나지 마세요. 이 도시에서 저와 함께 끝까지 싸우며 살아가요, 홍중이 형.」 진심을 고백한다.",
+                        text: "1. 「외곽 방벽으로 혼자 떠나지 마세요. 이 도시에서 저와 함께 끝까지 살아가요, 홍중이 형.」 그의 제복 소매를 붙잡고 마음을 고백한다.",
                         effect: {},
                         next: "ch6_end_hongjoong_love"
                     },
                     {
-                        text: "2. 군인으로서의 사명을 다하려는 홍중의 결정을 존중하며, 언제까지고 이 도시에서 기다리겠다고 격려한다.",
+                        text: "2. 군인으로서 마지막 책임을 다하려는 홍중의 신념을 존중하며, 언제까지고 이 도시에서 그가 돌아오길 기다리겠다고 약속한다.",
                         effect: {},
                         next: "ch6_end_hongjoong_duty"
                     }
@@ -1223,7 +1423,7 @@
                 chapter: "제6장 종장: 새벽의 약속",
                 bg: "street_night",
                 lines: [
-                    { speaker: "hongjoong", exp: "smile", pos: "center", text: "「그래. 명령보다 소중한 사람이 생겼으니, 이번만큼은 내 마음을 따르겠다. 고맙다, 윤호야.」" }
+                    { speaker: "hongjoong", exp: "smile", pos: "center", text: "「그래. 전출 명령은 거부하겠다. 국가의 명령보다 내가 평생 지켜야 할 단 한 사람이 바로 내 눈앞에 있으니까. 고맙다, 윤호야.」" }
                 ],
                 endingId: "end_hongjoong_love"
             },
@@ -1231,7 +1431,7 @@
                 chapter: "제6장 종장: 명예로운 이별",
                 bg: "security_hq",
                 lines: [
-                    { speaker: "hongjoong", exp: "normal", pos: "center", text: "「네가 내 신념을 이해해 주니 더 이상 두려울 게 없군. 반드시 무사히 돌아오마, 정윤호.」" }
+                    { speaker: "hongjoong", exp: "normal", pos: "center", text: "「네가 내 자존심과 신념을 지켜주었으니 더 이상 두려울 게 없군. 외곽 방벽을 안정시키는 대로 반드시 네 곁으로 돌아오마, 정윤호.」" }
                 ],
                 endingId: "end_hongjoong_duty"
             },
@@ -1245,19 +1445,20 @@
                 time: "22:00",
                 location: "언더 시티 B2 강여상의 비밀 진료소",
                 lines: [
-                    { speaker: null, text: "크로노스 의료 감사팀의 강제 단속을 윤호와 함께 막아낸 밤, 여상은 처음으로 진료실 구석에 앉아 수술용 장갑을 벗고 자신의 손끝에 남은 오래된 흉터를 내려다보았다." },
-                    { speaker: "yeosang", exp: "normal", pos: "right", text: "「의대 최종 평가 때 상류층 인사의 불법 장기 우선 배정을 거부했다가 면허 취득에서 영구 배제됐었어. 그 뒤론 누구와도 깊게 엮이지 않으려고 했는데…… 넌 자꾸 내 선 안으로 들어오네, 윤호야.」" },
-                    { speaker: "yunho", exp: "smile", pos: "left", text: "「여상이 네가 아무리 무뚝뚝한 척해도, 환자 한 명 한 명 진심으로 살려내는 걸 내가 제일 잘 아니까요.」" },
-                    { speaker: null, text: "제6장 최후의 결단: 폭로 이후 상층부 병원에서 여상에게 정식 면허 복권과 스카이 섹터 영입을 제안해 왔다." }
+                    { speaker: null, text: "크로노스 의료 감사팀의 강제 단속을 윤호와 함께 막아낸 밤. 불 꺼진 진료소 안, 여상은 언제나 끼고 있던 하얀 장갑을 천천히 벗어 책상 위에 올려놓았다." },
+                    { speaker: "yeosang", exp: "normal", pos: "right", text: "「의대 수석으로 졸업 심사를 받던 날, 상류층 의원의 불법 인공장기 우선 이식 수술에 서명하라는 강요를 거절했어. 그 대가로 난 면허 영구 박탈 판정을 받고 이 지하로 내려왔지.」" },
+                    { speaker: "yeosang", exp: "serious", pos: "right", text: "「환자를 살리는 일 외에는 누구에게도 감정을 쓰지 않으려고 했어. 정을 주면 약점이 되니까. ……그런데 윤호 넌 어째서 내 진료소가 무너질 뻔한 순간에 도망치지 않고 내 앞을 막아선 거야?」" },
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「여상이 네가 아무리 차갑게 선을 그어도, 사실은 누구보다 다정하고 마음이 여린 사람이라는 걸 내가 알아버렸으니까.」" },
+                    { speaker: null, text: "제6장 최후의 결단: 프로젝트 아케론의 의료 비리가 폭로된 후, 상층부 중앙 병원에서 여상에게 정식 의사 면허 복권과 스카이 섹터 영입을 제안해 왔다." }
                 ],
                 choices: [
                     {
-                        text: "1. 여상의 손을 따뜻하게 맞잡으며, 상류층 병원 대신 이곳에서 연인이자 반려로 함께 살아가자고 마음을 전한다.",
+                        text: "1. 장갑을 벗은 여상의 맨손을 따뜻하게 감싸 쥐며, 차가운 상류층 병원 대신 이곳에서 연인으로 평생 함께하자고 고백한다.",
                         effect: {},
                         next: "ch6_end_yeosang_love"
                     },
                     {
-                        text: "2. 연애 감정을 강요하기보다, 진료소의 정식 운영 파트너로서 평생 여상의 곁을 든든하게 보좌하겠다고 약속한다.",
+                        text: "2. 연애라는 틀로 묶기보다, 지하 진료소의 정식 운영 파트너로서 여상이 의술에만 전념할 수 있게 평생 곁을 지키겠다고 말한다.",
                         effect: {},
                         next: "ch6_end_yeosang_partner"
                     }
@@ -1267,7 +1468,7 @@
                 chapter: "제6장 종장: 두 사람만의 진료소",
                 bg: "underground_clinic",
                 lines: [
-                    { speaker: "yeosang", exp: "smile", pos: "center", text: "「스카이 섹터의 무균실보다 네 옆자리가 훨씬 따뜻하네. 앞으로 내 전담 주치의는 너야, 정윤호.」" }
+                    { speaker: "yeosang", exp: "smile", pos: "center", text: "「스카이 섹터의 화려한 무균실보다 네 손의 온기가 훨씬 따뜻하네. 앞으로 내 심장을 돌봐줄 주치의는 너 하나뿐이야, 윤호야.」" }
                 ],
                 endingId: "end_yeosang_love"
             },
@@ -1275,7 +1476,7 @@
                 chapter: "제6장 종장: 언더 시티의 안식처",
                 bg: "underground_clinic",
                 lines: [
-                    { speaker: "yeosang", exp: "smile", pos: "center", text: "「고마워, 윤호야. 네가 내 파트너라서 이제 어떤 응급 환자가 와도 두렵지 않아.」" }
+                    { speaker: "yeosang", exp: "smile", pos: "center", text: "「고마워, 윤호야. 네가 내 유일한 파트너로 옆에 있어 준다면, 이 지하 거리도 더 이상 외롭지 않을 거야.」" }
                 ],
                 endingId: "end_yeosang_partner"
             },
@@ -1289,20 +1490,21 @@
                 time: "00:15",
                 location: "제8구역 군 특수 정비동 격납고",
                 lines: [
-                    { speaker: null, text: "과부하 경고가 울리는 정비 베드 위에서, 최산은 전투용 외부 장갑이 열린 어깨를 드러낸 채 쓴웃음을 지었다." },
-                    { speaker: "san", exp: "normal", pos: "right", text: "「들켰네, 윤호야. 맞아, 난 2년 전 전투에서 이미 죽었어. 지금 이 몸은 군에서 만든 전투용 안드로이드고, 내 머릿속에만 옛날 인간 시절의 뇌가 생명 유지 장치에 담겨 있을 뿐이야.」" },
-                    { speaker: "yunho", exp: "serious", pos: "left", text: "「산아, 네가 기계 몸이든 뭐든 내 눈엔 그냥 나랑 같이 게임하고 장난치던 친구 최산이야! 초기화 따위 절대 못 하게 할 거야!」" },
+                    { speaker: null, text: "붉은 경고등이 점멸하는 특수 정비동 격납고. 군 사령부의 '강제 신경 초기화(기억 소거)' 명령을 거부하고 탈출을 시도하던 최산이, 과부하로 인해 한쪽 무릎을 꿇은 채 거친 숨을 몰아쉬고 있었다." },
+                    { speaker: "san", exp: "serious", pos: "right", text: "「윤호야, 여긴 위험한데 왜 왔어……! 보지 마, 지금 내 어깨 장갑이 열려서 금속 골격이랑 순환액 파이프가 다 드러나 있단 말이야.」" },
+                    { speaker: "san", exp: "normal", pos: "right", text: "「맞아, 난 2년 전 전투에서 이미 죽었어. 내 동의도 없이 뇌만 적출돼서 이 군용 안드로이드 몸에 갇힌 거야. 사람처럼 밥도 먹고 잠도 자지만…… 난 인간도 기계도 아닌 괴물일 뿐이야.」" },
+                    { speaker: "yunho", exp: "serious", pos: "left", text: "「바보 같은 소리 하지 마, 최산! 네 머릿속에 있는 기억도, 날 보며 웃어주던 마음도 전부 진짜잖아! 내 눈엔 넌 괴물이 아니라 내가 제일 아끼는 최산이야!」" },
                     { speaker: "san", exp: "surprised", pos: "right", text: "「……윤호야.」" },
-                    { speaker: null, text: "제6장 최후의 결단: 특수부대 추격조가 격납고 문을 강제 개방하려는 순간, 산의 신경 인터페이스가 임계점에 도달한다." }
+                    { speaker: null, text: "제6장 최후의 결단: 격납고 바깥에서 특수전술부대 추격조가 문을 폭파하려는 순간, 산의 뇌 생명 유지 장치 온도가 위험 수위에 도달한다." }
                 ],
                 choices: [
                     {
-                        text: "1. 홍중과 종호가 남겨둔 우회 코드로 군사 네트워크 락을 완전히 해제하고, 산의 손을 잡고 함께 탈출한다.",
+                        text: "1. 홍중과 종호가 몰래 넘겨준 마스터 해제 코드를 산의 포트에 직접 연결해 군용 통제를 영구 해제하고, 산의 손을 잡고 함께 도망친다.",
                         effect: {},
                         next: "ch6_end_san_love"
                     },
                     {
-                        text: "2. 추격조의 사격이 쏟아지자, 산이 스스로 출력 제한을 해제해 윤호를 방패처럼 감싸 안으며 돌파한다.",
+                        text: "2. 추격조의 중화기 사격이 쏟아지자, 산이 윤호를 구하기 위해 스스로 리미터를 해제하고 자신의 몸으로 총탄과 폭발을 막아낸다.",
                         effect: {},
                         next: "ch6_end_san_sacrifice"
                     }
@@ -1312,7 +1514,7 @@
                 chapter: "제6장 종장: 온전한 너의 이름",
                 bg: "yunho_room",
                 lines: [
-                    { speaker: "san", exp: "smile", pos: "center", text: "「내 인공 피부가 네 체온을 똑같이 느낄 수 있게 만들어져서 정말 다행이야. 사랑해, 윤호야.」" }
+                    { speaker: "san", exp: "smile", pos: "center", text: "「내 인공 피부가 네 심장 뛰는 소리와 체온을 똑같이 느낄 수 있어서 정말 다행이야. 영원히 네 곁에서 살아갈게. 사랑해, 윤호야.」" }
                 ],
                 endingId: "end_san_love"
             },
@@ -1320,7 +1522,7 @@
                 chapter: "제6장 종장: 리부트된 미소",
                 bg: "hardware_store",
                 lines: [
-                    { speaker: "san", exp: "smile", pos: "center", text: "「저기요, 직원분! 우리 어디서 본 적 있지 않아요? 이상하게 당신 얼굴을 보니까 마음이 놓여서요.」" }
+                    { speaker: "san", exp: "smile", pos: "center", text: "「저기요, 철물점 직원분! 우리 어디서 본 적 있지 않아요? 이상하게 당신이 웃는 얼굴을 보니까 가슴 한구석이 뭉클해져서요.」" }
                 ],
                 endingId: "end_san_sacrifice"
             },
@@ -1334,19 +1536,20 @@
                 time: "21:00",
                 location: "언더 시티 B1 송민기의 정비소",
                 lines: [
-                    { speaker: null, text: "암시장 해결사들의 습격으로 엉망이 된 정비소 바닥에서, 민기는 피멍이 든 얼굴로 윤호의 작업 조끼 자락을 꽉 쥐었다." },
-                    { speaker: "mingi", exp: "serious", pos: "right", text: "「윤호야…… 나 어릴 때부터 부모도 없이 굴러먹으면서 아무도 날 안 믿어줬거든? 근데 너만은 끝까지 날 안 버렸잖아. 나 사실은 친구 이상으로 너 좋아하고 있었어, 이 바보야.」" },
-                    { speaker: "yunho", exp: "surprised", pos: "left", text: "「민기야……」" },
-                    { speaker: null, text: "제6장 최후의 결단: 코어 거래 대금으로 받은 정당한 보상금으로 두 사람은 어떤 미래를 선택할까." }
+                    { speaker: null, text: "코어를 노리고 들이닥친 암시장 해결사들을 윤호와 힘을 합쳐 간신히 몰아낸 뒤, 어수선하게 부서진 정비소 작업대 아래에 두 사람은 나란히 주저앉았다." },
+                    { speaker: "mingi", exp: "serious", pos: "right", text: "「……야 정윤호. 넌 진짜 바보냐? 내가 사고만 치고 거짓말이나 밥 먹듯 하는 도박 중독자 새끼인데, 왜 매번 너까지 위험해지면서 날 구하러 오는 건데.」" },
+                    { speaker: "yunho", exp: "normal", pos: "left", text: "「어릴 때부터 이 칙칙한 하층 구역에서 부모도 없이 버티면서, 내가 힘들 때마다 제일 먼저 달려와서 웃겨준 게 너였잖아, 송민기.」" },
+                    { speaker: "mingi", exp: "serious", pos: "right", text: "「……하, 미치겠네 진짜. 윤호야, 나 사실은 옛날부터 친구라는 핑계 뒤에 숨어서 너 좋아하고 있었어. 나 같은 놈이 네 옆에 서는 게 염치없어서 괜히 장난만 쳤던 거라고.」" },
+                    { speaker: null, text: "기름때와 상처투성이인 민기의 큰 손이 떨리는 채로 윤호의 뺨을 조심스럽게 감쌌다. 제6장 최후의 결단: 사건 해결 후 받은 정당한 기술 보상금으로 두 사람은 어떤 내일을 그릴까." }
                 ],
                 choices: [
                     {
-                        text: "1. 도박장 빚을 전부 청산하고, 제9구역에 두 사람의 이름을 내건 정식 기계·안드로이드 수리 공방을 함께 연다.",
+                        text: "1. 민기의 도박 빚을 깨끗이 청산하고, 제9구역 거리에 두 사람의 이름을 나란히 걸고 정식 기계·안드로이드 수리 공방을 창업한다.",
                         effect: {},
                         next: "ch6_end_mingi_love"
                     },
                     {
-                        text: "2. 답답한 아르카디아의 규칙 따위 전부 뒤로하고, 민기와 함께 외곽 횡단 열차에 올라타 자유로운 모험을 떠난다.",
+                        text: "2. 답답한 계층 사회인 아르카디아를 훌쩍 떠나, 민기와 단둘이 대륙 횡단 열차에 몸을 싣고 새로운 도시로 자유로운 여행을 떠난다.",
                         effect: {},
                         next: "ch6_end_mingi_runaway"
                     }
@@ -1356,7 +1559,7 @@
                 chapter: "제6장 종장: 우리들의 공방",
                 bg: "hardware_store",
                 lines: [
-                    { speaker: "mingi", exp: "smile", pos: "center", text: "「야 정윤호 사장님! 오늘부터 내 평생 잭팟은 너 하나뿐이니까 도망갈 생각 마라!」" }
+                    { speaker: "mingi", exp: "smile", pos: "center", text: "「야 정윤호 공동 대표님! 내 인생 최고의 잭팟은 바로 너니까, 평생 내 옆에서 책임져라!」" }
                 ],
                 endingId: "end_mingi_love"
             },
@@ -1364,7 +1567,7 @@
                 chapter: "제6장 종장: 방벽 너머의 질주",
                 bg: "street_night",
                 lines: [
-                    { speaker: "mingi", exp: "smile", pos: "center", text: "「꽉 잡아라, 정윤호! 너랑 나만 있으면 어느 도시로 가든 무적이라고!」" }
+                    { speaker: "mingi", exp: "smile", pos: "center", text: "「내 손 꽉 잡아라, 윤호야! 너랑 나만 있으면 이 황무지 끝 어디를 가든 무적이라고!」" }
                 ],
                 endingId: "end_mingi_runaway"
             },
@@ -1378,19 +1581,20 @@
                 time: "22:30",
                 location: "스타라이트 미디어 단독 콘서트장 백스테이지",
                 lines: [
-                    { speaker: null, text: "가상 인격과 오락용 안드로이드가 판치는 시대에 '유일무이한 인간 아이돌'이라는 왕관을 쓰고 살아온 정우영이, 불 꺼진 무대 뒤에서 윤호의 어깨에 이마를 기댔다." },
-                    { speaker: "wooyoung", exp: "normal", pos: "right", text: "「사람들은 무대 위의 화려한 정우영만 원해. 내가 조금만 지치거나 약한 모습을 보이면 금방이라도 버릴 것처럼 굴거든…… 근데 윤호 넌 날 그냥 스물아홉 살 정우영으로 봐줬잖아.」" },
-                    { speaker: "yunho", exp: "smile", pos: "left", text: "「무대 위에서 춤추는 우영이도 멋있지만, 난 내 앞에서 어묵 국물 마시며 투정 부리는 우영이가 제일 좋아.」" },
-                    { speaker: null, text: "제6장 최후의 결단: 소속사 재계약 및 녹스 후원 폭로 기자회견을 앞둔 순간, 두 사람의 선택은." }
+                    { speaker: null, text: "가상 아이돌과 오락용 안드로이드가 무대를 대체한 시대에 '유일무이한 인간 아이돌'이라는 화려한 왕관을 쓰고 살아온 정우영. 그러나 기획사 임원들이 범죄조직 녹스의 자금 세탁에 자신의 콘서트를 이용해 왔다는 사실을 알게 된 그는, 불 꺼진 대기실 구석에 웅크리고 있었다." },
+                    { speaker: "wooyoung", exp: "serious", pos: "right", text: "「윤호야…… 사람들은 무대 위에서 웃고 춤추는 상품으로서의 정우영만 좋아해. 만약 내가 기획사의 비리를 폭로하고 추락하면, 그땐 아무도 내 옆에 안 남겠지?」" },
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「난 남을 거야, 우영아. 화려한 조명 아래의 아이돌 정우영이 아니라, 내 앞에서 포장마차 어묵 국물 마시며 장난치던 스물아홉 살 정우영을 좋아하는 거니까.」" },
+                    { speaker: "wooyoung", exp: "surprised", pos: "right", text: "「……윤호야. 너 방금 그 말, 내 심장에 엄청 위험한 말인 거 알고 한 거지?」" },
+                    { speaker: null, text: "우영이 눈가가 살짝 붉어진 채로 윤호의 목을 끌어안았다. 제6장 최후의 결단: 대형 기자회견과 피날레 콘서트를 앞둔 밤, 두 사람의 선택은." }
                 ],
                 choices: [
                     {
-                        text: "1. 소속사의 통제를 벗어나 독립 레이블을 세우도록 돕고, 무대 뒤에서 언제나 우영을 안아주는 연인이 된다.",
+                        text: "1. 기획사의 부당한 통제를 폭로하고 우영이 독립 레이블을 세우도록 도우며, 무대 뒤에서 언제나 우영을 안아주는 연인이 된다.",
                         effect: {},
                         next: "ch6_end_wooyoung_love"
                     },
                     {
-                        text: "2. 우영이 스캔들 없이 더 높은 곳에서 빛날 수 있도록, 비밀을 지킨 채 가장 든든한 첫 번째 팬의 자리로 돌아간다.",
+                        text: "2. 우영이 어떤 스캔들에도 상처받지 않고 더 높은 무대에서 영원히 빛날 수 있도록, 비밀을 지킨 채 그의 첫 번째 팬 자리로 돌아간다.",
                         effect: {},
                         next: "ch6_end_wooyoung_star"
                     }
@@ -1400,7 +1604,7 @@
                 chapter: "제6장 종장: 오직 한 사람을 위한 앙코르",
                 bg: "starlight_stage",
                 lines: [
-                    { speaker: "wooyoung", exp: "smile", pos: "center", text: "「윤호야, 오늘 무대 맨 앞자리 비워뒀어. 내 모든 노래는 이제 너한테만 바치는 거야!」" }
+                    { speaker: "wooyoung", exp: "smile", pos: "center", text: "「윤호야, 오늘 공연 VVIP석 맨 한가운데는 네 자리야! 내 모든 춤과 노래는 이제 너한테만 바치는 고백이니까!」" }
                 ],
                 endingId: "end_wooyoung_love"
             },
@@ -1408,7 +1612,7 @@
                 chapter: "제6장 종장: 영원한 스타라이트",
                 bg: "starlight_stage",
                 lines: [
-                    { speaker: "wooyoung", exp: "smile", pos: "center", text: "「이 도시에선 아무리 어두운 밤이라도 절 믿어준 한 사람 덕분에 춤출 수 있었습니다. 고마워요, 내 가장 소중한 팬분!」" }
+                    { speaker: "wooyoung", exp: "smile", pos: "center", text: "「가장 어두운 밤에도 절 있는 그대로 믿어준 한 사람 덕분에 다시 무대에 설 수 있었습니다. 고마워요, 내 영원한 별!」" }
                 ],
                 endingId: "end_wooyoung_star"
             },
@@ -1422,20 +1626,21 @@
                 time: "23:45",
                 location: "안보국 지하 4층 메인 보안 서버실",
                 lines: [
-                    { speaker: null, text: "수십 개의 모니터 불빛만이 깜빡이는 서늘한 서버실에서, 밤샘 해킹 방어전을 마친 최종호가 피곤한 눈을 비비며 안경을 벗었다." },
-                    { speaker: "jongho", exp: "normal", pos: "right", text: "「원래 전 남의 단말기 기록이나 추적하면서 거리를 두는 편이거든요. 감정에 휘둘리면 분석이 틀어지니까요. ……근데 윤호 형이 위험해질 뻔했을 땐 손이 떨려서 타자도 못 치겠더라고요.」" },
-                    { speaker: "yunho", exp: "smile", pos: "left", text: "「종호야, 따뜻한 캔커피 사 왔어. 이제 그만 모니터 끄고 내 방에 가서 같이 쉬자.」" },
-                    { speaker: "jongho", exp: "smile", pos: "right", text: "「……형이 그렇게 다정하게 말하면, 저 진짜로 형 방에 눌러앉아 버립니다?」" },
-                    { speaker: null, text: "제6장 최후의 결단: 프로젝트 아케론의 최종 서버 데이터를 처리하는 마지막 밤, 두 사람의 관계는 어디로 향할까." }
+                    { speaker: null, text: "군 내부 첩자들의 해킹 공격을 홀로 막아내며 사흘 밤낮을 지새운 최종호 대위. 차가운 서버실 바닥에 앉아 안경을 벗은 그의 눈가에는 짙은 피로가 내려앉아 있었다." },
+                    { speaker: "jongho", exp: "normal", pos: "right", text: "「전 어릴 때부터 사람보다 0과 1로 이루어진 코드가 더 편했어요. 계산대로 움직이고 배신하지 않으니까요. 그래서 늘 남들과 거리를 두고 혼자 일하는 걸 고집했는데……」" },
+                    { speaker: "jongho", exp: "serious", pos: "right", text: "「아까 윤호 형 위치 신호가 감시망에서 잠깐 끊겼을 땐, 평생 한 번도 낸 적 없던 오타를 열 번이나 쳤어요. 형을 잃을까 봐 그렇게 무서웠던 적은 처음이에요.」" },
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「종호야, 내가 무사히 여기 왔잖아. 자, 네가 좋아하는 따뜻한 캔커피 사 왔으니까 이제 그만 내 어깨에 기대서 눈 좀 붙여.」" },
+                    { speaker: "jongho", exp: "smile", pos: "right", text: "「……형이 자꾸 그렇게 다정하게 굴면, 저 진짜로 버릇 나빠져서 형 옆에서 안 떨어집니다?」" },
+                    { speaker: null, text: "제6장 최후의 결단: 프로젝트 아케론의 메인 서버 정리를 마친 새벽, 윤호와 종호가 나아갈 길은." }
                 ],
                 choices: [
                     {
-                        text: "1. 「눌러앉아도 돼, 종호야.」 서툰 감정 표현 뒤에 숨은 종호의 외로움을 감싸 안으며 연인으로 마음을 나눈다.",
+                        text: "1. 「평생 안 떨어져도 돼, 종호야.」 서툰 감정 표현 뒤에 숨은 종호의 고독을 따뜻하게 안아주며 연인으로 거듭난다.",
                         effect: {},
                         next: "ch6_end_jongho_love"
                     },
                     {
-                        text: "2. 종호와 함께 부패한 권력층의 기밀을 감시하고 정의를 실현하는 비밀 정보 파트너로서 굳건한 동맹을 맺는다.",
+                        text: "2. 윤호의 현장 감각과 종호의 천재적인 정보력을 합쳐, 도시의 부패 권력을 어둠 속에서 감시하는 최고의 파트너가 된다.",
                         effect: {},
                         next: "ch6_end_jongho_partner"
                     }
@@ -1445,7 +1650,7 @@
                 chapter: "제6장 종장: 로그오프 뒤의 온기",
                 bg: "yunho_room",
                 lines: [
-                    { speaker: "jongho", exp: "smile", pos: "center", text: "「윤호 형 옆에 있으면 어떤 방화벽보다 안전해요. 오늘 밤은 알람 다 끄고 형 품에서 푹 잘래요.」" }
+                    { speaker: "jongho", exp: "smile", pos: "center", text: "「윤호 형 품이 세상의 어떤 보안 방화벽보다 따뜻하고 안전하네요. 오늘 밤은 단말기 다 끄고 형 옆에서 푹 잘래요.」" }
                 ],
                 endingId: "end_jongho_love"
             },
@@ -1453,7 +1658,7 @@
                 chapter: "제6장 종장: 아르카디아의 파수꾼",
                 bg: "security_hq",
                 lines: [
-                    { speaker: "jongho", exp: "smile", pos: "center", text: "「형은 현장을 맡아주세요. 등 뒤의 모든 통신망과 보안 문은 제가 완벽하게 열어둘 테니까요.」" }
+                    { speaker: "jongho", exp: "smile", pos: "center", text: "「윤호 형은 앞만 보고 걸어가세요. 형이 가는 길의 모든 잠긴 문과 감시 카메라는 제가 뒤에서 완벽하게 통제할 테니까요.」" }
                 ],
                 endingId: "end_jongho_partner"
             },
