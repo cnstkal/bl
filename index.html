@@ -42,6 +42,16 @@
             to   { opacity: 1; transform: translate(0, 0) scale(1); }
         }
 
+        @keyframes charExit-left {
+            to { opacity: 0; transform: translate(-52px, 14px); }
+        }
+        @keyframes charExit-right {
+            to { opacity: 0; transform: translate(52px, 14px); }
+        }
+        @keyframes charExit-center {
+            to { opacity: 0; transform: translate(0, 28px) scale(0.97); }
+        }
+
         /* 대화창 텍스트 커서 효과 */
         .typing-cursor::after {
             content: '▼';
@@ -2854,7 +2864,9 @@
                 updateStanding(lineObj.speaker, lineObj.exp || "normal", lineObj.pos || "center");
             } else {
                 speakerBox.classList.add("hidden");
-                // 서술 줄: 무대의 모든 인물을 밝게
+                // 서술문에서 인물의 퇴장이 명시되면 해당 인물을 무대에서 퇴장시킴
+                syncStageWithNarration(lineObj.text);
+                // 서술 줄: 남아 있는 인물은 모두 밝게
                 renderStage(null);
             }
 
@@ -2955,6 +2967,48 @@
             if (current && current !== target) stage[current] = null;
             stage[target] = charKey;
             renderStage(charKey);
+        }
+
+        // 서술문에 명시된 퇴장 동작을 무대 상태에 반영
+        function syncStageWithNarration(text) {
+            if (!text) return;
+
+            const exitWords = /떠나|빠져나가|사라지|뒤로하고|발걸음을 옮기|자리를 비우|문을 나서|매장을 나서|돌아서 나가|멀어져|퇴장/;
+            if (!exitWords.test(text)) return;
+
+            const groupExit = /두 군인|두 사람|일행|모두를 뒤로하고|그들을 뒤로하고/.test(text);
+            STAGE_POS.forEach(pos => {
+                const key = stage[pos];
+                if (!key) return;
+
+                const info = CHAR_INFO[key];
+                const name = info && info.name;
+                const isNamedExit = name && text.includes(name);
+                const isGroupExit = groupExit && key !== "yunho";
+
+                if (isNamedExit || isGroupExit) {
+                    removeStageCharacter(key, pos);
+                }
+            });
+        }
+
+        // 캐릭터가 있던 방향으로 짧게 빠져나간 뒤 슬롯 정리
+        function removeStageCharacter(charKey, position) {
+            const el = document.getElementById(`char-slot-${position}`);
+            if (!el || stage[position] !== charKey) return;
+
+            el.style.animation = `charExit-${position} 0.32s ease-in forwards`;
+            window.setTimeout(() => {
+                // 퇴장 애니메이션 도중 같은 슬롯에 다른 인물이 배치됐다면 건드리지 않음
+                if (stage[position] !== charKey) return;
+                stage[position] = null;
+                el.innerHTML = "";
+                el.dataset.char = "";
+                el.style.animation = "";
+                el.style.transform = "";
+                el.classList.add("hidden", "opacity-0", "translate-y-6");
+                renderStage(null);
+            }, 330);
         }
 
         function typeText(text, isDialogue) {
