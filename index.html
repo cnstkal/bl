@@ -1205,6 +1205,26 @@
            * 10/15 오후(철물점~오락실): 최산(고전 게임팩과 리볼버 그립을 찾으러 온 손님)
            * 10/16 저녁(언더 시티 B2): 강여상(다친 손 치료와 동생 상비약) → 정우영(여상의 진료소에 숨어든 아이돌)
            ========================================================================= */
+        // 업로드된 실제 배경 이미지 경로 (GitHub Pages 상대 경로)
+        const BG_IMAGES = {
+            hardware_store: "backgrounds/철물점.png",
+            street_night: "backgrounds/밤거리.png",
+            yunho_room: "backgrounds/윤호의 방.png",
+            underground_clinic: "backgrounds/진료소.png",
+            coin_laundry: "backgrounds/정비소.png", // 세탁소 전용 이미지가 없어 실내 작업장 이미지로 임시 연결
+            nox_lounge: "backgrounds/라운지.png",
+            subway_train: "backgrounds/열차.png",
+            security_hq: "backgrounds/사령부.png",
+            starlight_stage: "backgrounds/콘서트장.png",
+            checkpoint: "backgrounds/검문소.png",
+            hangar: "backgrounds/격납고.png",
+            city: "backgrounds/도시.png",
+            arcade: "backgrounds/오락실.png",
+            server_room: "backgrounds/서버실.png",
+            maintenance_shop: "backgrounds/정비소.png",
+            underground_passage: "backgrounds/지하통로.png"
+        };
+
         const STORY_NODES = {
             // ==================== [제1장: 잿빛 하늘 아래의 나사못 (10월 14일 낮)] ====================
             "ch1_start": {
@@ -2362,8 +2382,21 @@
             if (node.location) document.getElementById("hud-location").innerText = node.location;
             document.getElementById("hud-money").innerText = `${gameState.money} C`;
 
-            if (node.bg && BG_ART[node.bg]) {
-                document.getElementById("bg-layer").innerHTML = BG_ART[node.bg];
+            if (node.bg) {
+                const bgLayer = document.getElementById("bg-layer");
+                const bgImage = BG_IMAGES[node.bg];
+                if (bgImage) {
+                    // 실제 업로드 이미지 우선 사용, 한글 파일명과 공백도 안전하게 처리
+                    bgLayer.innerHTML = "";
+                    bgLayer.style.backgroundImage = `url("${encodeURI(bgImage)}")`;
+                    bgLayer.style.backgroundSize = "cover";
+                    bgLayer.style.backgroundPosition = "center center";
+                    bgLayer.style.backgroundRepeat = "no-repeat";
+                } else if (BG_ART[node.bg]) {
+                    // 이미지가 등록되지 않은 배경 키는 기존 SVG로 대체
+                    bgLayer.style.backgroundImage = "none";
+                    bgLayer.innerHTML = BG_ART[node.bg];
+                }
             }
 
             document.getElementById("choice-overlay").classList.add("hidden");
