@@ -209,15 +209,16 @@
                 max-width: 92vw !important;
             }
 
-            /* 두 명 이상: 좌우에 나란히 */
+            /* 두 명 이상: 크기는 그대로, 좌우에 나란히 (몸은 가장자리에서 잘려도 얼굴은 유지) */
             #standing-layer.pair > div {
-                max-width: 50%;
+                max-width: none;
+                flex: 0 0 auto;
+                margin-left: -6px;
+                margin-right: -6px;
             }
 
             #standing-layer.pair img {
-                height: auto !important;
-                width: 46vw !important;
-                max-width: 46vw !important;
+                max-width: none !important;
             }
 
             #vn-container > footer {
@@ -2716,6 +2717,8 @@
                 updateStanding(lineObj.speaker, lineObj.exp || "normal", lineObj.pos || "center");
             } else {
                 speakerBox.classList.add("hidden");
+                // 서술 줄: 무대의 모든 인물을 밝게
+                renderStage(null);
             }
 
             const logName = lineObj.speaker ? CHAR_INFO[lineObj.speaker].name : "서술";
@@ -2767,10 +2770,13 @@
                     el.style.animation = `charEnter-${pos} 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards`;
                 }
                 // 말하는 사람은 살짝 떠오르고 밝게, 나머지는 어둡게
-                el.style.transform = key === speakerKey ? "translateY(-6px)" : "translateY(0)";
-                el.style.filter = key === speakerKey
-                    ? "brightness(1) drop-shadow(0 15px 25px rgba(0,0,0,0.85))"
-                    : "brightness(0.55) drop-shadow(0 15px 25px rgba(0,0,0,0.85))";
+                const isSpeaking = !!speakerKey && key === speakerKey;
+                const isQuiet = !!speakerKey && key !== speakerKey;
+                el.style.transform = isSpeaking ? "translateY(-6px)" : "translateY(0)";
+                // 대사 중: 말하는 인물은 밝게, 가만히 있는 인물은 검게 / 서술: 모두 밝게
+                el.style.filter = isQuiet
+                    ? "brightness(0.12) drop-shadow(0 15px 25px rgba(0,0,0,0.85))"
+                    : "brightness(1) drop-shadow(0 15px 25px rgba(0,0,0,0.85))";
             });
             layer.classList.toggle("pair", count >= 2);
         }
