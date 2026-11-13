@@ -453,17 +453,35 @@
             </div>
         </div>
 
-        <!-- [모달 8] 특별 일러스트 (EVENT CG) 갤러리 -->
+        <!-- [모달 8] 특별 일러스트 (EVENT CG) 갤러리 (수집형 잠금 및 확대 뷰어 포함) -->
         <div id="modal-cg-gallery" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-4">
             <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-5xl w-full max-h-[85vh] flex flex-col shadow-2xl">
                 <div class="flex justify-between items-center p-5 border-b border-slate-800">
                     <div>
-                        <h3 class="font-bold text-lg text-rose-400">특별 장면 일러스트 갤러리 (SPECIAL EVENT CG)</h3>
-                        <p class="text-xs text-slate-400 mt-0.5">스토리의 결정적 순간에 등장하는 특별 일러스트 컬렉션입니다. 나중에 <code class="text-amber-300">SPECIAL_CG_IMAGES</code>에 이미지 주소를 넣으면 해당 일러스트로 교체됩니다.</p>
+                        <h3 class="font-bold text-lg text-rose-400 flex items-center gap-3">
+                            <span>특별 장면 일러스트 갤러리 (EVENT CG ARCHIVE)</span>
+                            <span id="cg-collection-count" class="text-xs px-3 py-1 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-300 font-cyber">0 / 14</span>
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-0.5">이야기를 플레이하며 직접 목격한 특별 장면만 해금되어 수집됩니다. 해금된 일러스트를 클릭하면 크게 감상할 수 있습니다.</p>
                     </div>
                     <button onclick="closeModal('modal-cg-gallery')" class="text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full">✕</button>
                 </div>
                 <div id="cg-gallery-content" class="flex-1 overflow-y-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm"></div>
+            </div>
+        </div>
+
+        <!-- [모달 9] 해금된 CG 전체화면 확대 뷰어 -->
+        <div id="modal-cg-viewer" onclick="closeModal('modal-cg-viewer')" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md hidden flex-col items-center justify-center p-6 cursor-pointer">
+            <div class="max-w-5xl w-full space-y-4" onclick="event.stopPropagation()">
+                <div id="cg-viewer-art" class="w-full h-[65vh] rounded-2xl overflow-hidden border-2 border-rose-500/60 shadow-2xl bg-slate-950"></div>
+                <div class="flex justify-between items-center bg-slate-900/90 border border-slate-800 px-6 py-4 rounded-xl">
+                    <div>
+                        <span id="cg-viewer-meta" class="text-xs font-bold text-rose-400 block"></span>
+                        <h4 id="cg-viewer-title" class="text-lg font-bold text-white mt-0.5"></h4>
+                        <p id="cg-viewer-desc" class="text-xs text-slate-300 mt-1"></p>
+                    </div>
+                    <button onclick="closeModal('modal-cg-viewer')" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold shrink-0 ml-4">닫기</button>
+                </div>
             </div>
         </div>
 
@@ -548,10 +566,15 @@
             cg_san_spark: "",           // [특별 일러스트 3] 철물점 카운터에서 최산과 윤호의 손끝이 맞닿으며 푸른 스파크와 온기가 전해지는 장면
             cg_yeosang_bandage: "",     // [특별 일러스트 4] 지하 진료소에서 강여상이 장갑 낀 손으로 윤호의 다친 손바닥을 치료해 주는 장면
             cg_wooyoung_hideout: "",    // [특별 일러스트 5] 좁은 커튼 뒤에 숨은 아이돌 정우영이 윤호의 점퍼를 걸친 채 숨을 죽이고 눈을 맞추는 장면
-            cg_mingi_rooftop: "",       // [특별 일러스트 6] 제9구역 철물점 옥상에서 송민기와 나란히 캔맥주를 마시며 네온 야경을 바라보는 장면
-            cg_jongho_console: "",      // [특별 일러스트 7] 푸른 홀로그램 모니터 불빛 아래 안경을 벗은 최종호가 윤호의 어깨에 기대어 잠든 장면
-            cg_sunghwa_repair: "",      // [특별 일러스트 8] 펜트하우스에서 윤호가 박성화의 열린 은빛 티타늄 흉부 기계 심장을 정비해 주는 장면
-            cg_san_awakening: ""        // [특별 일러스트 9] 격납고에서 윤호가 최산의 목덜미 신경 포트에 마스터 해제 케이블을 연결하고 껴안는 장면
+            cg_laundry_san: "",         // [특별 일러스트 6] 휴일 새벽 코인 세탁소에서 최산과 나란히 앉아 돌아가는 세탁조를 바라보며 이어폰을 나눠 끼는 장면
+            cg_subway_hongjoong: "",    // [특별 일러스트 7] 급정거한 미들 코어 지하철 객차 안에서 김홍중 소령이 한 손으로 윤호의 허리와 어깨를 감싸 지탱해 주는 장면
+            cg_mingi_rooftop: "",       // [특별 일러스트 8] 제9구역 철물점 옥상에서 송민기와 나란히 캔맥주를 마시며 네온 야경을 바라보는 장면
+            cg_jongho_console: "",      // [특별 일러스트 9] 푸른 홀로그램 모니터 불빛 아래 안경을 벗은 최종호가 윤호의 어깨에 기대어 잠든 장면
+            cg_sunghwa_repair: "",      // [특별 일러스트 10] 펜트하우스에서 윤호가 박성화의 열린 은빛 티타늄 흉부 기계 심장을 정비해 주는 장면
+            cg_hongjoong_dawn: "",      // [특별 일러스트 11] 작전 종료 후 안보국 지휘차 지붕 위에서 김홍중이 제복 코트를 벗어 윤호의 어깨에 걸쳐주는 새벽 장면
+            cg_yeosang_gloves: "",      // [특별 일러스트 12] 단속 위기를 넘긴 진료소에서 강여상이 처음으로 하얀 무균 장갑을 벗고 맨손으로 윤호의 뺨을 감싸는 장면
+            cg_san_awakening: "",       // [특별 일러스트 13] 격납고에서 윤호가 최산의 목덜미 신경 포트에 마스터 해제 케이블을 연결하고 껴안는 장면
+            cg_wooyoung_encore: ""      // [특별 일러스트 14] 조명이 모두 꺼진 텅 빈 콘서트 무대 한가운데서 정우영이 윤호 한 사람만을 위해 춤추며 손을 내미는 장면
         };
 
         // 특별 장면 일러스트 메타데이터 및 기본 고해상도 아트워크 (이미지 미등록 시 시네마틱 SVG 연출 제공)
@@ -569,18 +592,14 @@
                     </defs>
                     <rect width="1280" height="720" fill="url(#cg1Bg)"/>
                     <circle cx="760" cy="320" r="420" fill="url(#cg1Glow)"/>
-                    <!-- 윤호의 감청색 조끼 포켓 클로즈업 -->
                     <rect x="220" y="240" width="460" height="480" rx="24" fill="#1e293b" stroke="#475569" stroke-width="4"/>
                     <rect x="310" y="420" width="240" height="190" rx="12" fill="#0f172a" stroke="#64748b" stroke-width="3"/>
-                    <!-- 검은 금속 명함과 은빛 NOX 로고 -->
                     <g transform="rotate(-12 450 390)">
                         <rect x="360" y="290" width="210" height="125" rx="10" fill="#05070a" stroke="#c084fc" stroke-width="3"/>
                         <text x="465" y="362" fill="#e9d5ff" font-size="26" font-family="Orbitron, sans-serif" text-anchor="middle" letter-spacing="6">NOX · S.H</text>
                     </g>
-                    <!-- 성화의 검은 가죽 장갑과 은빛 티타늄 손목 관절 -->
                     <path d="M 520 310 Q 670 250 860 290 L 1180 430 L 1080 580 L 740 410 Z" fill="#090d16" stroke="#94a3b8" stroke-width="3"/>
                     <rect x="780" y="315" width="42" height="115" rx="8" transform="rotate(22 780 315)" fill="#cbd5e1" stroke="#38bdf8" stroke-width="2"/>
-                    <circle cx="880" cy="210" r="3" fill="#e9d5ff"/><circle cx="620" cy="180" r="4" fill="#c084fc"/>
                 </svg>`
             },
             cg_hongjoong_umbrella: {
@@ -594,18 +613,12 @@
                         <linearGradient id="cg2Bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#040914"/><stop offset="60%" stop-color="#0f2942"/><stop offset="100%" stop-color="#090d16"/></linearGradient>
                     </defs>
                     <rect width="1280" height="720" fill="url(#cg2Bg)"/>
-                    <!-- 경광등 불빛 -->
                     <circle cx="280" cy="380" r="260" fill="#0284c7" opacity="0.22"/>
                     <circle cx="980" cy="360" r="240" fill="#f43f5e" opacity="0.18"/>
-                    <!-- 우산 실루엣과 빗방울 -->
                     <path d="M 80 280 Q 480 60 880 290 Z" fill="#1e293b" stroke="#38bdf8" stroke-width="4" opacity="0.9"/>
                     <line x1="480" y1="180" x2="460" y2="680" stroke="#94a3b8" stroke-width="8"/>
-                    <!-- 안보국 소령 금빛 견장과 제복 실루엣 -->
                     <path d="M 680 720 L 730 350 Q 860 310 980 350 L 1040 720 Z" fill="#0f172a" stroke="#eab308" stroke-width="3"/>
                     <rect x="740" y="345" width="75" height="22" rx="4" fill="#eab308"/>
-                    <line x1="220" y1="80" x2="180" y2="660" stroke="#7dd3fc" stroke-width="1.5" opacity="0.35"/>
-                    <line x1="620" y1="40" x2="580" y2="680" stroke="#7dd3fc" stroke-width="1.5" opacity="0.35"/>
-                    <line x1="1060" y1="90" x2="1020" y2="670" stroke="#7dd3fc" stroke-width="1.5" opacity="0.35"/>
                 </svg>`
             },
             cg_san_spark: {
@@ -618,7 +631,6 @@
                     <rect width="1280" height="720" fill="#0d1322"/>
                     <circle cx="640" cy="360" r="320" fill="#fb7185" opacity="0.18"/>
                     <circle cx="640" cy="360" r="140" fill="#38bdf8" opacity="0.28"/>
-                    <!-- 맞닿은 두 손의 실루엣과 스파크 연출 -->
                     <path d="M 140 460 Q 380 380 610 365 L 590 435 Q 380 460 140 560 Z" fill="#f1dca7" stroke="#34d399" stroke-width="3"/>
                     <path d="M 1140 280 Q 880 330 650 355 L 670 425 Q 890 410 1140 390 Z" fill="#f8e5b8" stroke="#fb7185" stroke-width="3"/>
                     <polyline points="580,350 630,310 620,370 675,330 645,405 700,385" fill="none" stroke="#38bdf8" stroke-width="5"/>
@@ -635,7 +647,6 @@
                     <rect width="1280" height="720" fill="#06161b"/>
                     <circle cx="640" cy="360" r="360" fill="#14b8a6" opacity="0.18"/>
                     <rect x="180" y="120" width="920" height="480" rx="24" fill="#0b2229" stroke="#2dd4bf" stroke-width="2" opacity="0.8"/>
-                    <!-- 여상의 하얀 장갑 낀 손과 나노 패치 -->
                     <path d="M 280 420 Q 520 390 660 370 L 650 450 Q 480 480 280 510 Z" fill="#f1dca7"/>
                     <rect x="550" y="375" width="95" height="48" rx="10" fill="#2dd4bf" opacity="0.75" stroke="#ccfbf1" stroke-width="2"/>
                     <path d="M 980 300 Q 760 330 610 365 L 635 430 Q 790 410 980 390 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="3"/>
@@ -656,6 +667,36 @@
                     <text x="640" y="370" fill="#fbcfe8" font-size="28" font-family="Orbitron, sans-serif" text-anchor="middle">STARLIGHT SECRET</text>
                 </svg>`
             },
+            cg_laundry_san: {
+                id: "cg_laundry_san",
+                title: "새벽 코인 세탁소의 따뜻한 비누향",
+                charName: "최산 & 정윤호",
+                chapter: "제3.2장",
+                desc: "일요일 오전의 24시 코인 세탁소에서 빙글빙글 돌아가는 건조기 앞에 나란히 앉아 구형 유선 이어폰을 한쪽씩 나눠 낀 윤호와 최산.",
+                svg: `<svg viewBox="0 0 1280 720" class="w-full h-full object-cover">
+                    <rect width="1280" height="720" fill="#0c192c"/>
+                    <rect x="180" y="110" width="420" height="480" rx="24" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+                    <circle cx="390" cy="360" r="145" fill="#091326" stroke="#7dd3fc" stroke-width="8"/>
+                    <rect x="680" y="110" width="420" height="480" rx="24" fill="#1e293b" stroke="#fb7185" stroke-width="3"/>
+                    <circle cx="890" cy="360" r="145" fill="#091326" stroke="#fda4af" stroke-width="8"/>
+                    <path d="M 420 560 Q 640 420 860 560" fill="none" stroke="#34d399" stroke-width="5" stroke-dasharray="8 4"/>
+                </svg>`
+            },
+            cg_subway_hongjoong: {
+                id: "cg_subway_hongjoong",
+                title: "급정거한 열차 안의 단단한 품",
+                charName: "김홍중 & 정윤호",
+                chapter: "제3.5장",
+                desc: "미들 코어행 자기부상 지하철이 신호 이상으로 급정거한 순간, 비번 복장의 김홍중 소령이 한 팔로 손잡이를 잡고 다른 팔로 윤호를 끌어안아 지탱해 준 장면.",
+                svg: `<svg viewBox="0 0 1280 720" class="w-full h-full object-cover">
+                    <rect width="1280" height="720" fill="#071120"/>
+                    <rect x="100" y="140" width="1080" height="240" rx="16" fill="#0c243d" stroke="#38bdf8" stroke-width="3"/>
+                    <line x1="0" y1="90" x2="1280" y2="90" stroke="#94a3b8" stroke-width="10"/>
+                    <line x1="640" y1="90" x2="640" y2="260" stroke="#eab308" stroke-width="8"/>
+                    <circle cx="640" cy="285" r="28" fill="none" stroke="#eab308" stroke-width="8"/>
+                    <circle cx="640" cy="480" r="180" fill="#0284c7" opacity="0.22"/>
+                </svg>`
+            },
             cg_mingi_rooftop: {
                 id: "cg_mingi_rooftop",
                 title: "제9구역 옥상의 잔광과 캔맥주",
@@ -668,7 +709,6 @@
                     </defs>
                     <rect width="1280" height="720" fill="url(#cg6Sky)"/>
                     <line x1="0" y1="520" x2="1280" y2="520" stroke="#fbbf24" stroke-width="4" opacity="0.6"/>
-                    <!-- 부딪치는 두 개의 맥주캔 -->
                     <rect x="490" y="280" width="110" height="190" rx="14" transform="rotate(14 545 375)" fill="#0284c7" stroke="#e2e8f0" stroke-width="3"/>
                     <rect x="660" y="275" width="110" height="190" rx="14" transform="rotate(-14 715 370)" fill="#f59e0b" stroke="#e2e8f0" stroke-width="3"/>
                     <circle cx="630" cy="310" r="45" fill="#fef3c7" opacity="0.4"/>
@@ -683,7 +723,6 @@
                 svg: `<svg viewBox="0 0 1280 720" class="w-full h-full object-cover">
                     <rect width="1280" height="720" fill="#050b18"/>
                     <rect x="220" y="90" width="840" height="360" rx="16" fill="#0c1e35" stroke="#6366f1" stroke-width="3"/>
-                    <!-- 벗어둔 안경과 따뜻한 커피 캔 -->
                     <rect x="440" y="510" width="110" height="45" rx="8" fill="none" stroke="#a5b4fc" stroke-width="4"/>
                     <rect x="570" y="510" width="110" height="45" rx="8" fill="none" stroke="#a5b4fc" stroke-width="4"/>
                     <line x1="550" y1="530" x2="570" y2="530" stroke="#a5b4fc" stroke-width="4"/>
@@ -704,6 +743,34 @@
                     <circle cx="640" cy="360" r="35" fill="#ffffff"/>
                 </svg>`
             },
+            cg_hongjoong_dawn: {
+                id: "cg_hongjoong_dawn",
+                title: "작전 종료 후의 코트와 여명",
+                charName: "김홍중 & 정윤호",
+                chapter: "제5장 [김홍중 루트]",
+                desc: "새벽 작전을 마친 뒤 지휘 장갑차 보닛에 나란히 기대어, 김홍중 소령이 자신의 제복 롱코트를 벗어 추위에 떠는 윤호의 어깨에 둘러주는 순간.",
+                svg: `<svg viewBox="0 0 1280 720" class="w-full h-full object-cover">
+                    <defs>
+                        <linearGradient id="dawnBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#061224"/><stop offset="65%" stop-color="#1e3a5f"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient>
+                    </defs>
+                    <rect width="1280" height="720" fill="url(#dawnBg)"/>
+                    <rect x="280" y="320" width="720" height="400" rx="30" fill="#0f172a" stroke="#eab308" stroke-width="3"/>
+                    <circle cx="640" cy="520" r="90" fill="#38bdf8" opacity="0.25"/>
+                </svg>`
+            },
+            cg_yeosang_gloves: {
+                id: "cg_yeosang_gloves",
+                title: "처음으로 벗어 던진 하얀 장갑",
+                charName: "강여상 & 정윤호",
+                chapter: "제5장 [강여상 루트]",
+                desc: "진료소를 지켜낸 밤, 타인과의 접촉을 꺼리던 강여상이 스스로 하얀 장갑을 벗고 따뜻한 맨손으로 윤호의 뺨과 입술 끝을 어루만지는 순간.",
+                svg: `<svg viewBox="0 0 1280 720" class="w-full h-full object-cover">
+                    <rect width="1280" height="720" fill="#05181c"/>
+                    <circle cx="640" cy="360" r="310" fill="#2dd4bf" opacity="0.2"/>
+                    <path d="M 380 480 Q 640 310 900 480" fill="none" stroke="#f8fafc" stroke-width="8"/>
+                    <circle cx="640" cy="340" r="70" fill="#fde68a" opacity="0.35"/>
+                </svg>`
+            },
             cg_san_awakening: {
                 id: "cg_san_awakening",
                 title: "마스터 코드 해제와 자유의 포옹",
@@ -717,6 +784,19 @@
                     <rect x="440" y="290" width="400" height="140" rx="20" fill="#0f172a" stroke="#34d399" stroke-width="4"/>
                     <text x="640" y="370" fill="#34d399" font-size="28" font-family="Orbitron, sans-serif" text-anchor="middle">OVERRIDE COMPLETE</text>
                 </svg>`
+            },
+            cg_wooyoung_encore: {
+                id: "cg_wooyoung_encore",
+                title: "텅 빈 객석, 오직 한 사람을 위한 독무",
+                charName: "정우영 & 정윤호",
+                chapter: "제5장 [정우영 루트]",
+                desc: "모든 관객과 스태프가 빠져나간 새벽의 메가 돔 무대 위, 핀조명 하나 아래에서 정우영이 윤호 한 사람만을 바라보며 손을 내미는 순간.",
+                svg: `<svg viewBox="0 0 1280 720" class="w-full h-full object-cover">
+                    <rect width="1280" height="720" fill="#0d0517"/>
+                    <polygon points="640,0 920,720 360,720" fill="#f472b6" opacity="0.18"/>
+                    <ellipse cx="640" cy="620" rx="340" ry="60" fill="#1e1b4b" stroke="#ec4899" stroke-width="3"/>
+                    <circle cx="640" cy="380" r="85" fill="#fbcfe8" opacity="0.3"/>
+                </svg>`
             }
         };
 
@@ -724,7 +804,7 @@
         const SHOW_IMAGE_PLACEHOLDER_BADGE = true;
 
         /* =========================================================================
-           1. 배경 아트워크 (7종 장소/분위기 고해상도 SVG)
+           1. 배경 아트워크 (10종 장소/분위기 고해상도 SVG)
            ========================================================================= */
         const BG_ART = {
             hardware_store: `
@@ -811,13 +891,11 @@
                         </linearGradient>
                     </defs>
                     <rect width="1600" height="900" fill="url(#noxBg)"/>
-                    <!-- 통유리 너머 미들 코어 스카이라인 -->
                     <rect x="160" y="70" width="1280" height="480" fill="#0c0a1d" stroke="#581c87" stroke-width="4"/>
                     <circle cx="1150" cy="220" r="110" fill="#c084fc" opacity="0.12"/>
                     <rect x="280" y="180" width="130" height="370" fill="#1e1b4b"/>
                     <rect x="480" y="130" width="180" height="420" fill="#0f172a"/>
                     <rect x="860" y="150" width="170" height="400" fill="#1e1b4b"/>
-                    <!-- 고급 바 테이블 및 조명 -->
                     <rect x="100" y="600" width="1400" height="260" rx="20" fill="#181124" stroke="#7e22ce" stroke-width="3"/>
                     <line x1="160" y1="70" x2="160" y2="550" stroke="#a855f7" stroke-width="2" opacity="0.4"/>
                     <line x1="1440" y1="70" x2="1440" y2="550" stroke="#a855f7" stroke-width="2" opacity="0.4"/>
@@ -826,13 +904,11 @@
             security_hq: `
                 <svg viewBox="0 0 1600 900" class="w-full h-full object-cover">
                     <rect width="1600" height="900" fill="#060d1a"/>
-                    <!-- 대형 전술 홀로그램 스크린 -->
                     <rect x="180" y="80" width="1240" height="470" rx="12" fill="#081c30" stroke="#0284c7" stroke-width="4"/>
                     <circle cx="800" cy="315" r="160" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.45"/>
                     <circle cx="800" cy="315" r="95" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="10 6" opacity="0.6"/>
                     <line x1="240" y1="315" x2="1360" y2="315" stroke="#0284c7" stroke-width="1" opacity="0.4"/>
                     <line x1="800" y1="110" x2="800" y2="520" stroke="#0284c7" stroke-width="1" opacity="0.4"/>
-                    <!-- 서버 콘솔 데스크 -->
                     <polygon points="100,900 1500,900 1320,600 280,600" fill="#0f172a" stroke="#334155" stroke-width="4"/>
                 </svg>
             `,
@@ -849,6 +925,25 @@
                     <polygon points="450,0 650,900 150,900" fill="#f472b6" opacity="0.08"/>
                     <polygon points="1150,0 1450,900 950,900" fill="#38bdf8" opacity="0.08"/>
                     <ellipse cx="800" cy="760" rx="580" ry="90" fill="#0f172a" stroke="#ec4899" stroke-width="3" opacity="0.8"/>
+                </svg>
+            `,
+            coin_laundry: `
+                <svg viewBox="0 0 1600 900" class="w-full h-full object-cover">
+                    <rect width="1600" height="900" fill="#091526"/>
+                    <rect x="120" y="140" width="380" height="520" rx="20" fill="#1e293b" stroke="#38bdf8" stroke-width="4"/>
+                    <circle cx="310" cy="420" r="135" fill="#0b1320" stroke="#7dd3fc" stroke-width="8"/>
+                    <rect x="560" y="140" width="380" height="520" rx="20" fill="#1e293b" stroke="#38bdf8" stroke-width="4"/>
+                    <circle cx="750" cy="420" r="135" fill="#0b1320" stroke="#7dd3fc" stroke-width="8"/>
+                    <rect x="1040" y="280" width="440" height="380" rx="14" fill="#0f172a" stroke="#475569" stroke-width="4"/>
+                </svg>
+            `,
+            subway_train: `
+                <svg viewBox="0 0 1600 900" class="w-full h-full object-cover">
+                    <rect width="1600" height="900" fill="#070e1a"/>
+                    <rect x="140" y="180" width="560" height="280" rx="18" fill="#0c213b" stroke="#38bdf8" stroke-width="4"/>
+                    <rect x="900" y="180" width="560" height="280" rx="18" fill="#0c213b" stroke="#38bdf8" stroke-width="4"/>
+                    <line x1="0" y1="110" x2="1600" y2="110" stroke="#64748b" stroke-width="12"/>
+                    <rect x="80" y="540" width="1440" height="180" rx="12" fill="#1e293b" stroke="#334155" stroke-width="4"/>
                 </svg>
             `
         };
@@ -1471,13 +1566,49 @@
                     { speaker: "yunho", exp: "serious", pos: "left", text: "「송민기, 너 진짜 언제까지 이렇게 아슬아슬하게 살래? 네가 다치면 어쩌려고 그래!」" },
                     { speaker: "mingi", exp: "serious", pos: "right", text: "「……미안하다, 윤호야. 나도 내가 구제 불능인 거 아는데, 네가 나 때문에 화내고 걱정해 줄 때마다 정신이 번쩍 든다. 이번 군용 코어 일만 잘 마무리되면 진짜 도박 끊고 네 옆에서 성실하게 살게. 약속한다.」" }
                 ],
-                next: "ch3_5_interlude_hub"
+                next: "ch3_2_sunday_laundry"
             },
 
-            // ==================== [제3.5장 (신규 대폭 확장): 폭풍 전야의 밀회와 깊어지는 인연 (10월 18~20일)] ====================
+            // ==================== [제3.2장 (신규 추가): 일요일 오전의 코인 세탁소와 휴일 (10월 17일)] ====================
+            "ch3_2_sunday_laundry": {
+                chapter: "제3.2장: 일요일 오전의 코인 세탁소",
+                routeTag: "공통 일상 · 제4일 휴일 오전",
+                bg: "coin_laundry",
+                date: "2138. 10. 17 (일)",
+                time: "10:30",
+                location: "제9구역 골목 24시 무인 코인 세탁소",
+                lines: [
+                    { speaker: null, text: "일주일 중 유일하게 오전 근무가 없는 10월 17일 일요일 아침. 늦잠을 자고 일어난 윤호는 방 구석에 밀려 있던 빨랫감을 커다란 세탁망에 쓸어 담아 골목 끝 무인 코인 세탁소로 향했다." },
+                    { speaker: null, text: "달그락, 쏴아— 따뜻한 온수와 합성 섬유유연제 향기가 퍼지는 세탁소 안은 평화로웠다. 동전 3 크레딧을 넣고 대형 건조기가 돌아가기를 기다리며 벤치에 앉아 하품을 하던 그때였다." },
+                    { speaker: "san", exp: "smile", pos: "right", text: "「어?! 윤호야! 일요일 아침부터 여기서 마주치네? 너도 빨래하러 왔어?」" },
+                    { speaker: null, text: "편안한 회색 트레이닝복 차림에 운동화 끈을 고쳐 매며 세탁소 안으로 들어선 사람은 다름 아닌 최산이었다. 손에는 군용 더플백에 가득 담긴 세탁물이 들려 있었다." },
+                    { speaker: "yunho", exp: "surprised", pos: "left", text: "「산아! 너도 이 동네 세탁소 써?」" },
+                    { speaker: "san", exp: "smile", pos: "right", text: "「응, 부대 관사 세탁실은 늘 줄이 길고 건조기 냄새가 별로거든. 여긴 비누 냄새가 따뜻해서 좋아. 옆자리에 앉아도 되지?」" },
+                    { speaker: null, text: "산은 자기 세탁물을 옆 기계에 넣고는 윤호의 바로 옆자리에 바짝 붙어 앉았다. 건조기 두 대가 나란히 웅웅거리며 돌아가는 소리가 세탁소 안을 채웠다." },
+                    { speaker: null, cg: "cg_laundry_san", text: "【SPECIAL SCENE】 윤호가 주머니에서 구형 유선 이어폰을 꺼내 왼쪽 유닛을 건네자, 산은 눈을 반짝이며 자기 오른쪽 귀에 이어폰을 꽂고 윤호의 어깨에 살짝 머리를 기대었다." },
+                    { speaker: "san", exp: "normal", pos: "right", cg: "cg_laundry_san", text: "「……있잖아 윤호야. 난 잠을 안 자도 몸이 움직이는 체질인데, 이상하게 네 옆에 앉아 있으니까 꼭 따뜻한 햇볕 아래서 낮잠 자는 것처럼 마음이 편해진다.」" },
+                    { speaker: "yunho", exp: "smile", pos: "left", cg: "cg_laundry_san", text: "「피곤하면 건조기 다 돌아갈 때까지 내 어깨에 기대서 눈 좀 붙여. 깨워줄게.」" },
+                    { speaker: "san", exp: "smile", pos: "right", text: "「헤헤, 그럴까? 딱 십오 분만 너한테 기대 있을게, 윤호야.」" },
+                    { speaker: null, text: "그렇게 평화로운 일요일 오전이 지나가고, 윤호의 휴일 오후 단말기에 또 다른 연락이 도착했다." }
+                ],
+                choices: [
+                    {
+                        text: "1. 세탁이 끝난 뒤 최산과 함께 제9구역 만두 가게에서 점심을 먹고, 오후 내내 윤호의 방에서 고전 콘솔 게임을 하며 논다.",
+                        effect: { rel: { san: { favor: 14, intimacy: 15, trust: 10 } }, memory: "일요일 휴일, 코인 세탁소에서 만난 최산과 하루 종일 빨래와 게임을 함께하며 가까워짐" },
+                        next: "ch3_5_interlude_hub"
+                    },
+                    {
+                        text: "2. 빨래를 마친 뒤 오후에는 지하 2층 진료소에 들러, 일요일에도 쉬지 못하고 약품을 정리 중인 강여상에게 따뜻한 도시락을 사 간다.",
+                        effect: { rel: { yeosang: { favor: 14, intimacy: 14, trust: 12 }, san: { favor: 6 } }, memory: "일요일 오후, 식사를 거르며 일하던 강여상에게 따뜻한 도시락을 챙겨다 줌" },
+                        next: "ch3_5_interlude_hub"
+                    }
+                ]
+            },
+
+            // ==================== [제3.5장 (대폭 확장): 폭풍 전야의 밀회와 깊어지는 인연 (10월 18~21일)] ====================
             "ch3_5_interlude_hub": {
                 chapter: "제3.5장: 빗소리 너머의 밀회와 단서들",
-                routeTag: "공통 심화 · 제5~7일 일상 및 야간 교류",
+                routeTag: "공통 심화 · 제5~8일 일상 및 야간 교류",
                 bg: "yunho_room",
                 date: "2138. 10. 18 (월)",
                 time: "19:40",
@@ -1533,7 +1664,7 @@
                     { speaker: "mingi", exp: "serious", pos: "left", text: "「야야, 남의 소중한 죽마고우 손은 왜 그렇게 애지중지 만지냐. 윤호야, 날도 쌀쌀한데 내 후드 주머니에 손 넣어라.」" },
                     { speaker: "yunho", exp: "smile", pos: "center", text: "「둘 다 왜 그래, 애들도 아니고. 자자, 맥주 김 빠지기 전에 마저 마시고 내 방에 가서 고전 게임 토너먼트나 하자!」" }
                 ],
-                next: "ch3_5_day6_investigation"
+                next: "ch3_5_tuesday_subway"
             },
 
             "ch3_5_lounge_sunghwa": {
@@ -1550,7 +1681,7 @@
                     { speaker: "sunghwa", exp: "normal", pos: "right", text: "「내 몸의 절반 이상이 이 차가운 합금으로 바뀐 뒤로는…… 가끔 내가 숨을 쉬고 있는 건지, 아니면 정밀하게 조립된 태엽이 돌아가는 건지 헷갈릴 때가 있다.」" },
                     { speaker: "sunghwa", exp: "smirk", pos: "right", text: "「그런데 네 옆에 있으면 맥박 뛰는 소리가 유독 선명하게 들려서 나쁘지 않군. 조만간 아래층 구역이 꽤 소란스러워질 텐데, 내 명함은 절대 잃어버리지 마라, 윤호야.」" }
                 ],
-                next: "ch3_5_day6_investigation"
+                next: "ch3_5_tuesday_subway"
             },
 
             "ch3_5_nightmarket_military": {
@@ -1566,7 +1697,7 @@
                     { speaker: null, cg: "cg_jongho_console", text: "【SPECIAL SCENE】 포장마차 자리를 마치고 군 통신 차량에서 잠깐 비를 피하는 동안, 사흘 밤낮으로 암호 트래픽을 쫓던 종호가 안경을 벗고 윤호의 어깨에 살짝 기대어 깜빡 잠이 들었다." },
                     { speaker: "hongjoong", exp: "smile", pos: "right", cg: "cg_jongho_console", text: "「원래 타인 곁에서는 절대 눈을 붙이지 않는 녀석인데, 네 옆이 어지간히 편한 모양이군. 나도 오늘 밤만큼은 네 덕분에 오랜만에 마음이 놓인다, 윤호야.」" }
                 ],
-                next: "ch3_5_day6_investigation"
+                next: "ch3_5_tuesday_subway"
             },
 
             "ch3_5_clinic_tea": {
@@ -1582,23 +1713,65 @@
                     { speaker: "wooyoung", exp: "normal", pos: "right", text: "「있잖아 윤호야. 여상이도 그렇고 너도 그렇고, 이렇게 아무 계산 없이 날 '정우영' 그 자체로 대해주는 사람들이랑 있을 때가 제일 숨통이 트여.」" },
                     { speaker: "yeosang", exp: "smile", pos: "left", text: "「나도 마찬가지야. 원래 혼자 있는 시간을 제일 좋아했는데, 이제는 윤호 네가 오는 발소리만 들어도 반갑거든.」" }
                 ],
+                next: "ch3_5_tuesday_subway"
+            },
+
+            // ==================== [신규 장면: 10월 19일 화요일 미들 코어 외근 & 급정거한 지하철] ====================
+            "ch3_5_tuesday_subway": {
+                chapter: "제3.5장: 미들 코어행 열차와 뜻밖의 동행",
+                routeTag: "공통 심화 · 제6일 외근 에피소드",
+                bg: "subway_train",
+                date: "2138. 10. 19 (화)",
+                time: "16:15",
+                location: "제9구역~미들 코어 연결 고속 자기부상 지하철",
+                lines: [
+                    { speaker: null, text: "다음 날인 10월 19일 화요일 오후. 점장님의 심부름으로 미들 코어 중앙 물류센터에서 특수 규격 밸브 부품을 수령한 윤호는, 부품 상자를 안고 하층 구역행 자기부상 지하철에 몸을 실었다." },
+                    { speaker: null, text: "창밖으로 수직 도시의 거대한 철골 기둥들이 빠르게 스쳐 지나가던 그때, 건너편 출입문 쪽에서 익숙한 목소리가 들려왔다." },
+                    { speaker: "hongjoong", exp: "normal", pos: "right", text: "「……정윤호? 미들 코어 열차에서 마주칠 줄은 몰랐군. 그 무거운 상자는 뭐지?」" },
+                    { speaker: null, text: "군복 위에 어두운색 사복 트렌치코트를 걸친 김홍중 소령이었다. 본부 회의를 마치고 제9구역 지휘소로 복귀하던 중이던 그가 자연스럽게 윤호의 옆으로 다가와 섰다." },
+                    { speaker: "yunho", exp: "smile", pos: "left", text: "「홍중이 형! 매장 외근 때문에 부품 받아서 돌아가는 길이에요. 형도 제9구역으로 가시는 거예요?」" },
+                    { speaker: "hongjoong", exp: "smile", pos: "right", text: "「그래. 한 손으로 들고 가기엔 꽤 무거워 보이는데, 이리 줘 봐. 내가 한쪽을 잡아주지.」" },
+                    { speaker: null, text: "바로 그 순간이었다. *끼이이익— 쿵!* 열차가 선로 전력망의 일시적 과부하로 인해 터널 한가운데서 급정거했고, 중심을 잃은 윤호의 몸이 앞으로 크게 쏠렸다." },
+                    { speaker: null, cg: "cg_subway_hongjoong", text: "【SPECIAL SCENE】 아찔한 찰나, 김홍중 소령이 왼손으로 천장 손잡이를 단단히 움켜쥐고 오른팔로 윤호의 허리와 어깨를 강하게 끌어안아 자신의 가슴팍 쪽으로 지탱해 주었다." },
+                    { speaker: "hongjoong", exp: "serious", pos: "right", cg: "cg_subway_hongjoong", text: "「……괜찮나, 윤호야? 다친 데는 없고?」" },
+                    { speaker: "yunho", exp: "surprised", pos: "left", cg: "cg_subway_hongjoong", text: "「네, 형 덕분에 안 넘어졌어요…… 생각보다 팔 힘이 엄청 세시네요.」" },
+                    { speaker: "hongjoong", exp: "normal", pos: "right", text: "「체격만 보고 날 얕보면 곤란하지. 열차가 완전히 멈출 때까지 위험하니 그냥 이대로 내 코트 자락 잡고 서 있어라.」" },
+                    { speaker: null, text: "단정한 섬유 향기와 은은한 커피 향이 스치는 홍중의 품 안에서, 윤호는 평소 엄격한 장교로만 보였던 그의 듬직하고 다정한 온기를 새삼 느꼈다." }
+                ],
                 next: "ch3_5_day6_investigation"
             },
 
             "ch3_5_day6_investigation": {
                 chapter: "제3.5장: 암호 코어의 파편과 다가오는 그림자",
-                routeTag: "공통 심화 · 제7일 사건 전조",
+                routeTag: "공통 심화 · 제7~8일 사건 전조",
                 bg: "hardware_store",
                 date: "2138. 10. 20 (수)",
                 time: "17:30",
                 location: "제9구역 메가볼트 철물점 창고",
                 lines: [
-                    { speaker: null, text: "이틀 뒤인 10월 20일 수요일 늦은 오후. 철물점 자재 창고 안쪽에서 송민기와 최종호가 각자의 경로로 알아낸 '군용 생체 신경 메모리 코어'의 1차 해독 단서가 윤호의 단말기로 전송되어 왔다." },
+                    { speaker: null, text: "10월 20일 수요일 늦은 오후. 철물점 자재 창고 안쪽에서 송민기와 최종호가 각자의 경로로 알아낸 '군용 생체 신경 메모리 코어'의 1차 해독 단서가 윤호의 단말기로 전송되어 왔다." },
                     { speaker: null, text: "코어 표면의 홀로그램 로그에는 『PROJECT ACHERON - 피실험체 코드: SAN-09 / 관리 책임: KRONOS & NOX 특수부』라는 짧은 문자열이 찍혀 있었다." },
                     { speaker: "yunho", exp: "serious", pos: "center", text: "「SAN-09……? 설마 최산?! 그리고 크로노스 기업이랑 녹스까지 얽혀 있다고?」" },
-                    { speaker: null, text: "단순한 장물 부품인 줄 알았던 코어가, 이제는 윤호가 소중히 여기는 사람들의 목숨과 직결된 시한폭탄임이 분명해졌다." }
+                    { speaker: null, text: "단순한 장물 부품인 줄 알았던 코어가, 이제는 윤호가 소중히 여기는 사람들의 목숨과 직결된 시한폭탄임이 분명해졌다." },
+                    { speaker: null, text: "설상가상으로 다음 날인 10월 21일 목요일 밤에는 크로노스 코퍼레이션의 무인 정찰 드론들이 제9구역 상공을 낮게 비행하며 코어의 주파수를 탐지하기 시작했다." }
                 ],
-                next: "ch4_storm_gathering"
+                choices: [
+                    {
+                        text: "1. 최종호에게 비밀리에 연락해 철물점 일대의 전파 차폐막 주파수를 보강해 달라고 부탁한다.",
+                        effect: { rel: { jongho: { favor: 12, trust: 14 } }, memory: "최종호의 사이버 보안 지원을 받아 크로노스 정찰 드론의 탐지를 무력화함" },
+                        next: "ch4_storm_gathering"
+                    },
+                    {
+                        text: "2. 박성화의 직통 명함 번호로 짧은 암호 메시지를 보내, 녹스 내부의 배신자 세력이 제9구역에 드론을 띄웠음을 알린다.",
+                        effect: { rel: { sunghwa: { favor: 12, trust: 14 } }, memory: "박성화에게 정찰 드론 출몰 정보를 전달해 녹스 내부 숙청 준비를 도움" },
+                        next: "ch4_storm_gathering"
+                    },
+                    {
+                        text: "3. 송민기의 지하 정비소로 내려가 납 합금 차폐 케이스를 이중으로 용접하며 끝까지 코어를 직접 지킨다.",
+                        effect: { rel: { mingi: { favor: 12, trust: 14 } }, memory: "송민기와 밤새 납 합금 차폐 케이스를 용접하며 코어 신호를 숨김" },
+                        next: "ch4_storm_gathering"
+                    }
+                ]
             },
 
             // ==================== [제4장: 균열하는 도시와 '프로젝트 아케론' (10월 22일)] ====================
@@ -1706,6 +1879,7 @@
                     { speaker: "yunho", exp: "smile", pos: "left", cg: "cg_sunghwa_repair", text: "「형이 날 해치지 않을 거라는 거 아니까요. 그리고 아무리 단단한 티타늄으로 감싸 놨어도, 형이 아파하고 외로워하는 게 제 눈엔 다 보이는걸요.」" },
                     { speaker: "sunghwa", exp: "surprised", pos: "right", text: "「……정윤호.」" },
                     { speaker: null, text: "누구에게도 약점을 내보이지 않던 성화가 낮게 숨을 삼키며, 기계가 아닌 따뜻한 살결이 남은 오른손을 뻗어 윤호의 뒷덜미를 끌어안았다." },
+                    { speaker: "sunghwa", exp: "smile", pos: "right", text: "「네 손끝이 닿으니 진통제 열 대를 맞은 것보다 훨씬 나아졌군. 오늘 밤은 어디도 가지 말고 내 침실 옆을 지켜라, 정윤호.」" },
                     { speaker: null, text: "그리고 다가온 제6장 최후의 밤. 통합안보사령부의 포위망이 미들 코어 턱밑까지 좁혀온 순간, 윤호는 성화와의 마지막 운명을 선택해야 한다." }
                 ],
                 choices: [
@@ -1753,7 +1927,8 @@
                     { speaker: "hongjoong", exp: "serious", pos: "right", text: "「2년 전 외곽 전쟁 때…… 내 직속 부하였던 최산이 눈앞에서 전사했다. 그 아이를 살리고 싶다는 내 오만함이 상층부의 안드로이드 뇌 이식 프로젝트에 이용당했어.」" },
                     { speaker: "hongjoong", exp: "normal", pos: "right", text: "「원칙과 시민 보호를 입에 담으면서도 정작 내 안은 늘 무너져 내리고 있었는데…… 평범한 시민인 네가 위험을 무릅쓰고 내 옆을 지켜줄 줄은 몰랐다, 윤호야.」" },
                     { speaker: "yunho", exp: "smile", pos: "left", text: "「홍중이 형은 오만한 게 아니라 누구보다 책임감이 강해서 혼자 다 짊어지려 하신 거잖아요. 제 앞에서는 완벽한 지휘관 말고, 그냥 사람 김홍중으로 쉬셔도 돼요.」" },
-                    { speaker: "hongjoong", exp: "smile", pos: "right", text: "「……네가 그렇게 웃으며 말할 때마다, 내가 평생 쌓아 온 방어선이 맥없이 무너지는 기분이다.」" },
+                    { speaker: null, cg: "cg_hongjoong_dawn", text: "【SPECIAL SCENE】 지휘실 밖 옥상 테라스로 나온 두 사람 위로 새벽의 푸른 여명이 밝아 오고, 김홍중 소령이 자신의 제복 롱코트를 벗어 쌀쌀한 새벽바람에 떠는 윤호의 어깨 위에 다정하게 걸쳐 주었다." },
+                    { speaker: "hongjoong", exp: "smile", pos: "right", cg: "cg_hongjoong_dawn", text: "「……네가 그렇게 웃으며 말할 때마다, 내가 평생 쌓아 온 방어선이 맥없이 무너지는 기분이다.」" },
                     { speaker: null, text: "제6장 최후의 결단: 상층부 비리 폭로 청문회 직후, 홍중에게 외곽 방벽 사령부 전출 명령서가 내려온다. 윤호의 선택은." }
                 ],
                 choices: [
@@ -1799,6 +1974,8 @@
                     { speaker: "yeosang", exp: "normal", pos: "right", text: "「의대 수석으로 졸업 심사를 받던 날, 상류층 의원의 불법 인공장기 우선 이식 수술에 서명하라는 강요를 거절했어. 그 대가로 난 면허 영구 박탈 판정을 받고 이 지하로 내려왔지.」" },
                     { speaker: "yeosang", exp: "serious", pos: "right", text: "「환자를 살리는 일 외에는 누구에게도 감정을 쓰지 않으려고 했어. 정을 주면 약점이 되니까. ……그런데 윤호 넌 어째서 내 진료소가 무너질 뻔한 순간에 도망치지 않고 내 앞을 막아선 거야?」" },
                     { speaker: "yunho", exp: "smile", pos: "left", text: "「여상이 네가 아무리 차갑게 선을 그어도, 사실은 누구보다 다정하고 마음이 여린 사람이라는 걸 내가 알아버렸으니까.」" },
+                    { speaker: null, cg: "cg_yeosang_gloves", text: "【SPECIAL SCENE】 여상이 처음으로 아무런 장갑도 끼지 않은 따뜻한 맨손을 뻗어, 윤호의 뺨과 다친 손바닥을 조심스럽게 감싸 안으며 눈을 맞추었다." },
+                    { speaker: "yeosang", exp: "smile", pos: "right", cg: "cg_yeosang_gloves", text: "「……누군가의 체온을 장갑 없이 직접 느끼는 게 얼마 만인지 모르겠어. 심장이 이상할 정도로 빨리 뛰네, 윤호야.」" },
                     { speaker: null, text: "제6장 최후의 결단: 프로젝트 아케론의 의료 비리가 폭로된 후, 상층부 중앙 병원에서 여상에게 정식 의사 면허 복권과 스카이 섹터 영입을 제안해 왔다." }
                 ],
                 choices: [
@@ -1935,7 +2112,8 @@
                     { speaker: null, text: "가상 아이돌과 오락용 안드로이드가 무대를 대체한 시대에 '유일무이한 인간 아이돌'이라는 화려한 왕관을 쓰고 살아온 정우영. 그러나 기획사 임원들이 범죄조직 녹스의 자금 세탁에 자신의 콘서트를 이용해 왔다는 사실을 알게 된 그는, 불 꺼진 대기실 구석에 웅크리고 있었다." },
                     { speaker: "wooyoung", exp: "serious", pos: "right", text: "「윤호야…… 사람들은 무대 위에서 웃고 춤추는 상품으로서의 정우영만 좋아해. 만약 내가 기획사의 비리를 폭로하고 추락하면, 그땐 아무도 내 옆에 안 남겠지?」" },
                     { speaker: "yunho", exp: "smile", pos: "left", text: "「난 남을 거야, 우영아. 화려한 조명 아래의 아이돌 정우영이 아니라, 내 앞에서 포장마차 어묵 국물 마시며 장난치던 스물아홉 살 정우영을 좋아하는 거니까.」" },
-                    { speaker: "wooyoung", exp: "surprised", pos: "right", text: "「……윤호야. 너 방금 그 말, 내 심장에 엄청 위험한 말인 거 알고 한 거지?」" },
+                    { speaker: null, cg: "cg_wooyoung_encore", text: "【SPECIAL SCENE】 모든 스태프가 퇴근한 텅 빈 콘서트장 무대 위로 윤호를 데리고 올라간 우영이, 핀조명 하나 아래에서 오직 윤호 한 사람만을 위한 독무를 추며 손을 내밀었다." },
+                    { speaker: "wooyoung", exp: "surprised", pos: "right", cg: "cg_wooyoung_encore", text: "「……윤호야. 너 방금 그 말, 내 심장에 엄청 위험한 말인 거 알고 한 거지? 내 손 잡아 줄래?」" },
                     { speaker: null, text: "우영이 눈가가 살짝 붉어진 채로 윤호의 목을 끌어안았다. 제6장 최후의 결단: 대형 기자회견과 피날레 콘서트를 앞둔 밤, 두 사람의 선택은." }
                 ],
                 choices: [
@@ -2528,27 +2706,80 @@
             el.classList.add("flex");
         }
 
+        // ★ 수집형 CG 갤러리 렌더링 (실제 플레이 중 마주치기 전에는 잠금/비공개 처리)
         function renderCGGalleryModal() {
             const container = document.getElementById("cg-gallery-content");
-            container.innerHTML = Object.values(SPECIAL_CG_DB).map(cg => {
+            const countEl = document.getElementById("cg-collection-count");
+            const allCgs = Object.values(SPECIAL_CG_DB);
+            if (countEl) {
+                countEl.innerText = `${unlockedCGs.length} / ${allCgs.length} COLLECTED`;
+            }
+
+            container.innerHTML = allCgs.map((cg, idx) => {
                 const unlocked = unlockedCGs.includes(cg.id);
+
+                // 아직 스토리에서 마주치지 못한 CG는 철저히 잠금 상태로 표시
+                if (!unlocked) {
+                    return `
+                        <div class="p-4 rounded-xl border bg-slate-950/70 border-slate-800/90 space-y-2.5 select-none">
+                            <div class="w-full h-44 rounded-lg bg-slate-900/90 border border-dashed border-slate-700 flex flex-col items-center justify-center text-slate-500 gap-2">
+                                <span class="text-2xl">🔒</span>
+                                <span class="font-cyber text-xs tracking-widest text-slate-400">LOCKED EVENT CG #${idx + 1}</span>
+                                <span class="text-[11px] text-slate-500">스토리 진행 중 해당 장면에 도달하면 해금됩니다</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-1">
+                                <span class="text-xs font-bold text-slate-600">${cg.chapter} · ？？？</span>
+                                <span class="text-[11px] font-mono bg-slate-900 border border-slate-800 px-2 py-0.5 rounded text-slate-600">미수집</span>
+                            </div>
+                            <h4 class="font-bold text-base text-slate-500">？？？ (미발견 특별 장면)</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">아직 개방되지 않은 기억입니다. 다른 선택지와 루트를 플레이하여 특별 일러스트를 수집해 보세요.</p>
+                        </div>
+                    `;
+                }
+
+                // 스토리에서 실제로 본 CG만 일러스트/제목/설명 및 확대 보기 지원
                 const customUrl = SPECIAL_CG_IMAGES[cg.id];
                 const previewHtml = (customUrl && customUrl.trim() !== "")
-                    ? `<img src="${customUrl}" alt="${cg.title}" class="w-full h-44 object-cover rounded-lg border border-slate-700"/>`
-                    : `<div class="w-full h-44 rounded-lg overflow-hidden border border-slate-700">${cg.svg}</div>`;
+                    ? `<img src="${customUrl}" alt="${cg.title}" class="w-full h-44 object-cover rounded-lg border border-rose-500/40"/>`
+                    : `<div class="w-full h-44 rounded-lg overflow-hidden border border-rose-500/40">${cg.svg}</div>`;
 
                 return `
-                    <div class="p-4 rounded-xl border ${unlocked ? 'bg-slate-950 border-rose-500/50' : 'bg-slate-950/60 border-slate-800 opacity-65'} space-y-2.5">
-                        ${previewHtml}
+                    <div onclick="openCGViewer('${cg.id}')" class="p-4 rounded-xl border bg-slate-950 border-rose-500/60 hover:border-rose-400 cursor-pointer transition transform hover:-translate-y-0.5 space-y-2.5 group shadow-lg">
+                        <div class="relative">
+                            ${previewHtml}
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center rounded-lg">
+                                <span class="px-3 py-1.5 rounded-full bg-rose-600 text-white text-xs font-bold shadow">클릭하여 확대 감상</span>
+                            </div>
+                        </div>
                         <div class="flex justify-between items-center pt-1">
-                            <span class="text-xs font-bold ${unlocked ? 'text-rose-400' : 'text-slate-400'}">${cg.chapter} · ${cg.charName}</span>
+                            <span class="text-xs font-bold text-rose-400">${cg.chapter} · ${cg.charName}</span>
                             <span class="text-[11px] font-mono bg-slate-900 border border-slate-700 px-2 py-0.5 rounded text-amber-300">ID: ${cg.id}</span>
                         </div>
-                        <h4 class="font-bold text-base text-white">${cg.title}</h4>
+                        <h4 class="font-bold text-base text-white group-hover:text-rose-300 transition">${cg.title}</h4>
                         <p class="text-xs text-slate-300 leading-relaxed">${cg.desc}</p>
                     </div>
                 `;
             }).join("");
+        }
+
+        function openCGViewer(cgId) {
+            if (!unlockedCGs.includes(cgId)) return;
+            const cg = SPECIAL_CG_DB[cgId];
+            if (!cg) return;
+
+            const artEl = document.getElementById("cg-viewer-art");
+            const customUrl = SPECIAL_CG_IMAGES[cgId];
+            artEl.innerHTML = (customUrl && customUrl.trim() !== "")
+                ? `<img src="${customUrl}" alt="${cg.title}" class="w-full h-full object-cover"/>`
+                : cg.svg;
+
+            document.getElementById("cg-viewer-meta").innerText = `${cg.chapter} · ${cg.charName} [슬롯 ID: ${cg.id}]`;
+            document.getElementById("cg-viewer-title").innerText = cg.title;
+            document.getElementById("cg-viewer-desc").innerText = cg.desc;
+
+            const viewer = document.getElementById("modal-cg-viewer");
+            viewer.classList.remove("hidden");
+            viewer.classList.add("flex");
         }
 
         function closeModal(id) {
