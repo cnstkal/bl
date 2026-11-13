@@ -2833,14 +2833,28 @@
             layer.classList.toggle("pair", count >= 2);
         }
 
+        // 한 화면에는 최대 2명까지만. 세 번째 인물이 필요하면 당장 말하지 않는 인물을 뺀다 (윤호 우선)
+        const lastSpoken = {};
+        let spokenSeq = 0;
+
         function updateStanding(charKey, expression, position) {
             stageExp[charKey] = expression;
+            lastSpoken[charKey] = ++spokenSeq;
+
+            const presentKeys = STAGE_POS.filter(p => stage[p]).map(p => stage[p]);
+            if (!presentKeys.includes(charKey) && presentKeys.length >= 2) {
+                const drop = presentKeys.includes("yunho")
+                    ? "yunho"
+                    : presentKeys.reduce((a, b) => (lastSpoken[a] <= lastSpoken[b] ? a : b));
+                STAGE_POS.forEach(p => { if (stage[p] === drop) stage[p] = null; });
+            }
+
             const current = STAGE_POS.find(p => stage[p] === charKey);
             const others = STAGE_POS.filter(p => stage[p] && stage[p] !== charKey);
             let target = position;
 
             if (position === "center" && others.length > 0) {
-                // 두 명 이상 등장: 먼저 있던 인물은 왼쪽, 새 인물은 오른쪽
+                // 두 명이 함께 있을 때: 먼저 있던 인물은 왼쪽, 새 인물은 오른쪽
                 if (current && current !== "center") {
                     target = current;
                 } else {
