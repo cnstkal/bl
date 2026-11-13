@@ -181,8 +181,7 @@
                 max-height: none;
                 padding: 0 8px 0;
                 overflow: visible;
-                /* 캐릭터 발끝이 대화창 윗선에 닿도록, 이름표 높이만큼 아래로 연장 (이름표는 그 위에 표시) */
-                margin-bottom: -26px;
+                margin-bottom: 0;
             }
 
             #standing-layer > div {
@@ -214,7 +213,7 @@
                 z-index: 30;
                 flex: none;
                 width: 100%;
-                padding: 8px 10px 14px;
+                padding: 0 10px 56px;
                 margin-top: auto;
             }
 
@@ -223,6 +222,9 @@
             }
 
             #speaker-box {
+                position: absolute;
+                bottom: 100%;
+                left: 0;
                 margin-left: 10px;
                 padding: 7px 13px;
             }
@@ -238,8 +240,8 @@
             #dialogue-text {
                 min-height: 88px;
                 padding-right: 0;
-                font-size: 14px;
-                line-height: 1.85;
+                font-size: 17px;
+                line-height: 1.7;
                 overflow-wrap: anywhere;
             }
 
@@ -295,7 +297,7 @@
             #vn-container > header > div:nth-child(2) > div {
                 grid-column: 1 / -1;
             }
-            #dialogue-text { font-size: 13px; }
+            #dialogue-text { font-size: 16px; }
         }
 
     </style>
