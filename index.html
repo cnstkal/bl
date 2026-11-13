@@ -2772,7 +2772,8 @@
                 // 말하는 사람은 살짝 떠오르고 밝게, 나머지는 어둡게
                 const isSpeaking = !!speakerKey && key === speakerKey;
                 const isQuiet = !!speakerKey && key !== speakerKey;
-                el.style.transform = isSpeaking ? "translateY(-6px)" : "translateY(0)";
+                // 발끝이 항상 대화창 윗선에 닿도록 위치는 고정 (말하는 인물 구분은 밝기로만)
+                el.style.transform = "translateY(0)";
                 // 대사 중: 말하는 인물은 밝게, 가만히 있는 인물은 검게 / 서술: 모두 밝게
                 el.style.filter = isQuiet
                     ? "brightness(0.12) drop-shadow(0 15px 25px rgba(0,0,0,0.85))"
