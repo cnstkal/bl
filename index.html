@@ -326,63 +326,48 @@
             <div class="absolute inset-0 z-0 cyber-rain opacity-50 pointer-events-none"></div>
             <div class="absolute inset-0 z-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-transparent pointer-events-none"></div>
 
-            <!-- 상단 버전 및 세계관 태그 -->
+            <!-- 상단: 작품 태그 + 엔딩 진행도 -->
             <div class="relative z-10 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <span class="px-3 py-1 rounded-full bg-rose-500/15 border border-rose-500/40 text-rose-300 text-xs font-semibold tracking-widest font-cyber">ARCADIA 2138</span>
-                    <span class="text-xs text-slate-400">장편 사이버펑크 디스토피아 멀티 엔딩 비주얼 노벨</span>
-                </div>
+                <span class="px-3 py-1 rounded-full bg-rose-500/15 border border-rose-500/40 text-rose-300 text-xs font-semibold tracking-widest font-cyber">ARCADIA 2138</span>
                 <div class="text-xs text-slate-400">
-                    달성한 엔딩: <span id="title-ending-count" class="text-emerald-400 font-bold">0 / 20</span>
+                    엔딩 <span id="title-ending-count" class="text-emerald-400 font-bold">0 / 20</span>
                 </div>
             </div>
 
-            <!-- 중앙 로고 및 메인 메뉴 -->
-            <div class="relative z-10 my-auto max-w-2xl space-y-10">
-                <div class="space-y-3 title-glow">
-                    <p class="text-xs md:text-sm tracking-[0.45em] text-emerald-400 font-cyber uppercase">CYBERPUNK DYSTOPIA INTERACTIVE STORY</p>
-                    <h1 class="text-5xl md:text-7xl font-black tracking-wider text-white font-cyber">
-                        AFTERGLOW
-                    </h1>
-                    <div class="flex items-center gap-4 pt-1">
-                        <div class="h-[2px] w-16 bg-gradient-to-r from-rose-500 to-amber-500"></div>
-                        <h2 class="text-2xl md:text-3xl font-light tracking-[0.35em] text-slate-200">잔 광</h2>
-                        <span class="text-xs text-slate-400 tracking-widest">— 꺼져가는 도시 끝에 남은 온기</span>
-                    </div>
+            <!-- 중앙: 제목 · 줄거리 · 메뉴 -->
+            <div class="relative z-10 my-auto max-w-xl space-y-8">
+                <div class="space-y-2">
+                    <h1 class="text-5xl md:text-7xl font-black tracking-wider text-white font-cyber">AFTERGLOW</h1>
+                    <p class="text-lg md:text-xl tracking-[0.3em] text-slate-200">잔 광</p>
                 </div>
 
-                <p class="text-slate-300/90 text-sm md:text-base leading-relaxed max-w-xl border-l-2 border-emerald-500/60 pl-4">
-                    2138년 초거대 수직 도시 아르카디아. 하층 제9구역의 평범한 철물점 청년 <strong class="text-white">정윤호</strong>의 삶에 스며든 일곱 명의 인물들.<br>
-                    당신이 건넨 사소한 말 한마디와 약속, 그리고 침묵이 누군가의 운명과 도시의 결말을 바꿉니다.
+                <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+                    2138년, 초거대 수직 도시 아르카디아. 하층 제9구역 철물점 청년 <strong class="text-white">정윤호</strong>의 일상에 스며든 일곱 명의 인물들. 당신의 선택이 도시의 결말을 바꿉니다.
                 </p>
 
-                <!-- 타이틀 메뉴 버튼 -->
-                <div class="flex flex-col sm:flex-row flex-wrap gap-3 pt-2">
-                    <button onclick="startNewGame()" class="px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold tracking-wider shadow-xl transition transform hover:-translate-y-0.5 font-cyber">
+                <!-- 메뉴 -->
+                <div class="space-y-2.5 font-cyber">
+                    <button onclick="startNewGame()" class="w-full py-3.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold tracking-wider transition">
                         NEW GAME
                     </button>
-                    <button id="btn-title-continue" onclick="continueLastGame()" class="px-7 py-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/50 text-emerald-300 font-semibold tracking-wider shadow-lg transition font-cyber">
-                        CONTINUE
-                    </button>
-                    <button onclick="openModal('modal-saveload')" class="px-7 py-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-200 font-semibold tracking-wider transition font-cyber">
-                        LOAD GAME
-                    </button>
-                    <button onclick="openModal('modal-cg-gallery')" class="px-7 py-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-rose-500/50 text-rose-300 font-semibold tracking-wider transition font-cyber">
-                        CG GALLERY
-                    </button>
-                    <button onclick="openModal('modal-endings')" class="px-7 py-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-amber-300 font-semibold tracking-wider transition font-cyber">
-                        ENDINGS
-                    </button>
-                    <button onclick="openModal('modal-settings')" class="px-6 py-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 font-semibold tracking-wider transition font-cyber">
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <button id="btn-title-continue" onclick="continueLastGame()" class="py-3 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-100 text-sm tracking-wider transition">
+                            CONTINUE
+                        </button>
+                        <button onclick="openModal('modal-saveload')" class="py-3 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-100 text-sm tracking-wider transition">
+                            LOAD GAME
+                        </button>
+                        <button onclick="openModal('modal-cg-gallery')" class="py-3 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-100 text-sm tracking-wider transition">
+                            CG GALLERY
+                        </button>
+                        <button onclick="openModal('modal-endings')" class="py-3 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-100 text-sm tracking-wider transition">
+                            ENDINGS
+                        </button>
+                    </div>
+                    <button onclick="openModal('modal-settings')" class="w-full py-3 rounded-lg bg-slate-900/60 hover:bg-slate-800 border border-slate-800 text-slate-400 text-sm tracking-wider transition">
                         SETTINGS
                     </button>
                 </div>
-            </div>
-
-            <!-- 하단 등장인물 요약 표시 -->
-            <div class="relative z-10 border-t border-slate-800/80 pt-4 flex flex-wrap justify-between items-center text-xs text-slate-400 gap-2">
-                <div>주인공: <span class="text-slate-200">정윤호(29)</span> | 주요 인물: <span class="text-slate-300">박성화(33) · 김홍중(33) · 강여상(29) · 최산(29) · 송민기(29) · 정우영(29) · 최종호(28)</span></div>
-                <div class="font-cyber text-slate-500">FULL 6 CHAPTERS & MULTI-ROUTE EDITION</div>
             </div>
         </div>
 
