@@ -2756,19 +2756,19 @@
             textEl.classList.remove("typing-cursor");
 
             textEl.className = isDialogue
-                ? "text-white text-base md:text-lg leading-relaxed font-medium tracking-wide pr-4"
-                : "text-slate-300 text-base md:text-lg leading-relaxed font-normal italic tracking-wide pr-4";
+                ? "text-white text-base md:text-lg leading-relaxed font-medium tracking-wide pr-4 whitespace-pre-wrap break-keep"
+                : "text-slate-300 text-base md:text-lg leading-relaxed font-normal italic tracking-wide pr-4 whitespace-pre-wrap break-keep";
 
             if (textSpeed === 0) {
-                textEl.innerText = currentFullText;
+                textEl.textContent = currentFullText;
                 finishTyping();
                 return;
             }
 
-            textEl.innerText = "";
+            textEl.textContent = "";
             let idx = 0;
             typingTimer = setInterval(() => {
-                textEl.innerText += currentFullText.charAt(idx);
+                textEl.textContent += currentFullText.charAt(idx);
                 idx++;
                 if (idx >= currentFullText.length) {
                     finishTyping();
@@ -2780,7 +2780,7 @@
             if (typingTimer) clearInterval(typingTimer);
             isTyping = false;
             const textEl = document.getElementById("dialogue-text");
-            textEl.innerText = currentFullText;
+            textEl.textContent = currentFullText;
             textEl.classList.add("typing-cursor");
 
             if (autoPlay) {
