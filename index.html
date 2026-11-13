@@ -180,7 +180,7 @@
                 min-height: 0;
                 max-height: none;
                 padding: 0 8px 0;
-                overflow: hidden;
+                overflow: visible;
             }
 
             #standing-layer > div {
@@ -190,10 +190,21 @@
             }
 
             #standing-layer img {
-                height: 37dvh !important;
+                height: 46dvh !important;
                 max-height: none !important;
                 width: auto !important;
                 max-width: 92vw !important;
+            }
+
+            /* 두 명 이상: 좌우에 나란히 */
+            #standing-layer.pair > div {
+                max-width: 50%;
+            }
+
+            #standing-layer.pair img {
+                height: auto !important;
+                width: 46vw !important;
+                max-width: 46vw !important;
             }
 
             #vn-container > footer {
@@ -201,7 +212,7 @@
                 z-index: 30;
                 flex: none;
                 width: 100%;
-                padding: 8px 10px 14px;
+                padding: 8px 10px 56px;
                 margin-top: auto;
             }
 
@@ -380,6 +391,9 @@
 
         <!-- 1. 배경 이미지 레이어 (SVG 아트워크로 장소/시간/날씨 표현) -->
         <div id="bg-layer" class="absolute inset-0 w-full h-full bg-transition z-0"></div>
+
+        <!-- 화면 아무 곳이나 탭하면 다음 대화로 진행 (헤더/푸터 버튼은 각자 동작) -->
+        <div id="tap-layer" onclick="handleNextDialogue()" class="absolute inset-0 z-10 cursor-pointer"></div>
 
         <!-- 환경 효과 오버레이 -->
         <div id="weather-layer" class="absolute inset-0 pointer-events-none z-10 opacity-40 cyber-rain"></div>
@@ -2570,6 +2584,11 @@
             if (node.location) document.getElementById("hud-location").innerText = node.location;
             document.getElementById("hud-money").innerText = `${gameState.money} C`;
 
+            if (node.bg && node.bg !== stageBg) {
+                stageBg = node.bg;
+                clearStage();
+            }
+
             if (node.bg) {
                 const bgLayer = document.getElementById("bg-layer");
                 const bgImage = BG_IMAGES[node.bg];
@@ -2692,33 +2711,67 @@
             typeText(lineObj.text, !!lineObj.speaker);
         }
 
-        function updateStanding(charKey, expression, position) {
-            const slots = {
-                left: document.getElementById("char-slot-left"),
-                center: document.getElementById("char-slot-center"),
-                right: document.getElementById("char-slot-right")
-            };
+        // 현재 무대에 올라와 있는 인물 (칸별 charKey)
+        const stage = { left: null, center: null, right: null };
+        const stageExp = {};
+        const STAGE_POS = ["left", "center", "right"];
+        let stageBg = null;
 
-            if (position === "center") {
-                slots.left.classList.add("hidden", "opacity-0");
-                slots.right.classList.add("hidden", "opacity-0");
-            } else {
-                slots.center.classList.add("hidden", "opacity-0");
+        function clearStage() {
+            STAGE_POS.forEach(pos => {
+                stage[pos] = null;
+                const el = document.getElementById(`char-slot-${pos}`);
+                el.innerHTML = "";
+                el.classList.add("hidden", "opacity-0", "translate-y-6");
+            });
+            renderStage(null);
+        }
+
+        function renderStage(speakerKey) {
+            const layer = document.getElementById("standing-layer");
+            let count = 0;
+            STAGE_POS.forEach(pos => {
+                const el = document.getElementById(`char-slot-${pos}`);
+                const key = stage[pos];
+                if (!key) {
+                    el.innerHTML = "";
+                    el.classList.add("hidden", "opacity-0", "translate-y-6");
+                    return;
+                }
+                count++;
+                el.innerHTML = generateStandingSVG(key, stageExp[key] || "normal");
+                el.classList.remove("hidden");
+                // 말하는 사람은 밝게, 나머지는 어둡게
+                el.style.filter = key === speakerKey
+                    ? "brightness(1) drop-shadow(0 15px 25px rgba(0,0,0,0.85))"
+                    : "brightness(0.55) drop-shadow(0 15px 25px rgba(0,0,0,0.85))";
+                setTimeout(() => el.classList.remove("translate-y-6", "opacity-0"), 20);
+            });
+            layer.classList.toggle("pair", count >= 2);
+        }
+
+        function updateStanding(charKey, expression, position) {
+            stageExp[charKey] = expression;
+            const current = STAGE_POS.find(p => stage[p] === charKey);
+            const others = STAGE_POS.filter(p => stage[p] && stage[p] !== charKey);
+            let target = position;
+
+            if (position === "center" && others.length > 0) {
+                // 두 명 이상 등장: 먼저 있던 인물은 왼쪽, 새 인물은 오른쪽
+                if (current && current !== "center") {
+                    target = current;
+                } else {
+                    if (stage.center) {
+                        stage.left = stage.center;
+                        stage.center = null;
+                    }
+                    target = stage.left && stage.left !== charKey ? "right" : "left";
+                }
             }
 
-            Object.keys(slots).forEach(pos => {
-                if (pos !== position) {
-                    slots[pos].style.filter = "brightness(0.55) drop-shadow(0 15px 25px rgba(0,0,0,0.85))";
-                }
-            });
-
-            const targetSlot = slots[position] || slots.center;
-            targetSlot.innerHTML = generateStandingSVG(charKey, expression);
-            targetSlot.classList.remove("hidden");
-            setTimeout(() => {
-                targetSlot.classList.remove("translate-y-6", "opacity-0");
-                targetSlot.style.filter = "brightness(1) drop-shadow(0 15px 25px rgba(0,0,0,0.85))";
-            }, 20);
+            if (current && current !== target) stage[current] = null;
+            stage[target] = charKey;
+            renderStage(charKey);
         }
 
         function typeText(text, isDialogue) {
