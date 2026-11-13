@@ -26,8 +26,20 @@
 
         /* 캐릭터 스탠딩 애니메이션 */
         .char-standing {
-            transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s ease;
             filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.85));
+        }
+        @keyframes charEnter-left {
+            from { opacity: 0; transform: translate(-48px, 14px); }
+            to   { opacity: 1; transform: translate(0, 0); }
+        }
+        @keyframes charEnter-right {
+            from { opacity: 0; transform: translate(48px, 14px); }
+            to   { opacity: 1; transform: translate(0, 0); }
+        }
+        @keyframes charEnter-center {
+            from { opacity: 0; transform: translate(0, 28px) scale(0.97); }
+            to   { opacity: 1; transform: translate(0, 0) scale(1); }
         }
 
         /* 대화창 텍스트 커서 효과 */
@@ -2739,17 +2751,26 @@
                 const key = stage[pos];
                 if (!key) {
                     el.innerHTML = "";
+                    el.dataset.char = "";
+                    el.style.animation = "";
+                    el.style.transform = "";
                     el.classList.add("hidden", "opacity-0", "translate-y-6");
                     return;
                 }
                 count++;
                 el.innerHTML = generateStandingSVG(key, stageExp[key] || "normal");
-                el.classList.remove("hidden");
-                // 말하는 사람은 밝게, 나머지는 어둡게
+                el.classList.remove("hidden", "opacity-0", "translate-y-6");
+
+                if (el.dataset.char !== key) {
+                    // 새로 등장한 인물: 자기 자리 방향에서 들어오는 모션
+                    el.dataset.char = key;
+                    el.style.animation = `charEnter-${pos} 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards`;
+                }
+                // 말하는 사람은 살짝 떠오르고 밝게, 나머지는 어둡게
+                el.style.transform = key === speakerKey ? "translateY(-6px)" : "translateY(0)";
                 el.style.filter = key === speakerKey
                     ? "brightness(1) drop-shadow(0 15px 25px rgba(0,0,0,0.85))"
                     : "brightness(0.55) drop-shadow(0 15px 25px rgba(0,0,0,0.85))";
-                setTimeout(() => el.classList.remove("translate-y-6", "opacity-0"), 20);
             });
             layer.classList.toggle("pair", count >= 2);
         }
