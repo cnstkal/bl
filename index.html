@@ -294,12 +294,11 @@
             }
 
             #special-cg-frame {
-                width: 96%;
-                height: auto;
-                max-height: 72dvh;
-                aspect-ratio: 16 / 9;
-                margin-bottom: 0;
-                border-radius: 14px;
+                width: 100%;
+                height: 100%;
+                max-height: none;
+                aspect-ratio: auto;
+                border-radius: 0;
             }
         }
 
@@ -439,12 +438,15 @@
                 <button onclick="openModal('modal-relations')" class="bg-slate-900/80 hover:bg-slate-800 border border-slate-700/70 text-slate-200 text-xs px-3.5 py-2 rounded-full backdrop-blur-md transition shadow">
                     인물 관계
                 </button>
+                <button onclick="quickSave()" class="bg-slate-900/80 hover:bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 text-xs px-3.5 py-2 rounded-full backdrop-blur-md transition shadow">
+                    저장
+                </button>
             </div>
         </header>
 
         <!-- 2-B. 특별 장면 (Event CG / 스페셜 일러스트) 전체 화면 레이어 -->
-        <div id="special-cg-layer" class="absolute inset-0 z-25 hidden items-center justify-center bg-slate-950/90 backdrop-blur-sm pointer-events-none transition-opacity duration-700">
-            <div id="special-cg-frame" class="relative w-[92%] max-w-[1280px] h-[66%] md:h-[70%] mb-28 rounded-3xl overflow-hidden border-2 border-rose-500/60 shadow-[0_0_50px_rgba(244,63,94,0.35)] bg-slate-900 flex items-center justify-center">
+        <div id="special-cg-layer" class="absolute inset-0 z-25 hidden bg-black pointer-events-none">
+            <div id="special-cg-frame" class="relative w-full h-full overflow-hidden bg-black">
                 <!-- 특별 일러스트 SVG 또는 GPT 교체 이미지가 렌더링되는 영역 -->
                 <div id="special-cg-art" class="w-full h-full"></div>
                 <!-- 좌측 상단 EVENT CG 배지 및 GPT 슬롯 안내 -->
@@ -2666,6 +2668,8 @@
                 artBox.innerHTML = cgData.svg;
             }
 
+            // CG가 화면을 덮는 동안 배경·캐릭터·날씨 효과는 숨김
+            setSceneVisible(false);
             layer.classList.remove("hidden");
             layer.classList.add("flex");
         }
@@ -2676,6 +2680,16 @@
                 layer.classList.add("hidden");
                 layer.classList.remove("flex");
             }
+            setSceneVisible(true);
+        }
+
+        // 배경/캐릭터/날씨 레이어 표시 여부 (CG 연출 중에는 숨김)
+        function setSceneVisible(visible) {
+            const v = visible ? "" : "hidden";
+            ["bg-layer", "standing-layer", "weather-layer"].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.visibility = visible ? "" : "hidden";
+            });
         }
 
         function showCurrentLine() {
@@ -3194,6 +3208,17 @@
                 `;
             }
             container.innerHTML = html;
+        }
+
+        // 현재 진행 지점 저장 (타이틀의 CONTINUE가 이 지점부터 이어서 시작)
+        function quickSave() {
+            const payload = {
+                ...gameState,
+                savedAt: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
+            };
+            localStorage.setItem("arcadia_vn_save_1", JSON.stringify(payload));
+            renderSaveSlots();
+            showToast("저장되었습니다. 타이틀의 CONTINUE로 이 지점부터 이어할 수 있어요.");
         }
 
         function saveGame(slot) {
