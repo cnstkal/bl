@@ -2983,7 +2983,18 @@
 
                 const info = CHAR_INFO[key];
                 const name = info && info.name;
-                const isNamedExit = name && text.includes(name);
+                const shortNames = {
+                    yunho: ["윤호"],
+                    sunghwa: ["성화"],
+                    hongjoong: ["홍중"],
+                    yeosang: ["여상"],
+                    san: ["산"],
+                    mingi: ["민기"],
+                    wooyoung: ["우영"],
+                    jongho: ["종호"]
+                };
+                const isNamedExit = (name && text.includes(name)) ||
+                    (shortNames[key] || []).some(alias => text.includes(alias));
                 const isGroupExit = groupExit && key !== "yunho";
 
                 if (isNamedExit || isGroupExit) {
