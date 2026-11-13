@@ -416,15 +416,6 @@
                 <button onclick="openModal('modal-relations')" class="bg-slate-900/80 hover:bg-slate-800 border border-slate-700/70 text-slate-200 text-xs px-3.5 py-2 rounded-full backdrop-blur-md transition shadow">
                     인물 관계
                 </button>
-                <button onclick="openModal('modal-cg-gallery')" class="bg-slate-900/80 hover:bg-slate-800 border border-rose-500/40 text-rose-300 text-xs px-3.5 py-2 rounded-full backdrop-blur-md transition shadow hidden sm:inline-block">
-                    특별 CG
-                </button>
-                <button onclick="openModal('modal-endings')" class="bg-slate-900/80 hover:bg-slate-800 border border-slate-700/70 text-amber-300 text-xs px-3.5 py-2 rounded-full backdrop-blur-md transition shadow hidden sm:inline-block">
-                    엔딩 도감
-                </button>
-                <button onclick="showTitleScreen()" class="bg-slate-900/80 hover:bg-rose-950/80 border border-slate-700/70 text-slate-300 text-xs px-3 py-2 rounded-full backdrop-blur-md transition shadow" title="타이틀 화면으로">
-                    타이틀
-                </button>
             </div>
         </header>
 
@@ -446,7 +437,7 @@
         </div>
 
         <!-- 3. 캐릭터 스탠딩 레이어 -->
-        <div id="standing-layer" class="relative z-20 flex-1 flex items-end justify-center px-12 pb-44 pointer-events-none overflow-hidden">
+        <div id="standing-layer" class="relative z-20 flex-1 flex items-end justify-center px-4 pb-0 pointer-events-none overflow-hidden min-h-0">
             <div id="char-slot-left" class="char-standing transform translate-y-6 opacity-0 hidden mx-4"></div>
             <div id="char-slot-center" class="char-standing transform translate-y-6 opacity-0 hidden mx-4"></div>
             <div id="char-slot-right" class="char-standing transform translate-y-6 opacity-0 hidden mx-4"></div>
@@ -506,14 +497,6 @@
                         <div class="flex items-center gap-2">
                             <span id="chapter-indicator" class="text-emerald-400/90 font-semibold">제1장: 잿빛 하늘 아래의 나사못</span>
                             <span id="route-indicator" class="text-[11px] bg-slate-900 border border-slate-700 text-slate-300 px-2 py-0.5 rounded-md">공통 서사</span>
-                        </div>
-
-                        <div class="flex items-center gap-1.5 md:gap-2">
-                            <button onclick="openModal('modal-log')" class="hover:text-white hover:bg-slate-800 px-2.5 py-1 rounded-lg transition">이전 대화(Log)</button>
-                            <button id="btn-auto" onclick="toggleAutoPlay()" class="hover:text-white hover:bg-slate-800 px-2.5 py-1 rounded-lg transition">자동 진행(Auto)</button>
-                            <button onclick="cycleTextSpeed()" id="btn-speed" class="hover:text-white hover:bg-slate-800 px-2.5 py-1 rounded-lg transition">속도: 보통</button>
-                            <button onclick="openModal('modal-saveload')" class="hover:text-white hover:bg-slate-800 px-2.5 py-1 rounded-lg transition">저장 / 불러오기</button>
-                            <button onclick="openModal('modal-custom')" class="text-amber-300/90 hover:text-amber-200 hover:bg-amber-950/50 border border-amber-500/30 px-2.5 py-1 rounded-lg transition">보조 행동</button>
                         </div>
                     </div>
 
@@ -1184,7 +1167,7 @@
             if (customImgUrl && customImgUrl.trim() !== "") {
                 return `
                     <div class="relative flex flex-col items-center" data-char="${charKey}" data-exp="${expression}">
-                        <img src="${customImgUrl}" alt="${c.name} (${expression})" class="w-[290px] md:w-[370px] max-h-[560px] object-contain select-none"/>
+                        <img src="${customImgUrl}" alt="${c.name} (${expression})" class="h-[58vh] md:h-[66vh] w-auto max-w-[92vw] object-contain object-bottom select-none"/>
                     </div>
                 `;
             }
