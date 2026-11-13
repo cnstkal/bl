@@ -2529,6 +2529,43 @@
             };
         }
 
+        // 긴 대사는 문장 단위로 나눠서 여러 번 탭해 읽도록 분할 (화면에 다 들어가게)
+        const MAX_LINE_CHARS = 120;
+
+        function splitTextIntoPages(text, max) {
+            const sentences = text.match(/[\s\S]*?[.!?…]+[」』"']*(?:\s+|$)|[\s\S]+$/g) || [text];
+            const pages = [];
+            let cur = "";
+            sentences.forEach(sn => {
+                const t = sn.trim();
+                if (!t) return;
+                if (cur && (cur + " " + t).length > max) {
+                    pages.push(cur);
+                    cur = t;
+                } else {
+                    cur = cur ? cur + " " + t : t;
+                }
+            });
+            if (cur) pages.push(cur);
+            return pages;
+        }
+
+        function splitLongLines() {
+            Object.values(STORY_NODES).forEach(node => {
+                if (!node.lines) return;
+                const out = [];
+                node.lines.forEach(line => {
+                    if (!line.text || line.text.length <= MAX_LINE_CHARS) {
+                        out.push(line);
+                        return;
+                    }
+                    splitTextIntoPages(line.text, MAX_LINE_CHARS).forEach(t => out.push({ ...line, text: t }));
+                });
+                node.lines = out;
+            });
+        }
+        splitLongLines();
+
         let gameState = createInitialState();
         let unlockedEndings = JSON.parse(localStorage.getItem("afterglow_unlocked_endings") || "[]");
         let unlockedCGs = JSON.parse(localStorage.getItem("afterglow_unlocked_cgs") || "[]");
